@@ -302,12 +302,25 @@ export default function TransferCapacityDrawer({
                   )}
                 </div>
 
-                {/* Transfer Amount Display */}
+                {/* Transfer Amount Input */}
                 <div className="w-[79px] bg-white border border-border-main rounded-lg h-[56px] px-3 relative">
                   <div className="flex flex-col gap-1 grow items-start justify-center h-full relative">
-                    <div className="flex gap-1 items-center justify-end pt-4 w-full">
-                      <div className={`flex-1 text-base text-right h-6 leading-none flex items-center justify-end ${transferAmount ? 'text-text-main' : 'text-background-subtle-medium'}`}>
-                        +{transferAmount || '0'}
+                    <div className="flex items-center justify-end pt-4 w-full">
+                      <div className="flex items-center justify-end flex-1">
+                        <span className={`text-base ${transferAmount ? 'text-text-main' : 'text-background-subtle-medium'}`}>+</span>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={transferAmount}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[^0-9]/g, '');
+                            setTransferAmount(value);
+                          }}
+                          disabled={!toQuotaId}
+                          className={`bg-transparent border-none outline-none text-base text-right h-6 leading-none p-0 ${transferAmount ? 'text-text-main' : 'text-background-subtle-medium'}`}
+                          placeholder="0"
+                          style={{ width: `${Math.max(12, (transferAmount?.length || 1) * 10)}px`, maxWidth: '40px' }}
+                        />
                       </div>
                     </div>
                     {/* Label */}
