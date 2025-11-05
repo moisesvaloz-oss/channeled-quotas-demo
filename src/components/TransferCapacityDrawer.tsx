@@ -312,6 +312,15 @@ export default function TransferCapacityDrawer({
                   </div>
                 </div>
               </div>
+
+              {/* Available Quota Text */}
+              {toQuota && (
+                <div className="flex gap-2.5 items-center justify-center px-2">
+                  <p className="text-sm font-bold text-black leading-none">
+                    Available quota: {toQuota.available}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
