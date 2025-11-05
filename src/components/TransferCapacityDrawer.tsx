@@ -148,7 +148,7 @@ export default function TransferCapacityDrawer({
                     onClick={() => setFromDropdownOpen(!fromDropdownOpen)}
                     className="w-full bg-white border border-border-main rounded-lg h-[56px] px-3 pr-11 flex flex-col justify-center relative"
                   >
-                    <label className="text-text-subtle text-xs font-light absolute top-2 left-3 pointer-events-none">From</label>
+                    <label className="text-text-subtle text-xs font-bold absolute top-2 left-3 pointer-events-none">From</label>
                     <div className="pt-4 flex items-center gap-1">
                       {fromQuota && (
                         <img 
@@ -199,7 +199,7 @@ export default function TransferCapacityDrawer({
                   <div className="flex flex-col gap-1 grow items-start justify-center h-full relative">
                     <div className="flex items-center justify-end pt-4 w-full">
                       <div className="flex items-center justify-end flex-1">
-                        <span className="text-base text-text-main">-</span>
+                        <span className={`text-base ${transferAmount ? 'text-text-main' : 'text-background-subtle-medium'}`}>-</span>
                         <input
                           type="text"
                           inputMode="numeric"
@@ -209,7 +209,7 @@ export default function TransferCapacityDrawer({
                             setTransferAmount(value);
                           }}
                           disabled={!fromQuotaId}
-                          className="bg-transparent border-none outline-none text-base text-text-main text-right h-6 leading-none p-0"
+                          className={`bg-transparent border-none outline-none text-base text-right h-6 leading-none p-0 ${transferAmount ? 'text-text-main' : 'text-background-subtle-medium'}`}
                           placeholder="0"
                           style={{ width: `${Math.max(12, (transferAmount?.length || 1) * 10)}px`, maxWidth: '40px' }}
                         />
@@ -217,7 +217,7 @@ export default function TransferCapacityDrawer({
                     </div>
                     {/* Label */}
                     <div className="absolute left-0 right-0 top-2 flex gap-1 items-center justify-center">
-                      <p className="text-xs font-light text-text-subtle leading-none">Transfer</p>
+                      <p className="text-xs font-bold text-text-subtle leading-none">Transfer</p>
                     </div>
                   </div>
                 </div>
@@ -257,7 +257,7 @@ export default function TransferCapacityDrawer({
                     disabled={!fromQuotaId}
                     className="w-full bg-white border border-border-main rounded-lg h-[56px] px-3 pr-11 flex flex-col justify-center relative disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <label className="text-text-subtle text-xs font-light absolute top-2 left-3 pointer-events-none">To</label>
+                    <label className="text-text-subtle text-xs font-bold absolute top-2 left-3 pointer-events-none">To</label>
                     <div className="pt-4 flex items-center gap-1">
                       {toQuota && (
                         <img 
@@ -306,13 +306,13 @@ export default function TransferCapacityDrawer({
                 <div className="w-[79px] bg-white border border-border-main rounded-lg h-[56px] px-3 relative">
                   <div className="flex flex-col gap-1 grow items-start justify-center h-full relative">
                     <div className="flex gap-1 items-center justify-end pt-4 w-full">
-                      <div className="flex-1 text-base text-text-main text-right h-6 leading-none flex items-center justify-end">
+                      <div className={`flex-1 text-base text-right h-6 leading-none flex items-center justify-end ${transferAmount ? 'text-text-main' : 'text-background-subtle-medium'}`}>
                         +{transferAmount || '0'}
                       </div>
                     </div>
                     {/* Label */}
                     <div className="absolute left-0 right-0 top-2 flex gap-1 items-center justify-center">
-                      <p className="text-xs font-light text-text-subtle leading-none">Transfer</p>
+                      <p className="text-xs font-bold text-text-subtle leading-none">Transfer</p>
                     </div>
                   </div>
                 </div>
