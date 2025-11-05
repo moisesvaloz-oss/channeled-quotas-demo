@@ -505,9 +505,7 @@ export default function QuotaManagement() {
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
                           <div className="w-[20px]"></div>
-                          <div className="w-[20px] flex items-center justify-center">
-                            <img src={ICON_VERTICAL_DOTS} alt="" className="w-[3.5px] h-[13.5px] cursor-pointer" />
-                          </div>
+                          <div className="w-[20px]"></div>
                         </div>
                       </div>
                     );
@@ -717,9 +715,7 @@ export default function QuotaManagement() {
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
                           <div className="w-[20px]"></div>
-                          <div className="w-[20px] flex items-center justify-center">
-                            <img src={ICON_VERTICAL_DOTS} alt="" className="w-[3.5px] h-[13.5px] cursor-pointer" />
-                          </div>
+                          <div className="w-[20px]"></div>
                         </div>
                       </div>
                     );
