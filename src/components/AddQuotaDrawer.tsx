@@ -15,6 +15,7 @@ interface AddQuotaDrawerProps {
   capacityGroupName: string;
   timeSlot: string;
   editingQuota?: Quota | null;
+  replicatingQuota?: Quota | null;
   validateCapacity: (groupName: string, capacity: number, excludeQuotaId?: string) => {
     isValid: boolean;
     maxAvailable: number;
@@ -22,7 +23,7 @@ interface AddQuotaDrawerProps {
   };
 }
 
-export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, timeSlot, editingQuota, validateCapacity }: AddQuotaDrawerProps) {
+export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, timeSlot, editingQuota, replicatingQuota, validateCapacity }: AddQuotaDrawerProps) {
   const addQuota = useQuotaStore((state) => state.addQuota);
   const updateQuota = useQuotaStore((state) => state.updateQuota);
   
@@ -140,33 +141,40 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
 
   // Initialize form when editing
   useEffect(() => {
-    if (editingQuota) {
-      setQuotaName(editingQuota.name);
-      setCapacity(editingQuota.capacity.toString());
-      setQuotaType(editingQuota.type);
+    const sourceQuota = editingQuota || replicatingQuota;
+    
+    if (sourceQuota) {
+      setQuotaName(sourceQuota.name);
+      setCapacity(sourceQuota.capacity.toString());
+      setQuotaType(sourceQuota.type);
       
       // Parse assignation to set application fields
-      if (editingQuota.assignation && editingQuota.assignation !== 'No assignation') {
+      if (sourceQuota.assignation && sourceQuota.assignation !== 'No assignation') {
         // Try to determine which type of application based on assignation value
         // This is a simplified approach - in a real app you'd store this info
-        if (channelTypeOptions.some(opt => editingQuota.assignation.includes(opt))) {
+        if (channelTypeOptions.some(opt => sourceQuota.assignation.includes(opt))) {
           setApplicationOption('channel-type');
-        } else if (channelOptions.some(opt => editingQuota.assignation.includes(opt))) {
+        } else if (channelOptions.some(opt => sourceQuota.assignation.includes(opt))) {
           setApplicationOption('channels');
-        } else if (businessOptions.some(opt => editingQuota.assignation.includes(opt))) {
+        } else if (businessOptions.some(opt => sourceQuota.assignation.includes(opt))) {
           setApplicationOption('businesses');
         }
         
         // Parse selected values from assignation string
-        const values = editingQuota.assignation.split(',').map(v => v.trim());
+        const values = sourceQuota.assignation.split(',').map(v => v.trim());
         const cleanedValues = values.filter(v => !v.includes('+') && !v.includes('more'));
         setSelectedApplicationValues(cleanedValues);
       } else {
         setApplicationOption('');
         setSelectedApplicationValues([]);
       }
+      
+      // For replication mode, expand the replication section
+      if (replicatingQuota) {
+        setReplicationOption('specific');
+      }
     } else {
-      // Reset form when not editing
+      // Reset form when not editing or replicating
       setQuotaName('');
       setCapacity('');
       setQuotaType('');
@@ -175,7 +183,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
       setSelectedApplicationValues([]);
       setReplicationOption('');
     }
-  }, [editingQuota]);
+  }, [editingQuota, replicatingQuota]);
 
   // Reset isClosing when drawer opens
   useEffect(() => {
@@ -215,7 +223,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
         <div className="flex flex-col p-6 pb-2">
           <div className="text-center mb-2">
             <h2 className="text-base font-semibold text-text-main">
-              {editingQuota ? 'Edit Quota' : `Add Quota - ${capacityGroupName}`}
+              {replicatingQuota ? 'Replicate Quota' : editingQuota ? 'Edit Quota' : `Add Quota - ${capacityGroupName}`}
             </h2>
           </div>
           <div className="text-center">
@@ -245,9 +253,10 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                   onChange={(e) => setQuotaName(e.target.value)}
                   onFocus={() => setQuotaNameFocused(true)}
                   onBlur={() => setQuotaNameFocused(false)}
+                  disabled={!!replicatingQuota}
                   className={`text-text-main text-base outline-none bg-transparent w-full ${
                     quotaNameFocused || quotaName ? 'pt-4' : ''
-                  }`}
+                  } ${replicatingQuota ? 'opacity-50 cursor-not-allowed' : ''}`}
                 />
               </div>
             </div>
@@ -256,8 +265,9 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
             <div className="relative" ref={dropdownRef}>
               <button
                 type="button"
-                onClick={() => setQuotaTypeOpen(!quotaTypeOpen)}
-                className="w-full bg-white border border-border-main rounded-lg h-14 px-3 pr-11 flex flex-col justify-center relative"
+                onClick={() => !replicatingQuota && setQuotaTypeOpen(!quotaTypeOpen)}
+                disabled={!!replicatingQuota}
+                className={`w-full bg-white border border-border-main rounded-lg h-14 px-3 pr-11 flex flex-col justify-center relative ${replicatingQuota ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <label className="text-text-subtle text-xs absolute top-0 left-3 pointer-events-none">Quota type</label>
                 <div className={`pt-4 text-base text-left ${quotaType ? 'text-text-main' : 'text-background-subtle-medium'}`}>
@@ -321,6 +331,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                 <input
                   type="number"
                   value={capacity}
+                  disabled={!!replicatingQuota}
                   onChange={(e) => {
                     const newCapacity = e.target.value;
                     setCapacity(newCapacity);
@@ -341,7 +352,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                   onBlur={() => setCapacityFocused(false)}
                   className={`text-text-main text-base outline-none bg-transparent w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
                     capacityFocused || capacity ? 'pt-4' : ''
-                  }`}
+                  } ${replicatingQuota ? 'opacity-50 cursor-not-allowed' : ''}`}
                   min="0"
                 />
               </div>
@@ -387,8 +398,9 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                     
                           <div className="flex flex-col gap-2">
                             <label 
-                              className="flex items-center gap-2 cursor-pointer"
+                              className={`flex items-center gap-2 ${replicatingQuota ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                               onClick={() => {
+                                if (replicatingQuota) return;
                                 if (applicationOption === 'channel-type') {
                                   setApplicationOption('');
                                   setSelectedApplicationValues([]);
@@ -410,8 +422,9 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                               <span className="text-sm text-text-main">Channel type</span>
                             </label>
                             <label 
-                              className="flex items-center gap-2 cursor-pointer"
+                              className={`flex items-center gap-2 ${replicatingQuota ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                               onClick={() => {
+                                if (replicatingQuota) return;
                                 if (applicationOption === 'channels') {
                                   setApplicationOption('');
                                   setSelectedApplicationValues([]);
@@ -433,8 +446,9 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                               <span className="text-sm text-text-main">Channels</span>
                             </label>
                             <label 
-                              className="flex items-center gap-2 cursor-pointer"
+                              className={`flex items-center gap-2 ${replicatingQuota ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                               onClick={() => {
+                                if (replicatingQuota) return;
                                 if (applicationOption === 'businesses') {
                                   setApplicationOption('');
                                   setSelectedApplicationValues([]);
@@ -462,8 +476,9 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                       <div className="mt-4 relative" ref={applicationDropdownRef}>
                         <button
                           type="button"
-                          onClick={() => setApplicationSelectionOpen(!applicationSelectionOpen)}
-                          className="w-full bg-white border border-border-main rounded-lg h-14 px-3 pr-11 flex flex-col justify-center relative"
+                          onClick={() => !replicatingQuota && setApplicationSelectionOpen(!applicationSelectionOpen)}
+                          disabled={!!replicatingQuota}
+                          className={`w-full bg-white border border-border-main rounded-lg h-14 px-3 pr-11 flex flex-col justify-center relative ${replicatingQuota ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                           <label className="text-text-subtle text-xs absolute top-0 left-3 pointer-events-none">
                             {applicationOption === 'channel-type' && 'Channel type'}
@@ -524,8 +539,8 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
               )}
             </div>
 
-            {/* Replication Section - Only show when creating, not editing */}
-            {!editingQuota && (
+            {/* Replication Section - Only show when creating or replicating, not when editing */}
+            {(!editingQuota || replicatingQuota) && (
             <div className="border-t border-border-main pt-6">
               <button
                 onClick={() => setReplicationExpanded(!replicationExpanded)}
@@ -983,6 +998,26 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                     capacityGroupName,
                     timeSlot,
                   });
+                } else if (replicatingQuota) {
+                  // Replicate quota to selected time slots
+                  if (replicationOption === 'specific') {
+                    // Create quota for each date range that has dates selected
+                    dateRanges.forEach((range) => {
+                      if (range.fromDate && range.toDate) {
+                        // In a real app, you would generate time slots from the date range
+                        // For this demo, we'll just use the current timeSlot format with a placeholder
+                        const replicatedTimeSlot = `${range.fromDate} - ${range.fromTime || '10:30'}`;
+                        addQuota({
+                          name: quotaName,
+                          type: quotaType as 'Exclusive' | 'Shared' | 'Blocked',
+                          capacity: parseInt(capacity),
+                          assignation,
+                          capacityGroupName,
+                          timeSlot: replicatedTimeSlot,
+                        });
+                      }
+                    });
+                  }
                 } else {
                   // Add new quota
                   addQuota({

@@ -52,6 +52,7 @@ export default function QuotaManagement() {
   const [quotaToDelete, setQuotaToDelete] = useState<{ id: string; name: string } | null>(null);
   const [isEditingCapacity, setIsEditingCapacity] = useState(false);
   const [editingQuota, setEditingQuota] = useState<Quota | null>(null);
+  const [replicatingQuota, setReplicatingQuota] = useState<Quota | null>(null);
   const capacityEditsRef = useRef<{ [quotaId: string]: number }>({});
   const [capacityErrors, setCapacityErrors] = useState<{ [quotaId: string]: string }>({});
   const [transferDrawerOpen, setTransferDrawerOpen] = useState(false);
@@ -67,11 +68,15 @@ export default function QuotaManagement() {
 
   const handleDrawerClose = (quotaCreatedOrUpdated: boolean = false) => {
     const wasEditing = editingQuota !== null;
+    const wasReplicating = replicatingQuota !== null;
     setDrawerOpen(false);
     setEditingQuota(null);
+    setReplicatingQuota(null);
     if (quotaCreatedOrUpdated) {
       if (wasEditing) {
         setToastMessage('Quota successfully updated');
+      } else if (wasReplicating) {
+        setToastMessage('Quotas are being replicated to selected time slots.');
       } else {
         setToastMessage('Quotas are being created in all time slots selected.');
       }
@@ -81,6 +86,16 @@ export default function QuotaManagement() {
 
   const handleEditQuota = (quota: Quota) => {
     setEditingQuota(quota);
+    setSelectedGroup({
+      name: quota.capacityGroupName,
+      timeSlot: quota.timeSlot,
+    });
+    setDrawerOpen(true);
+    setOpenMenuId(null);
+  };
+
+  const handleReplicateQuota = (quota: Quota) => {
+    setReplicatingQuota(quota);
     setSelectedGroup({
       name: quota.capacityGroupName,
       timeSlot: quota.timeSlot,
@@ -618,7 +633,7 @@ export default function QuotaManagement() {
                               Transfer capacity
                             </button>
                             <button
-                              onClick={() => { console.log('Replicate quota:', quota.id); setOpenMenuId(null); }}
+                              onClick={() => handleReplicateQuota(quota)}
                               className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main"
                             >
                               <img src={ICON_COPY} alt="" className="w-[14px] h-[14px]" />
@@ -887,6 +902,7 @@ export default function QuotaManagement() {
          capacityGroupName={selectedGroup.name}
          timeSlot={selectedGroup.timeSlot}
          editingQuota={editingQuota}
+         replicatingQuota={replicatingQuota}
          validateCapacity={validateCapacity}
        />
 
