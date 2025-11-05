@@ -196,24 +196,46 @@ export default function QuotaManagement() {
       });
   };
 
-  // Validate capacity doesn't exceed group total
+  // Calculate group totals
+  const calculateGroupTotals = (groupName: string) => {
+    const groupConfig = CAPACITY_GROUPS[groupName as keyof typeof CAPACITY_GROUPS];
+    if (!groupConfig) return { sold: 0, available: 0, capacity: 0 };
+
+    // Calculate total blocked capacity for this group
+    const groupQuotas = getGroupQuotas(groupName);
+    const totalBlockedCapacity = groupQuotas
+      .filter(q => q.type === 'Blocked')
+      .reduce((sum, q) => sum + q.capacity, 0);
+
+    return {
+      sold: groupConfig.sold,
+      available: groupConfig.totalCapacity - groupConfig.sold - totalBlockedCapacity,
+      capacity: groupConfig.totalCapacity
+    };
+  };
+
+  // Validate capacity doesn't exceed available capacity
   const validateCapacity = (groupName: string, newCapacity: number, excludeQuotaId?: string) => {
     const groupConfig = CAPACITY_GROUPS[groupName as keyof typeof CAPACITY_GROUPS];
     if (!groupConfig) return { isValid: true, maxAvailable: 0, message: '' };
 
-    // Calculate total capacity used by other quotas
+    // Get the group's available capacity (total - sold - blocked)
+    const groupTotals = calculateGroupTotals(groupName);
+    
+    // Calculate total capacity already allocated to other quotas (excluding the one being edited)
     const groupQuotas = getGroupQuotas(groupName);
     const otherQuotasCapacity = groupQuotas
       .filter(q => q.id !== excludeQuotaId)
       .reduce((sum, q) => sum + q.capacity, 0);
 
-    const maxAvailable = groupConfig.totalCapacity - otherQuotasCapacity;
+    // The maximum available for this quota is the group's available capacity minus other quotas
+    const maxAvailable = groupTotals.available - otherQuotasCapacity;
     const isValid = newCapacity <= maxAvailable;
 
     return {
       isValid,
       maxAvailable,
-      message: isValid ? '' : `Value exceeds available quota (max: ${maxAvailable})`
+      message: isValid ? '' : `Value exceeds available capacity (max: ${maxAvailable})`
     };
   };
 
@@ -235,24 +257,6 @@ export default function QuotaManagement() {
       sold: Math.max(0, freeSold),
       available: Math.max(0, freeAvailable),
       capacity: Math.max(0, freeCapacity)
-    };
-  };
-
-  // Calculate group totals
-  const calculateGroupTotals = (groupName: string) => {
-    const groupConfig = CAPACITY_GROUPS[groupName as keyof typeof CAPACITY_GROUPS];
-    if (!groupConfig) return { sold: 0, available: 0, capacity: 0 };
-
-    // Calculate total blocked capacity for this group
-    const groupQuotas = getGroupQuotas(groupName);
-    const totalBlockedCapacity = groupQuotas
-      .filter(q => q.type === 'Blocked')
-      .reduce((sum, q) => sum + q.capacity, 0);
-
-    return {
-      sold: groupConfig.sold,
-      available: groupConfig.totalCapacity - groupConfig.sold - totalBlockedCapacity,
-      capacity: groupConfig.totalCapacity
     };
   };
 

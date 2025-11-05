@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useQuotaStore } from '../stores/quotaStore';
-import type { Quota } from '../stores/quotaStore';
 
 interface TransferCapacityDrawerProps {
   isOpen: boolean;
@@ -241,8 +240,8 @@ export default function TransferCapacityDrawer({
               onClick={() => {
                 // Swap From and To selections
                 const tempFrom = fromQuotaId;
-                setFromQuotaId(toQuotaId || null);
-                setToQuotaId(tempFrom || null);
+                setFromQuotaId(toQuotaId || '');
+                setToQuotaId(tempFrom || '');
               }}
               disabled={!fromQuotaId && !toQuotaId}
               className="flex flex-col items-center justify-center rounded-[64px] w-12 h-12 cursor-pointer hover:bg-neutral-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
