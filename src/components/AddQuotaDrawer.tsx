@@ -168,11 +168,6 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
         setApplicationOption('');
         setSelectedApplicationValues([]);
       }
-      
-      // For replication mode, expand the replication section
-      if (replicatingQuota) {
-        setReplicationOption('specific');
-      }
     } else {
       // Reset form when not editing or replicating
       setQuotaName('');
@@ -201,7 +196,26 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
   };
 
   // Validation: Check if all mandatory fields are filled and capacity is valid
-  const isFormValid = quotaName.trim() !== '' && quotaType !== '' && capacity.trim() !== '' && !capacityError;
+  const isFormValid = (() => {
+    // Basic field validation
+    const basicFieldsValid = quotaName.trim() !== '' && quotaType !== '' && capacity.trim() !== '' && !capacityError;
+    
+    if (!basicFieldsValid) return false;
+    
+    // For replication mode, also check that replication option is selected and complete
+    if (replicatingQuota) {
+      if (replicationOption === 'all-future') {
+        return true; // All future time slots is selected
+      } else if (replicationOption === 'specific') {
+        // Check that at least one date range has both dates filled
+        return dateRanges.some(range => range.fromDate && range.toDate);
+      } else {
+        return false; // No replication option selected
+      }
+    }
+    
+    return true; // For create/edit mode, basic validation is enough
+  })();
 
   if (!isOpen && !isClosing) return null;
 
@@ -1021,7 +1035,18 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                   });
                 } else if (replicatingQuota) {
                   // Replicate quota to selected time slots
-                  if (replicationOption === 'specific') {
+                  if (replicationOption === 'all-future') {
+                    // In a real app, you would get all future time slots from the system
+                    // For this demo, we'll just create one quota with a placeholder timeSlot
+                    addQuota({
+                      name: quotaName,
+                      type: quotaType as 'Exclusive' | 'Shared' | 'Blocked',
+                      capacity: parseInt(capacity),
+                      assignation,
+                      capacityGroupName,
+                      timeSlot: 'All future time slots',
+                    });
+                  } else if (replicationOption === 'specific') {
                     // Create quota for each date range that has dates selected
                     dateRanges.forEach((range) => {
                       if (range.fromDate && range.toDate) {
