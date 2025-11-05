@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuotaStore } from '../stores/quotaStore';
 import type { Quota } from '../stores/quotaStore';
 
@@ -8,6 +8,9 @@ interface TransferCapacityDrawerProps {
   sourceQuotaId?: string;
   timeSlot: string;
 }
+
+const ICON_CHEVRON_DOWN = 'http://localhost:3845/assets/72cc5b1d8215c30d3681996aab247393376ffdaf.svg';
+const ICON_PIE_CHART = 'http://localhost:3845/assets/88fbf3da8c1bcb99a31aede702cd8f32889d21b1.svg';
 
 export default function TransferCapacityDrawer({
   isOpen,
@@ -20,6 +23,10 @@ export default function TransferCapacityDrawer({
   const [fromQuotaId, setFromQuotaId] = useState(sourceQuotaId || '');
   const [toQuotaId, setToQuotaId] = useState('');
   const [transferAmount, setTransferAmount] = useState('');
+  const [fromDropdownOpen, setFromDropdownOpen] = useState(false);
+  const [toDropdownOpen, setToDropdownOpen] = useState(false);
+  const fromDropdownRef = useRef<HTMLDivElement>(null);
+  const toDropdownRef = useRef<HTMLDivElement>(null);
 
   // Filter quotas for the same time slot
   const availableQuotas = quotas.filter(q => q.timeSlot === timeSlot);
@@ -32,8 +39,25 @@ export default function TransferCapacityDrawer({
       setFromQuotaId(sourceQuotaId || '');
       setToQuotaId('');
       setTransferAmount('');
+      setFromDropdownOpen(false);
+      setToDropdownOpen(false);
     }
   }, [isOpen, sourceQuotaId]);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (fromDropdownRef.current && !fromDropdownRef.current.contains(event.target as Node)) {
+        setFromDropdownOpen(false);
+      }
+      if (toDropdownRef.current && !toDropdownRef.current.contains(event.target as Node)) {
+        setToDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleClose = (transferCompleted: boolean = false) => {
     setIsClosing(true);
@@ -118,47 +142,56 @@ export default function TransferCapacityDrawer({
             <div className="bg-accent-100 border border-accent-200 rounded flex flex-col gap-2 px-2 py-4 grow">
               <div className="flex gap-2 items-center justify-end w-full">
                 {/* From Quota Dropdown */}
-                <div className="flex-1 bg-white border border-border-main rounded-lg h-[56px] pl-3 pr-11 relative">
-                  <div className="flex flex-col gap-1 grow items-start justify-center h-full relative">
-                    <div className="flex gap-1 items-center pt-4 w-full">
+                <div className="flex-1 relative" ref={fromDropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setFromDropdownOpen(!fromDropdownOpen)}
+                    className="w-full bg-white border border-border-main rounded-lg h-[56px] px-3 pr-11 flex flex-col justify-center relative"
+                  >
+                    <label className="text-text-subtle text-xs absolute top-0 left-3 pointer-events-none">From</label>
+                    <div className="pt-4 flex items-center gap-1">
                       {fromQuota && (
                         <img 
-                          src="http://localhost:3845/assets/88fbf3da8c1bcb99a31aede702cd8f32889d21b1.svg" 
+                          src={ICON_PIE_CHART} 
                           alt="" 
                           className="w-3.5 h-3.5"
                         />
                       )}
-                      <select
-                        value={fromQuotaId}
-                        onChange={(e) => {
-                          setFromQuotaId(e.target.value);
-                          setTransferAmount('');
-                        }}
-                        className="flex-1 bg-transparent border-none outline-none text-base text-text-main appearance-none cursor-pointer h-6 leading-none"
-                      >
-                        <option value="">Select a quota</option>
-                        {availableQuotas
-                          .filter(q => q.type !== 'Blocked' && q.id !== toQuotaId)
-                          .map((quota) => (
-                            <option key={quota.id} value={quota.id}>
-                              {quota.name}
-                            </option>
-                          ))}
-                      </select>
+                      <div className={`text-base text-left ${fromQuota ? 'text-text-main' : 'text-background-subtle-medium'}`}>
+                        {fromQuota ? fromQuota.name : 'Select a quota'}
+                      </div>
                     </div>
-                    {/* Label */}
-                    <div className="absolute left-0 right-8 top-0 flex gap-1 items-center">
-                      <p className="text-xs font-light text-text-subtle leading-none">From</p>
+                    <div className="absolute right-3 top-[18px] w-5 h-5 flex items-center justify-center pointer-events-none">
+                      <img src={ICON_CHEVRON_DOWN} alt="" className="w-3.5 h-[7px]" />
                     </div>
-                  </div>
-                  {/* Chevron Icon */}
-                  <div className="absolute right-3 top-[18px] w-5 h-5 flex items-center justify-center">
-                    <img 
-                      src="http://localhost:3845/assets/72cc5b1d8215c30d3681996aab247393376ffdaf.svg" 
-                      alt="" 
-                      className="w-3.5 h-[7px]"
-                    />
-                  </div>
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {fromDropdownOpen && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-border-main rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+                      {availableQuotas
+                        .filter(q => q.type !== 'Blocked' && q.id !== toQuotaId)
+                        .map((quota) => (
+                          <button
+                            key={quota.id}
+                            type="button"
+                            onClick={() => {
+                              setFromQuotaId(quota.id);
+                              setTransferAmount('');
+                              setFromDropdownOpen(false);
+                            }}
+                            className="w-full px-3 py-3 text-left hover:bg-neutral-50 flex items-center gap-1 text-base text-text-main"
+                          >
+                            <img 
+                              src={ICON_PIE_CHART} 
+                              alt="" 
+                              className="w-3.5 h-3.5"
+                            />
+                            {quota.name}
+                          </button>
+                        ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Transfer Amount Input */}
@@ -212,45 +245,56 @@ export default function TransferCapacityDrawer({
             <div className="bg-accent-100 border border-accent-200 rounded flex flex-col gap-2 px-2 py-4 grow">
               <div className="flex gap-2 items-center justify-end w-full">
                 {/* To Quota Dropdown */}
-                <div className="flex-1 bg-white border border-border-main rounded-lg h-[56px] pl-3 pr-11 relative">
-                  <div className="flex flex-col gap-1 grow items-start justify-center h-full relative">
-                    <div className="flex gap-1 items-center pt-4 w-full">
+                <div className="flex-1 relative" ref={toDropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => fromQuotaId && setToDropdownOpen(!toDropdownOpen)}
+                    disabled={!fromQuotaId}
+                    className="w-full bg-white border border-border-main rounded-lg h-[56px] px-3 pr-11 flex flex-col justify-center relative disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <label className="text-text-subtle text-xs absolute top-0 left-3 pointer-events-none">To</label>
+                    <div className="pt-4 flex items-center gap-1">
                       {toQuota && (
                         <img 
-                          src="http://localhost:3845/assets/88fbf3da8c1bcb99a31aede702cd8f32889d21b1.svg" 
+                          src={ICON_PIE_CHART} 
                           alt="" 
                           className="w-3.5 h-3.5"
                         />
                       )}
-                      <select
-                        value={toQuotaId}
-                        onChange={(e) => setToQuotaId(e.target.value)}
-                        disabled={!fromQuotaId}
-                        className="flex-1 bg-transparent border-none outline-none text-base text-text-main appearance-none cursor-pointer disabled:cursor-not-allowed disabled:text-text-subtle h-6 leading-none"
-                      >
-                        <option value="">Select an option</option>
-                        {availableQuotas
-                          .filter(q => q.type !== 'Blocked' && q.id !== fromQuotaId)
-                          .map((quota) => (
-                            <option key={quota.id} value={quota.id}>
-                              {quota.name}
-                            </option>
-                          ))}
-                      </select>
+                      <div className={`text-base text-left ${toQuota ? 'text-text-main' : 'text-background-subtle-medium'}`}>
+                        {toQuota ? toQuota.name : 'Select an option'}
+                      </div>
                     </div>
-                    {/* Label */}
-                    <div className="absolute left-0 right-8 top-0 flex gap-1 items-center">
-                      <p className="text-xs font-light text-text-subtle leading-none">To</p>
+                    <div className="absolute right-3 top-[18px] w-5 h-5 flex items-center justify-center pointer-events-none">
+                      <img src={ICON_CHEVRON_DOWN} alt="" className="w-3.5 h-[7px]" />
                     </div>
-                  </div>
-                  {/* Chevron Icon */}
-                  <div className="absolute right-3 top-[18px] w-5 h-5 flex items-center justify-center">
-                    <img 
-                      src="http://localhost:3845/assets/72cc5b1d8215c30d3681996aab247393376ffdaf.svg" 
-                      alt="" 
-                      className="w-3.5 h-[7px]"
-                    />
-                  </div>
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {toDropdownOpen && fromQuotaId && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-border-main rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+                      {availableQuotas
+                        .filter(q => q.type !== 'Blocked' && q.id !== fromQuotaId)
+                        .map((quota) => (
+                          <button
+                            key={quota.id}
+                            type="button"
+                            onClick={() => {
+                              setToQuotaId(quota.id);
+                              setToDropdownOpen(false);
+                            }}
+                            className="w-full px-3 py-3 text-left hover:bg-neutral-50 flex items-center gap-1 text-base text-text-main"
+                          >
+                            <img 
+                              src={ICON_PIE_CHART} 
+                              alt="" 
+                              className="w-3.5 h-3.5"
+                            />
+                            {quota.name}
+                          </button>
+                        ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Transfer Amount Display */}
