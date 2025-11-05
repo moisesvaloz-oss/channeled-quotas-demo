@@ -148,7 +148,7 @@ export default function TransferCapacityDrawer({
                     onClick={() => setFromDropdownOpen(!fromDropdownOpen)}
                     className="w-full bg-white border border-border-main rounded-lg h-[56px] px-3 pr-11 flex flex-col justify-center relative"
                   >
-                    <label className="text-text-subtle text-xs font-light absolute top-0 left-3 pointer-events-none">From</label>
+                    <label className="text-text-subtle text-xs font-light absolute top-2 left-3 pointer-events-none">From</label>
                     <div className="pt-4 flex items-center gap-1">
                       {fromQuota && (
                         <img 
@@ -211,7 +211,7 @@ export default function TransferCapacityDrawer({
                       />
                     </div>
                     {/* Label */}
-                    <div className="absolute left-0 top-0 flex gap-1 items-center">
+                    <div className="absolute left-3 top-2 flex gap-1 items-center">
                       <p className="text-xs font-light text-text-subtle leading-none">Transfer</p>
                     </div>
                   </div>
@@ -252,7 +252,7 @@ export default function TransferCapacityDrawer({
                     disabled={!fromQuotaId}
                     className="w-full bg-white border border-border-main rounded-lg h-[56px] px-3 pr-11 flex flex-col justify-center relative disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <label className="text-text-subtle text-xs font-light absolute top-0 left-3 pointer-events-none">To</label>
+                    <label className="text-text-subtle text-xs font-light absolute top-2 left-3 pointer-events-none">To</label>
                     <div className="pt-4 flex items-center gap-1">
                       {toQuota && (
                         <img 
@@ -306,7 +306,7 @@ export default function TransferCapacityDrawer({
                       </div>
                     </div>
                     {/* Label */}
-                    <div className="absolute left-0 top-0 flex gap-1 items-center">
+                    <div className="absolute left-3 top-2 flex gap-1 items-center">
                       <p className="text-xs font-light text-text-subtle leading-none">Transfer</p>
                     </div>
                   </div>
