@@ -211,7 +211,7 @@ export default function TransferCapacityDrawer({
                       />
                     </div>
                     {/* Label */}
-                    <div className="absolute left-3 top-2 flex gap-1 items-center">
+                    <div className="absolute left-0 right-0 top-2 flex gap-1 items-center justify-center">
                       <p className="text-xs font-light text-text-subtle leading-none">Transfer</p>
                     </div>
                   </div>
@@ -306,7 +306,7 @@ export default function TransferCapacityDrawer({
                       </div>
                     </div>
                     {/* Label */}
-                    <div className="absolute left-3 top-2 flex gap-1 items-center">
+                    <div className="absolute left-0 right-0 top-2 flex gap-1 items-center justify-center">
                       <p className="text-xs font-light text-text-subtle leading-none">Transfer</p>
                     </div>
                   </div>
