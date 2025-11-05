@@ -220,7 +220,7 @@ export default function TransferCapacityDrawer({
 
               {/* Available Quota Text */}
               {fromQuota && (
-                <div className="flex gap-2.5 items-center justify-center px-2">
+                <div className="flex gap-2.5 items-center justify-start px-2">
                   <p className="text-sm font-bold text-black leading-none">
                     Available quota: {fromQuota.available}
                   </p>
@@ -315,7 +315,7 @@ export default function TransferCapacityDrawer({
 
               {/* Available Quota Text */}
               {toQuota && (
-                <div className="flex gap-2.5 items-center justify-center px-2">
+                <div className="flex gap-2.5 items-center justify-start px-2">
                   <p className="text-sm font-bold text-black leading-none">
                     Available quota: {toQuota.available}
                   </p>
