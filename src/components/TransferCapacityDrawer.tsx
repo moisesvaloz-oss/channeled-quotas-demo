@@ -197,8 +197,8 @@ export default function TransferCapacityDrawer({
                 {/* Transfer Amount Input */}
                 <div className="w-[79px] bg-white border border-border-main rounded-lg h-[56px] px-3 relative">
                   <div className="flex flex-col gap-1 grow items-start justify-center h-full relative">
-                    <div className="flex gap-1 items-center justify-end pt-4 w-full">
-                      <span className="text-base text-text-main">-</span>
+                    <div className="flex items-center justify-end pt-4 w-full">
+                      <span className="text-base text-text-main mr-0.5">-</span>
                       <input
                         type="number"
                         value={transferAmount}
@@ -207,7 +207,7 @@ export default function TransferCapacityDrawer({
                           setTransferAmount(value);
                         }}
                         disabled={!fromQuotaId}
-                        className="flex-1 bg-transparent border-none outline-none text-base text-text-main text-right h-6 leading-none"
+                        className="w-full bg-transparent border-none outline-none text-base text-text-main text-right h-6 leading-none"
                         placeholder="0"
                       />
                     </div>
