@@ -236,13 +236,23 @@ export default function TransferCapacityDrawer({
 
           {/* Transfer Icon */}
           <div className="flex items-center justify-center w-full">
-            <div className="flex flex-col items-center justify-center rounded-[64px] w-12 h-12">
+            <button
+              type="button"
+              onClick={() => {
+                // Swap From and To selections
+                const tempFrom = fromQuotaId;
+                setFromQuotaId(toQuotaId || null);
+                setToQuotaId(tempFrom || null);
+              }}
+              disabled={!fromQuotaId && !toQuotaId}
+              className="flex flex-col items-center justify-center rounded-[64px] w-12 h-12 cursor-pointer hover:bg-neutral-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <img 
                 src="http://localhost:3845/assets/afaaf690851c1cb3a6739ceced6c5111a06f2e80.svg" 
                 alt="Transfer" 
                 className="w-6 h-6"
               />
-            </div>
+            </button>
           </div>
 
           {/* To Section */}
