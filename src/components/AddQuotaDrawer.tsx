@@ -51,8 +51,6 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
   const dateRangeRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
   const addDateButtonRef = useRef<HTMLButtonElement>(null);
 
-  const weekdayOptions = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
   const quotaTypeOptions = ['Exclusive', 'Shared', 'Blocked'];
   
   // Generate hours (1-12), minutes (00-59), and periods (AM/PM) for scrollable picker
@@ -589,7 +587,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                         {dateRanges.map((range, index) => (
                           <div 
                             key={range.id} 
-                            ref={(el) => dateRangeRefs.current[range.id] = el}
+                            ref={(el) => { dateRangeRefs.current[range.id] = el; }}
                             className="border border-border-main rounded-lg p-4 flex flex-col gap-4 relative"
                           >
                             {/* Delete button */}
@@ -677,7 +675,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                               <div className="text-text-main text-xs font-semibold">Times</div>
                               <div className="flex gap-4">
                                 {/* First timeslot */}
-                                <div className="flex-1 relative" ref={(el) => timeDropdownRefs.current[`${index}-from`] = el}>
+                                <div className="flex-1 relative" ref={(el) => { timeDropdownRefs.current[`${index}-from`] = el; }}>
                                   <div className={`w-full bg-white border rounded-lg h-14 px-3 flex flex-col justify-center relative cursor-pointer ${
                                     openTimeDropdown?.index === index && openTimeDropdown?.field === 'from' 
                                       ? 'border-primary-base border-2' 
@@ -791,7 +789,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                                 </div>
 
                                 {/* Last timeslot */}
-                                <div className="flex-1 relative" ref={(el) => timeDropdownRefs.current[`${index}-to`] = el}>
+                                <div className="flex-1 relative" ref={(el) => { timeDropdownRefs.current[`${index}-to`] = el; }}>
                                   <div className={`w-full bg-white border rounded-lg h-14 px-3 flex flex-col justify-center relative cursor-pointer ${
                                     openTimeDropdown?.index === index && openTimeDropdown?.field === 'to' 
                                       ? 'border-primary-base border-2' 

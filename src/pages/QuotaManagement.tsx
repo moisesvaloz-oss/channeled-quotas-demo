@@ -854,6 +854,7 @@ export default function QuotaManagement() {
             </div>
           </div>
         </div>
+          </div>
         </div>
       </div>
 
