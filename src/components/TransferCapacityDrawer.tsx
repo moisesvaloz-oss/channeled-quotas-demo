@@ -209,9 +209,9 @@ export default function TransferCapacityDrawer({
                             setTransferAmount(value);
                           }}
                           disabled={!fromQuotaId}
-                          className="bg-transparent border-none outline-none text-base text-text-main text-right h-6 leading-none p-0 max-w-[32px]"
+                          className="bg-transparent border-none outline-none text-base text-text-main text-right h-6 leading-none p-0"
                           placeholder="0"
-                          style={{ width: `${Math.max(8, (transferAmount?.length || 1) * 9)}px` }}
+                          style={{ width: `${Math.max(12, (transferAmount?.length || 1) * 10)}px`, maxWidth: '40px' }}
                         />
                       </div>
                     </div>
