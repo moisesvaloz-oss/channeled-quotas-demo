@@ -152,11 +152,11 @@ export default function TransferCapacityDrawer({
                     </div>
                   </div>
                   {/* Chevron Icon */}
-                  <div className="absolute right-3 top-[18px] w-5 h-5">
+                  <div className="absolute right-3 top-[18px] w-5 h-5 flex items-center justify-center">
                     <img 
                       src="http://localhost:3845/assets/72cc5b1d8215c30d3681996aab247393376ffdaf.svg" 
                       alt="" 
-                      className="w-full h-full"
+                      className="w-3.5 h-[7px]"
                     />
                   </div>
                 </div>
@@ -244,11 +244,11 @@ export default function TransferCapacityDrawer({
                     </div>
                   </div>
                   {/* Chevron Icon */}
-                  <div className="absolute right-3 top-[18px] w-5 h-5">
+                  <div className="absolute right-3 top-[18px] w-5 h-5 flex items-center justify-center">
                     <img 
                       src="http://localhost:3845/assets/72cc5b1d8215c30d3681996aab247393376ffdaf.svg" 
                       alt="" 
-                      className="w-full h-full"
+                      className="w-3.5 h-[7px]"
                     />
                   </div>
                 </div>
