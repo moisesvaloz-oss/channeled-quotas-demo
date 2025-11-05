@@ -170,7 +170,7 @@ export default function TransferCapacityDrawer({
                   {fromDropdownOpen && (
                     <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-border-main rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
                       {availableQuotas
-                        .filter(q => q.type !== 'Blocked' && q.id !== toQuotaId)
+                        .filter(q => q.id !== toQuotaId)
                         .map((quota) => (
                           <button
                             key={quota.id}
@@ -274,7 +274,7 @@ export default function TransferCapacityDrawer({
                   {toDropdownOpen && fromQuotaId && (
                     <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-border-main rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
                       {availableQuotas
-                        .filter(q => q.type !== 'Blocked' && q.id !== fromQuotaId)
+                        .filter(q => q.id !== fromQuotaId)
                         .map((quota) => (
                           <button
                             key={quota.id}
