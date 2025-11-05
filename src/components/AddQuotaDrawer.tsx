@@ -254,9 +254,9 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                   onFocus={() => setQuotaNameFocused(true)}
                   onBlur={() => setQuotaNameFocused(false)}
                   disabled={!!replicatingQuota}
-                  className={`text-text-main text-base outline-none bg-transparent w-full ${
+                  className={`text-base outline-none bg-transparent w-full ${
                     quotaNameFocused || quotaName ? 'pt-4' : ''
-                  } ${replicatingQuota ? 'cursor-not-allowed' : ''}`}
+                  } ${replicatingQuota ? 'text-background-subtle-medium cursor-not-allowed' : 'text-text-main'}`}
                 />
               </div>
             </div>
@@ -270,7 +270,9 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                 className={`w-full border border-border-main rounded-lg h-14 px-3 pr-11 flex flex-col justify-center relative ${replicatingQuota ? 'bg-neutral-75 cursor-not-allowed' : 'bg-white'}`}
               >
                 <label className="text-text-subtle text-xs absolute top-0 left-3 pointer-events-none">Quota type</label>
-                <div className={`pt-4 text-base text-left ${quotaType ? 'text-text-main' : 'text-background-subtle-medium'}`}>
+                <div className={`pt-4 text-base text-left ${
+                  replicatingQuota ? 'text-background-subtle-medium' : quotaType ? 'text-text-main' : 'text-background-subtle-medium'
+                }`}>
                   {quotaType || 'Select an option'}
                 </div>
                 <div className="absolute right-3 top-[18px] w-5 h-5 flex items-center justify-center pointer-events-none">
@@ -350,9 +352,9 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                   }}
                   onFocus={() => setCapacityFocused(true)}
                   onBlur={() => setCapacityFocused(false)}
-                  className={`text-text-main text-base outline-none bg-transparent w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+                  className={`text-base outline-none bg-transparent w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
                     capacityFocused || capacity ? 'pt-4' : ''
-                  } ${replicatingQuota ? 'cursor-not-allowed' : ''}`}
+                  } ${replicatingQuota ? 'text-background-subtle-medium cursor-not-allowed' : 'text-text-main'}`}
                   min="0"
                 />
               </div>
@@ -411,15 +413,20 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                               }}
                             >
                               <div className={`w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center ${
-                                applicationOption === 'channel-type' 
-                                  ? 'bg-primary-base border-primary-base' 
-                                  : 'border border-border-main bg-white'
+                                replicatingQuota 
+                                  ? 'border border-border-main bg-neutral-75'
+                                  : applicationOption === 'channel-type' 
+                                    ? 'bg-primary-base border-primary-base' 
+                                    : 'border border-border-main bg-white'
                               }`}>
-                                {applicationOption === 'channel-type' && (
+                                {applicationOption === 'channel-type' && !replicatingQuota && (
                                   <div className="w-2 h-2 rounded-full bg-white" />
                                 )}
+                                {applicationOption === 'channel-type' && replicatingQuota && (
+                                  <div className="w-2 h-2 rounded-full bg-background-subtle-medium" />
+                                )}
                               </div>
-                              <span className="text-sm text-text-main">Channel type</span>
+                              <span className={`text-sm ${replicatingQuota ? 'text-background-subtle-medium' : 'text-text-main'}`}>Channel type</span>
                             </label>
                             <label 
                               className={`flex items-center gap-2 ${replicatingQuota ? 'cursor-not-allowed' : 'cursor-pointer'}`}
@@ -435,15 +442,20 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                               }}
                             >
                               <div className={`w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center ${
-                                applicationOption === 'channels' 
-                                  ? 'bg-primary-base border-primary-base' 
-                                  : 'border border-border-main bg-white'
+                                replicatingQuota 
+                                  ? 'border border-border-main bg-neutral-75'
+                                  : applicationOption === 'channels' 
+                                    ? 'bg-primary-base border-primary-base' 
+                                    : 'border border-border-main bg-white'
                               }`}>
-                                {applicationOption === 'channels' && (
+                                {applicationOption === 'channels' && !replicatingQuota && (
                                   <div className="w-2 h-2 rounded-full bg-white" />
                                 )}
+                                {applicationOption === 'channels' && replicatingQuota && (
+                                  <div className="w-2 h-2 rounded-full bg-background-subtle-medium" />
+                                )}
                               </div>
-                              <span className="text-sm text-text-main">Channels</span>
+                              <span className={`text-sm ${replicatingQuota ? 'text-background-subtle-medium' : 'text-text-main'}`}>Channels</span>
                             </label>
                             <label 
                               className={`flex items-center gap-2 ${replicatingQuota ? 'cursor-not-allowed' : 'cursor-pointer'}`}
@@ -459,15 +471,20 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                               }}
                             >
                               <div className={`w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center ${
-                                applicationOption === 'businesses' 
-                                  ? 'bg-primary-base border-primary-base' 
-                                  : 'border border-border-main bg-white'
+                                replicatingQuota 
+                                  ? 'border border-border-main bg-neutral-75'
+                                  : applicationOption === 'businesses' 
+                                    ? 'bg-primary-base border-primary-base' 
+                                    : 'border border-border-main bg-white'
                               }`}>
-                                {applicationOption === 'businesses' && (
+                                {applicationOption === 'businesses' && !replicatingQuota && (
                                   <div className="w-2 h-2 rounded-full bg-white" />
                                 )}
+                                {applicationOption === 'businesses' && replicatingQuota && (
+                                  <div className="w-2 h-2 rounded-full bg-background-subtle-medium" />
+                                )}
                               </div>
-                              <span className="text-sm text-text-main">Businesses</span>
+                              <span className={`text-sm ${replicatingQuota ? 'text-background-subtle-medium' : 'text-text-main'}`}>Businesses</span>
                             </label>
                           </div>
 
@@ -485,7 +502,11 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                             {applicationOption === 'channels' && 'Channels'}
                             {applicationOption === 'businesses' && 'Businesses'}
                           </label>
-                          <div className={`pt-4 text-base text-left overflow-hidden text-ellipsis whitespace-nowrap ${selectedApplicationValues.length > 0 ? 'text-text-main' : 'text-background-subtle-medium'}`}>
+                          <div className={`pt-4 text-base text-left overflow-hidden text-ellipsis whitespace-nowrap ${
+                            replicatingQuota 
+                              ? 'text-background-subtle-medium' 
+                              : selectedApplicationValues.length > 0 ? 'text-text-main' : 'text-background-subtle-medium'
+                          }`}>
                             {selectedApplicationValues.length > 0 
                               ? selectedApplicationValues.length === 1
                                 ? selectedApplicationValues[0]
