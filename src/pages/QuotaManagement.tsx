@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import AddQuotaDrawer from '../components/AddQuotaDrawer';
+import TransferCapacityDrawer from '../components/TransferCapacityDrawer';
 import Toast from '../components/Toast';
 import DeleteQuotaModal from '../components/DeleteQuotaModal';
 import { useQuotaStore } from '../stores/quotaStore';
@@ -52,6 +53,8 @@ export default function QuotaManagement() {
   const [editingQuota, setEditingQuota] = useState<Quota | null>(null);
   const capacityEditsRef = useRef<{ [quotaId: string]: number }>({});
   const [capacityErrors, setCapacityErrors] = useState<{ [quotaId: string]: string }>({});
+  const [transferDrawerOpen, setTransferDrawerOpen] = useState(false);
+  const [transferSourceQuotaId, setTransferSourceQuotaId] = useState<string>('');
 
   const handleAddQuota = (groupName: string) => {
     setSelectedGroup({ 
@@ -83,6 +86,21 @@ export default function QuotaManagement() {
     });
     setDrawerOpen(true);
     setOpenMenuId(null);
+  };
+
+  const handleTransferCapacity = (quotaId: string) => {
+    setTransferSourceQuotaId(quotaId);
+    setTransferDrawerOpen(true);
+    setOpenMenuId(null);
+  };
+
+  const handleTransferDrawerClose = (transferCompleted: boolean = false) => {
+    setTransferDrawerOpen(false);
+    setTransferSourceQuotaId('');
+    if (transferCompleted) {
+      setToastMessage('Capacity transfer completed successfully');
+      setShowToast(true);
+    }
   };
 
   const toggleMenu = (quotaId: string) => {
@@ -587,7 +605,7 @@ export default function QuotaManagement() {
                                Edit quota
                              </button>
                             <button
-                              onClick={() => { console.log('Transfer capacity:', quota.id); setOpenMenuId(null); }}
+                              onClick={() => handleTransferCapacity(quota.id)}
                               className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main"
                             >
                               <img src={ICON_TRANSFER} alt="" className="w-[14px] h-[8.7px]" />
@@ -799,7 +817,7 @@ export default function QuotaManagement() {
                                Edit quota
                              </button>
                               <button
-                                onClick={() => { console.log('Transfer capacity:', quota.id); setOpenMenuId(null); }}
+                                onClick={() => handleTransferCapacity(quota.id)}
                                 className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main"
                               >
                                 <img src={ICON_TRANSFER} alt="" className="w-[14px] h-[8.7px]" />
@@ -866,6 +884,14 @@ export default function QuotaManagement() {
          timeSlot={selectedGroup.timeSlot}
          editingQuota={editingQuota}
          validateCapacity={validateCapacity}
+       />
+
+       {/* Transfer Capacity Drawer */}
+       <TransferCapacityDrawer
+         isOpen={transferDrawerOpen}
+         onClose={handleTransferDrawerClose}
+         sourceQuotaId={transferSourceQuotaId}
+         timeSlot="Sun 27 Jul 2025 - 10:30"
        />
 
         {/* Success Toast */}
