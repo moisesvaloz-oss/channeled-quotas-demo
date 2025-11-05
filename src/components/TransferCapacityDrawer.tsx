@@ -91,90 +91,114 @@ export default function TransferCapacityDrawer({
         }`}
       >
         {/* Header */}
-        <div className="flex flex-col items-center pt-6 px-6 pb-2 border-b border-border-main">
-          <h2 className="text-base font-semibold text-text-main text-center">
-            Transfer Capacity
-          </h2>
-          <p className="text-sm font-bold text-text-main text-center mt-1">
-            {timeSlot}
-          </p>
+        <div className="flex flex-col h-[57px] items-center px-8 pb-2 pt-0 relative w-full">
+          <div className="flex h-6 items-center justify-center w-full">
+            <h2 className="text-base font-semibold text-text-main text-center leading-6">
+              Transfer Capacity
+            </h2>
+          </div>
+          <div className="flex grow items-center justify-center w-full min-h-0">
+            <p className="text-sm font-bold text-text-main text-center leading-6">
+              {timeSlot}
+            </p>
+          </div>
+          {/* Divider */}
+          <div className="absolute left-0 top-[56px] h-px w-[327px]">
+            <div className="border-t border-border-main grow h-px"></div>
+          </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-6 pt-8 pb-6">
+        <div className="flex-1 overflow-y-auto px-6 pt-0 pb-0 flex flex-col gap-4">
+          {/* Spacing hack */}
+          <div className="h-0 w-20" />
+          
           {/* From Section */}
-          <div className="bg-accent-100 border border-accent-200 rounded p-2 mb-4">
-            <div className="flex gap-2 items-center mb-2">
-              {/* From Quota Dropdown */}
-              <div className="flex-1 bg-white border border-border-main rounded-lg h-14 px-3 relative">
-                <label className="absolute top-0 left-3 text-xs font-light text-text-subtle">
-                  From
-                </label>
-                <select
-                  value={fromQuotaId}
-                  onChange={(e) => {
-                    setFromQuotaId(e.target.value);
-                    setTransferAmount('');
-                  }}
-                  className="w-full h-full pt-4 bg-transparent border-none outline-none text-sm text-text-main appearance-none cursor-pointer"
-                >
-                  <option value="">Select a quota</option>
-                  {availableQuotas
-                    .filter(q => q.type !== 'Blocked' && q.id !== toQuotaId)
-                    .map((quota) => (
-                      <option key={quota.id} value={quota.id}>
-                        {quota.name}
-                      </option>
-                    ))}
-                </select>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <svg width="14" height="8" viewBox="0 0 14 8" fill="none">
-                    <path d="M1 1L7 7L13 1" stroke="#031419" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-                {fromQuota && (
-                  <div className="absolute left-11 top-1/2 -translate-y-1/2 pointer-events-none">
+          <div className="flex gap-6 items-start w-[327px]">
+            <div className="bg-accent-100 border border-accent-200 rounded flex flex-col gap-2 px-2 py-4 grow">
+              <div className="flex gap-2 items-center justify-end w-full">
+                {/* From Quota Dropdown */}
+                <div className="flex-1 bg-white border border-border-main rounded-lg h-[56px] pl-3 pr-11 relative">
+                  <div className="flex flex-col gap-1 grow items-start justify-center h-full relative">
+                    <div className="flex gap-1 items-center pt-4 w-full">
+                      {fromQuota && (
+                        <img 
+                          src="http://localhost:3845/assets/88fbf3da8c1bcb99a31aede702cd8f32889d21b1.svg" 
+                          alt="" 
+                          className="w-3.5 h-3.5"
+                        />
+                      )}
+                      <select
+                        value={fromQuotaId}
+                        onChange={(e) => {
+                          setFromQuotaId(e.target.value);
+                          setTransferAmount('');
+                        }}
+                        className="flex-1 bg-transparent border-none outline-none text-base text-text-main appearance-none cursor-pointer h-6 leading-none"
+                      >
+                        <option value="">Select a quota</option>
+                        {availableQuotas
+                          .filter(q => q.type !== 'Blocked' && q.id !== toQuotaId)
+                          .map((quota) => (
+                            <option key={quota.id} value={quota.id}>
+                              {quota.name}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                    {/* Label */}
+                    <div className="absolute left-0 right-8 top-0 flex gap-1 items-center">
+                      <p className="text-xs font-light text-text-subtle leading-none">From</p>
+                    </div>
+                  </div>
+                  {/* Chevron Icon */}
+                  <div className="absolute right-3 top-[18px] w-5 h-5">
                     <img 
-                      src="http://localhost:3845/assets/88fbf3da8c1bcb99a31aede702cd8f32889d21b1.svg" 
+                      src="http://localhost:3845/assets/72cc5b1d8215c30d3681996aab247393376ffdaf.svg" 
                       alt="" 
-                      className="w-3.5 h-3.5"
+                      className="w-full h-full"
                     />
                   </div>
-                )}
+                </div>
+
+                {/* Transfer Amount Input */}
+                <div className="w-[79px] bg-white border border-border-main rounded-lg h-[56px] px-3 relative">
+                  <div className="flex flex-col gap-1 grow items-start justify-center h-full relative">
+                    <div className="flex gap-1 items-center justify-end pt-4 w-full">
+                      <input
+                        type="number"
+                        value={transferAmount}
+                        onChange={(e) => {
+                          const value = e.target.value.replace('-', '');
+                          setTransferAmount(value);
+                        }}
+                        disabled={!fromQuotaId}
+                        className="flex-1 bg-transparent border-none outline-none text-base text-text-main text-right h-6 leading-none"
+                        placeholder="0"
+                      />
+                    </div>
+                    {/* Label */}
+                    <div className="absolute left-0 top-0 flex gap-1 items-center">
+                      <p className="text-xs font-light text-text-subtle leading-none">Transfer</p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              {/* Transfer Amount Input */}
-              <div className="w-[79px] bg-white border border-border-main rounded-lg h-14 px-3 relative">
-                <label className="absolute top-0 left-3 text-xs font-light text-text-subtle">
-                  Transfer
-                </label>
-                <input
-                  type="number"
-                  value={transferAmount ? `-${transferAmount}` : '-0'}
-                  onChange={(e) => {
-                    const value = e.target.value.replace('-', '');
-                    setTransferAmount(value);
-                  }}
-                  disabled={!fromQuotaId}
-                  className="w-full h-full pt-4 bg-transparent border-none outline-none text-sm text-text-main text-right"
-                  placeholder="-0"
-                />
-              </div>
+              {/* Available Quota Text */}
+              {fromQuota && (
+                <div className="flex gap-2.5 items-center justify-center px-2">
+                  <p className="text-sm font-bold text-black leading-none">
+                    Available quota: {fromQuota.available}
+                  </p>
+                </div>
+              )}
             </div>
-
-            {/* Available Quota Text */}
-            {fromQuota && (
-              <div className="text-center">
-                <p className="text-sm font-bold text-text-main">
-                  Available quota: {fromQuota.available}
-                </p>
-              </div>
-            )}
           </div>
 
           {/* Transfer Icon */}
-          <div className="flex justify-center my-4">
-            <div className="w-12 h-12 flex items-center justify-center">
+          <div className="flex gap-6 items-center justify-center w-full">
+            <div className="flex flex-col items-center justify-center rounded-[64px] w-12 h-12">
               <img 
                 src="http://localhost:3845/assets/afaaf690851c1cb3a6739ceced6c5111a06f2e80.svg" 
                 alt="Transfer" 
@@ -184,51 +208,64 @@ export default function TransferCapacityDrawer({
           </div>
 
           {/* To Section */}
-          <div className="bg-accent-100 border border-accent-200 rounded p-2">
-            <div className="flex gap-2 items-center">
-              {/* To Quota Dropdown */}
-              <div className="flex-1 bg-white border border-border-main rounded-lg h-14 px-3 relative">
-                <label className="absolute top-0 left-3 text-xs font-light text-text-subtle">
-                  To
-                </label>
-                <select
-                  value={toQuotaId}
-                  onChange={(e) => setToQuotaId(e.target.value)}
-                  disabled={!fromQuotaId}
-                  className="w-full h-full pt-4 bg-transparent border-none outline-none text-sm text-text-main appearance-none cursor-pointer disabled:cursor-not-allowed disabled:text-text-subtle"
-                >
-                  <option value="">Select an option</option>
-                  {availableQuotas
-                    .filter(q => q.type !== 'Blocked' && q.id !== fromQuotaId)
-                    .map((quota) => (
-                      <option key={quota.id} value={quota.id}>
-                        {quota.name}
-                      </option>
-                    ))}
-                </select>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <svg width="14" height="8" viewBox="0 0 14 8" fill="none">
-                    <path d="M1 1L7 7L13 1" stroke="#031419" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-                {toQuota && (
-                  <div className="absolute left-11 top-1/2 -translate-y-1/2 pointer-events-none">
+          <div className="flex gap-6 items-start w-[327px]">
+            <div className="bg-accent-100 border border-accent-200 rounded flex flex-col gap-2 px-2 py-4 grow">
+              <div className="flex gap-2 items-center justify-end w-full">
+                {/* To Quota Dropdown */}
+                <div className="flex-1 bg-white border border-border-main rounded-lg h-[56px] pl-3 pr-11 relative">
+                  <div className="flex flex-col gap-1 grow items-start justify-center h-full relative">
+                    <div className="flex gap-1 items-center pt-4 w-full">
+                      {toQuota && (
+                        <img 
+                          src="http://localhost:3845/assets/88fbf3da8c1bcb99a31aede702cd8f32889d21b1.svg" 
+                          alt="" 
+                          className="w-3.5 h-3.5"
+                        />
+                      )}
+                      <select
+                        value={toQuotaId}
+                        onChange={(e) => setToQuotaId(e.target.value)}
+                        disabled={!fromQuotaId}
+                        className="flex-1 bg-transparent border-none outline-none text-base text-text-main appearance-none cursor-pointer disabled:cursor-not-allowed disabled:text-text-subtle h-6 leading-none"
+                      >
+                        <option value="">Select an option</option>
+                        {availableQuotas
+                          .filter(q => q.type !== 'Blocked' && q.id !== fromQuotaId)
+                          .map((quota) => (
+                            <option key={quota.id} value={quota.id}>
+                              {quota.name}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                    {/* Label */}
+                    <div className="absolute left-0 right-8 top-0 flex gap-1 items-center">
+                      <p className="text-xs font-light text-text-subtle leading-none">To</p>
+                    </div>
+                  </div>
+                  {/* Chevron Icon */}
+                  <div className="absolute right-3 top-[18px] w-5 h-5">
                     <img 
-                      src="http://localhost:3845/assets/88fbf3da8c1bcb99a31aede702cd8f32889d21b1.svg" 
+                      src="http://localhost:3845/assets/72cc5b1d8215c30d3681996aab247393376ffdaf.svg" 
                       alt="" 
-                      className="w-3.5 h-3.5"
+                      className="w-full h-full"
                     />
                   </div>
-                )}
-              </div>
+                </div>
 
-              {/* Transfer Amount Display */}
-              <div className="w-[79px] bg-white border border-border-main rounded-lg h-14 px-3 relative">
-                <label className="absolute top-0 left-3 text-xs font-light text-text-subtle">
-                  Transfer
-                </label>
-                <div className="w-full h-full pt-4 flex items-center justify-end text-sm text-text-main">
-                  +{transferAmount || '0'}
+                {/* Transfer Amount Display */}
+                <div className="w-[79px] bg-white border border-border-main rounded-lg h-[56px] px-3 relative">
+                  <div className="flex flex-col gap-1 grow items-start justify-center h-full relative">
+                    <div className="flex gap-1 items-center justify-end pt-4 w-full">
+                      <div className="flex-1 text-base text-text-main text-right h-6 leading-none flex items-center justify-end">
+                        +{transferAmount || '0'}
+                      </div>
+                    </div>
+                    {/* Label */}
+                    <div className="absolute left-0 top-0 flex gap-1 items-center">
+                      <p className="text-xs font-light text-text-subtle leading-none">Transfer</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -236,17 +273,17 @@ export default function TransferCapacityDrawer({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-border-main">
+        <div className="flex flex-col gap-2 items-center pb-0 pt-6 px-0 w-full">
           <button
             onClick={handleSave}
             disabled={!canSave()}
-            className={`w-full h-12 rounded-full font-semibold text-sm transition-colors ${
+            className={`flex gap-1 h-12 items-center justify-center max-h-12 min-w-28 px-6 rounded-[64px] w-full ${
               canSave()
                 ? 'bg-action-primary text-white hover:bg-action-primary-hover'
                 : 'bg-neutral-100 text-text-subtle cursor-not-allowed'
             }`}
           >
-            Save
+            <p className="font-semibold text-sm leading-none">Save</p>
           </button>
         </div>
       </div>
