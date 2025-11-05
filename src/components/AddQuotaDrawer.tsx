@@ -237,7 +237,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
           <div className="flex flex-col gap-6">
             {/* Quota Name */}
             <div>
-              <div className="bg-white border border-border-main rounded-lg h-14 px-3 flex items-center relative">
+              <div className={`border border-border-main rounded-lg h-14 px-3 flex items-center relative ${replicatingQuota ? 'bg-neutral-75' : 'bg-white'}`}>
                 <label 
                   className={`absolute left-3 transition-all duration-200 pointer-events-none ${
                     quotaNameFocused || quotaName 
@@ -256,7 +256,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                   disabled={!!replicatingQuota}
                   className={`text-text-main text-base outline-none bg-transparent w-full ${
                     quotaNameFocused || quotaName ? 'pt-4' : ''
-                  } ${replicatingQuota ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  } ${replicatingQuota ? 'cursor-not-allowed' : ''}`}
                 />
               </div>
             </div>
@@ -267,7 +267,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                 type="button"
                 onClick={() => !replicatingQuota && setQuotaTypeOpen(!quotaTypeOpen)}
                 disabled={!!replicatingQuota}
-                className={`w-full bg-white border border-border-main rounded-lg h-14 px-3 pr-11 flex flex-col justify-center relative ${replicatingQuota ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`w-full border border-border-main rounded-lg h-14 px-3 pr-11 flex flex-col justify-center relative ${replicatingQuota ? 'bg-neutral-75 cursor-not-allowed' : 'bg-white'}`}
               >
                 <label className="text-text-subtle text-xs absolute top-0 left-3 pointer-events-none">Quota type</label>
                 <div className={`pt-4 text-base text-left ${quotaType ? 'text-text-main' : 'text-background-subtle-medium'}`}>
@@ -316,9 +316,9 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
 
             {/* Capacity */}
             <div>
-              <div className={`bg-white border rounded-lg h-14 px-3 flex items-center relative ${
+              <div className={`border rounded-lg h-14 px-3 flex items-center relative ${
                 capacityError ? 'border-status-danger' : 'border-border-main'
-              }`}>
+              } ${replicatingQuota ? 'bg-neutral-75' : 'bg-white'}`}>
                 <label 
                   className={`absolute left-3 transition-all duration-200 pointer-events-none ${
                     capacityFocused || capacity 
@@ -352,7 +352,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                   onBlur={() => setCapacityFocused(false)}
                   className={`text-text-main text-base outline-none bg-transparent w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
                     capacityFocused || capacity ? 'pt-4' : ''
-                  } ${replicatingQuota ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  } ${replicatingQuota ? 'cursor-not-allowed' : ''}`}
                   min="0"
                 />
               </div>
@@ -398,7 +398,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                     
                           <div className="flex flex-col gap-2">
                             <label 
-                              className={`flex items-center gap-2 ${replicatingQuota ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                              className={`flex items-center gap-2 ${replicatingQuota ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                               onClick={() => {
                                 if (replicatingQuota) return;
                                 if (applicationOption === 'channel-type') {
@@ -422,7 +422,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                               <span className="text-sm text-text-main">Channel type</span>
                             </label>
                             <label 
-                              className={`flex items-center gap-2 ${replicatingQuota ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                              className={`flex items-center gap-2 ${replicatingQuota ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                               onClick={() => {
                                 if (replicatingQuota) return;
                                 if (applicationOption === 'channels') {
@@ -446,7 +446,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                               <span className="text-sm text-text-main">Channels</span>
                             </label>
                             <label 
-                              className={`flex items-center gap-2 ${replicatingQuota ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                              className={`flex items-center gap-2 ${replicatingQuota ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                               onClick={() => {
                                 if (replicatingQuota) return;
                                 if (applicationOption === 'businesses') {
@@ -478,7 +478,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                           type="button"
                           onClick={() => !replicatingQuota && setApplicationSelectionOpen(!applicationSelectionOpen)}
                           disabled={!!replicatingQuota}
-                          className={`w-full bg-white border border-border-main rounded-lg h-14 px-3 pr-11 flex flex-col justify-center relative ${replicatingQuota ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          className={`w-full border border-border-main rounded-lg h-14 px-3 pr-11 flex flex-col justify-center relative ${replicatingQuota ? 'bg-neutral-75 cursor-not-allowed' : 'bg-white'}`}
                         >
                           <label className="text-text-subtle text-xs absolute top-0 left-3 pointer-events-none">
                             {applicationOption === 'channel-type' && 'Channel type'}
