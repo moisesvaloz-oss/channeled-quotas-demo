@@ -127,19 +127,19 @@ export default function TransferCapacityDrawer({
             </p>
           </div>
           {/* Divider */}
-          <div className="absolute left-0 top-[56px] h-px w-[327px]">
-            <div className="border-t border-border-main grow h-px"></div>
+          <div className="absolute left-6 top-[56px] h-px w-[327px]">
+            <div className="border-t border-border-main h-px w-full"></div>
           </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-6 pt-0 pb-0 flex flex-col gap-4">
+        <div className="flex-1 overflow-y-auto px-6 pt-0 pb-0 flex flex-col gap-4 items-center">
           {/* Spacing hack */}
           <div className="h-0 w-20" />
           
           {/* From Section */}
-          <div className="flex gap-6 items-start w-[327px]">
-            <div className="bg-accent-100 border border-accent-200 rounded flex flex-col gap-2 px-2 py-4 grow">
+          <div className="w-[327px]">
+            <div className="bg-accent-100 border border-accent-200 rounded flex flex-col gap-2 px-2 py-4">
               <div className="flex gap-2 items-center justify-end w-full">
                 {/* From Quota Dropdown */}
                 <div className="flex-1 relative" ref={fromDropdownRef}>
@@ -230,7 +230,7 @@ export default function TransferCapacityDrawer({
           </div>
 
           {/* Transfer Icon */}
-          <div className="flex gap-6 items-center justify-center w-full">
+          <div className="flex items-center justify-center w-full">
             <div className="flex flex-col items-center justify-center rounded-[64px] w-12 h-12">
               <img 
                 src="http://localhost:3845/assets/afaaf690851c1cb3a6739ceced6c5111a06f2e80.svg" 
@@ -241,8 +241,8 @@ export default function TransferCapacityDrawer({
           </div>
 
           {/* To Section */}
-          <div className="flex gap-6 items-start w-[327px]">
-            <div className="bg-accent-100 border border-accent-200 rounded flex flex-col gap-2 px-2 py-4 grow">
+          <div className="w-[327px]">
+            <div className="bg-accent-100 border border-accent-200 rounded flex flex-col gap-2 px-2 py-4">
               <div className="flex gap-2 items-center justify-end w-full">
                 {/* To Quota Dropdown */}
                 <div className="flex-1 relative" ref={toDropdownRef}>
@@ -326,7 +326,7 @@ export default function TransferCapacityDrawer({
         </div>
 
         {/* Footer */}
-        <div className="flex flex-col gap-2 items-center pb-0 pt-6 px-0 w-full">
+        <div className="flex flex-col gap-2 items-center pb-0 pt-6 px-6 w-full">
           <button
             onClick={handleSave}
             disabled={!canSave()}
