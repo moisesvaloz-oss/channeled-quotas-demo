@@ -133,7 +133,7 @@ export default function TransferCapacityDrawer({
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-6 pt-0 pb-0 flex flex-col gap-4 items-center">
+        <div className="flex-1 overflow-y-auto px-6 pt-0 pb-0 flex flex-col gap-4 items-center min-h-0">
           {/* Spacing hack */}
           <div className="h-0 w-20" />
           
@@ -354,7 +354,7 @@ export default function TransferCapacityDrawer({
         </div>
 
         {/* Footer */}
-        <div className="flex flex-col gap-2 items-center pb-6 pt-6 px-6 w-full">
+        <div className="flex flex-col gap-2 items-center pb-6 pt-6 px-6 w-full flex-shrink-0">
           <button
             onClick={handleSave}
             disabled={!canSave()}
