@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  /* FeverZone color palette from Figma */
+  --color-primary-base: #0089e3;
+  --color-primary-active: #0079ca;
+  --color-background-main: #ffffff;
+  --color-background-contrast: #06232c;
+  --color-background-secondary: #2c4751;
+  --color-background-subtle-medium: #a7b2ba;
+  --color-text-main: #031419;
+  --color-text-contrast: #ffffff;
+  --color-text-subtle: #536b75;
+  --color-border-main: #ccd2d8;
+  --color-border-contrast: #536b75;
+  --color-accent-100: #f0ebfd;
+  --color-accent-200: #d5c4f5;
+  --color-accent-400: #8e69e3;
+  --color-neutral-50: #fafbfb;
+  --color-neutral-75: #f6f7f7;
+  --color-neutral-100: #f2f3f3;
+  --color-neutral-700: #06232c;
+  --color-neutral-800: #031419;
+  
+  /* Exact spacing from Figma */
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-full: 64px;
+  
+  /* Status colors */
+  --color-status-positive: #24a865;
+  --color-status-danger: #eb0052;
+  
+  /* Sidebar width */
+  --width-sidebar: 256px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.4s ease-out;
+}
+
+.animate-fadeOut {
+  animation: fadeOut 0.8s ease-out forwards;
+}
+
+.animate-slideInFromRight {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+.animate-slideOutToRight {
+  animation: slideOutToRight 0.3s ease-in forwards;
+}
