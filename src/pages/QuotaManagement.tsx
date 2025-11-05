@@ -39,6 +39,7 @@ export default function QuotaManagement() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [menuDirection, setMenuDirection] = useState<'down' | 'up'>('down');
   const menuRef = useRef<HTMLDivElement>(null);
@@ -167,6 +168,11 @@ export default function QuotaManagement() {
   const getGroupQuotas = (groupName: string) => {
     return quotas
       .filter(q => q.capacityGroupName === groupName)
+      .filter(q => {
+        // Filter by search query if present
+        if (!searchQuery) return true;
+        return q.name.toLowerCase().includes(searchQuery.toLowerCase());
+      })
       .sort((a, b) => {
         // Blocked quotas always come first
         if (a.type === 'Blocked' && b.type !== 'Blocked') return -1;
@@ -339,6 +345,8 @@ export default function QuotaManagement() {
                     <input
                       type="text"
                       placeholder="Search quota names"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
                       className="flex-1 text-text-subtle text-base outline-none bg-transparent"
                     />
                   </div>
