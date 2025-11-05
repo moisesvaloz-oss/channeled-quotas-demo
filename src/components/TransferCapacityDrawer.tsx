@@ -354,7 +354,7 @@ export default function TransferCapacityDrawer({
         </div>
 
         {/* Footer */}
-        <div className="flex flex-col gap-2 items-center pb-0 pt-6 px-6 w-full">
+        <div className="flex flex-col gap-2 items-center pb-6 pt-6 px-6 w-full">
           <button
             onClick={handleSave}
             disabled={!canSave()}
