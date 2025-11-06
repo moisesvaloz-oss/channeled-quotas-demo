@@ -8,8 +8,8 @@ interface TransferCapacityDrawerProps {
   timeSlot: string;
 }
 
-const ICON_CHEVRON_DOWN = 'http://localhost:3845/assets/72cc5b1d8215c30d3681996aab247393376ffdaf.svg';
-const ICON_PIE_CHART = 'http://localhost:3845/assets/88fbf3da8c1bcb99a31aede702cd8f32889d21b1.svg';
+const ICON_CHEVRON_DOWN = '/icons/chevron-down.svg';
+const ICON_PIE_CHART = '/icons/pie-chart.svg';
 
 export default function TransferCapacityDrawer({
   isOpen,
@@ -247,7 +247,7 @@ export default function TransferCapacityDrawer({
               className="flex flex-col items-center justify-center rounded-[64px] w-12 h-12 cursor-pointer hover:bg-neutral-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <img 
-                src="http://localhost:3845/assets/afaaf690851c1cb3a6739ceced6c5111a06f2e80.svg" 
+                src="/icons/transfer-arrows.svg" 
                 alt="Transfer" 
                 className="w-6 h-6"
               />

@@ -9,21 +9,21 @@ import DeleteQuotaModal from '../components/DeleteQuotaModal';
 import { useQuotaStore } from '../stores/quotaStore';
 import type { Quota } from '../stores/quotaStore';
 
-// Figma icon assets
-const ICON_BACK_ARROW = 'http://localhost:3845/assets/c9098c25966c76877cc26d2e2a76a4e9d5eaaedd.svg';
-const ICON_CALENDAR = 'http://localhost:3845/assets/f540097310d95b0899ca769b6c05aee18c861096.svg';
-const ICON_CLOCK = 'http://localhost:3845/assets/cd487be1ea0c7bec00ecaee3311d5774b90df4af.svg';
-const ICON_SEARCH = 'http://localhost:3845/assets/fd1b24bc93b77cd1a821d5fca186ea30167e4fff.svg';
-const ICON_INFO = 'http://localhost:3845/assets/c277c3c69d094a5a05da822ee0a6672f1023abae.svg';
-const ICON_ANGLE_DOWN = 'http://localhost:3845/assets/b9d8079bd319a753b8c203fbf72ae4430e0e030b.svg';
-const ICON_PEN_TO_SQUARE = 'http://localhost:3845/assets/f6d06be5d02a88c4ce028ee177e86ee317822fda.svg';
-const ICON_ADD_QUOTA = 'http://localhost:3845/assets/3b98c240ad5647f6728cb4f4b223d7b2d7ae339c.svg';
-const ICON_VERTICAL_DOTS = 'http://localhost:3845/assets/9bf622ddbf92eb6e519925bcd2a25e2ab52ea786.svg';
-const ICON_PIE_CHART = 'http://localhost:3845/assets/88fbf3da8c1bcb99a31aede702cd8f32889d21b1.svg';
-const ICON_EDIT = 'http://localhost:3845/assets/12306911d87e1d24621b0c977ed3525d4f1e9b11.svg';
-const ICON_TRANSFER = 'http://localhost:3845/assets/5f34d4646c97a6674e3f35fd7dd4c6ba2703c062.svg';
-const ICON_COPY = 'http://localhost:3845/assets/b894d1507407975e89ba631d8c341a21fc043adc.svg';
-const ICON_TRASH_CAN = 'http://localhost:3845/assets/3858559fd7f77d9823ecf1d258f36c21005196b3.svg';
+// Icon assets
+const ICON_BACK_ARROW = '/icons/back-arrow.svg';
+const ICON_CALENDAR = '/icons/calendar.svg';
+const ICON_CLOCK = '/icons/clock.svg';
+const ICON_SEARCH = '/icons/search.svg';
+const ICON_INFO = '/icons/info.svg';
+const ICON_ANGLE_DOWN = '/icons/angle-down.svg';
+const ICON_PEN_TO_SQUARE = '/icons/pen-to-square.svg';
+const ICON_ADD_QUOTA = '/icons/add-quota.svg';
+const ICON_VERTICAL_DOTS = '/icons/vertical-dots.svg';
+const ICON_PIE_CHART = '/icons/pie-chart.svg';
+const ICON_EDIT = '/icons/edit.svg';
+const ICON_TRANSFER = '/icons/transfer.svg';
+const ICON_COPY = '/icons/copy.svg';
+const ICON_TRASH_CAN = '/icons/trash-can.svg';
 
 // Define fixed capacity group configurations
 const CAPACITY_GROUPS = {
@@ -659,7 +659,7 @@ export default function QuotaManagement() {
                     {capacityErrors[quota.id] && isEditingCapacity && (
                       <div className="absolute right-[60px] top-full mt-1 flex items-center gap-1">
                         <img 
-                          src="http://localhost:3845/assets/88fbf3da8c1bcb99a31aede702cd8f32889d21b1.svg" 
+                          src={ICON_PIE_CHART} 
                           alt="" 
                           className="w-3 h-3" 
                         />
@@ -869,7 +869,7 @@ export default function QuotaManagement() {
                     {capacityErrors[quota.id] && isEditingCapacity && (
                       <div className="absolute right-[60px] top-full mt-1 flex items-center gap-1">
                         <img 
-                          src="http://localhost:3845/assets/88fbf3da8c1bcb99a31aede702cd8f32889d21b1.svg" 
+                          src={ICON_PIE_CHART} 
                           alt="" 
                           className="w-3 h-3" 
                         />

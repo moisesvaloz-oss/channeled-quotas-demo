@@ -2,14 +2,14 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 
-// Figma icon assets
-const ICON_TICKET = 'http://localhost:3845/assets/ac4f7ca8ab5e571a45c3ddef25515bb537b036c7.svg';
-const ICON_ANGLE_DOWN = 'http://localhost:3845/assets/b9d8079bd319a753b8c203fbf72ae4430e0e030b.svg';
-const ICON_PEN_TO_SQUARE = 'http://localhost:3845/assets/861dc28e2f6668787a3e788fadf702ab07f0f6ce.svg';
-const ICON_INFO = 'http://localhost:3845/assets/c277c3c69d094a5a05da822ee0a6672f1023abae.svg';
-const ICON_CALENDAR = 'http://localhost:3845/assets/f540097310d95b0899ca769b6c05aee18c861096.svg';
-const ICON_CLOCK = 'http://localhost:3845/assets/cd487be1ea0c7bec00ecaee3311d5774b90df4af.svg';
-const ICON_EYE = 'http://localhost:3845/assets/f8e28ecc53de5a8ae7503183a385cadbb620b526.svg';
+// Icon assets
+const ICON_TICKET = '/icons/ticket.svg';
+const ICON_ANGLE_DOWN = '/icons/angle-down.svg';
+const ICON_PEN_TO_SQUARE = '/icons/pen-to-square-alt.svg';
+const ICON_INFO = '/icons/info.svg';
+const ICON_CALENDAR = '/icons/calendar.svg';
+const ICON_CLOCK = '/icons/clock.svg';
+const ICON_EYE = '/icons/eye.svg';
 
 export default function LandingPage() {
   const navigate = useNavigate();

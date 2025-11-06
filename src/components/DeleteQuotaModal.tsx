@@ -1,4 +1,4 @@
-const ICON_CLOSE = 'http://localhost:3845/assets/b6fbf3d7006e204b275e4fc86e082df88f142f97.svg';
+const ICON_CLOSE = '/icons/close.svg';
 
 interface DeleteQuotaModalProps {
   isOpen: boolean;

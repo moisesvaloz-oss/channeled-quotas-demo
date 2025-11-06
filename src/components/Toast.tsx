@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const ICON_CHECK = 'http://localhost:3845/assets/0bb5dea20baa1d2c139db38b1253ccfd8efa179e.svg';
+const ICON_CHECK = '/icons/check.svg';
 
 interface ToastProps {
   message: string;

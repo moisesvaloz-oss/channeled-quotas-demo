@@ -2,12 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { useQuotaStore } from '../stores/quotaStore';
 import type { Quota } from '../stores/quotaStore';
 
-// Figma icon assets
-const ICON_CHEVRON_DOWN = 'http://localhost:3845/assets/72cc5b1d8215c30d3681996aab247393376ffdaf.svg';
-const ICON_CHEVRON_RIGHT = 'http://localhost:3845/assets/7469ac74fa80626a73a346a408ff2d15cd2d4df2.svg';
-const ICON_TRASH = 'http://localhost:3845/assets/137797b8a9f55885ca547ee8f5016021160d0e8d.svg';
-const ICON_ADD = 'http://localhost:3845/assets/cc8aecf366bb8218286aebfdaa95d2363b8a23a0.svg';
-const ICON_CLOCK = 'http://localhost:3845/assets/cd487be1ea0c7bec00ecaee3311d5774b90df4af.svg';
+// Icon assets
+const ICON_CHEVRON_DOWN = '/icons/chevron-down.svg';
+const ICON_CHEVRON_RIGHT = '/icons/chevron-right.svg';
+const ICON_TRASH = '/icons/trash.svg';
+const ICON_ADD = '/icons/add.svg';
+const ICON_CLOCK = '/icons/clock.svg';
 
 interface AddQuotaDrawerProps {
   isOpen: boolean;
@@ -375,7 +375,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
               {capacityError && (
                 <div className="flex items-center gap-1 mt-1 justify-end">
                   <img 
-                    src="http://localhost:3845/assets/88fbf3da8c1bcb99a31aede702cd8f32889d21b1.svg" 
+                    src="/icons/pie-chart.svg" 
                     alt="" 
                     className="w-3 h-3" 
                   />
