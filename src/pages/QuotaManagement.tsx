@@ -28,7 +28,10 @@ const ICON_TRASH_CAN = '/icons/trash-can.svg';
 // Define fixed capacity group configurations
 const CAPACITY_GROUPS = {
   'Club 54': { totalCapacity: 600, sold: 250 },
-  'Fanstand': { totalCapacity: 200, sold: 100 }
+  'Fanstand': { totalCapacity: 200, sold: 100 },
+  'Birdie Shack': { totalCapacity: 350, sold: 0 },
+  'Birdie Shack LB': { totalCapacity: 15, sold: 0 },
+  'LIV Premium All Access': { totalCapacity: 10, sold: 0 }
 } as const;
 
 export default function QuotaManagement() {
@@ -884,6 +887,642 @@ export default function QuotaManagement() {
               <div className="px-2 pb-2 flex justify-end">
                 <button 
                   onClick={() => handleAddQuota('Fanstand')}
+                  className="flex items-center gap-1 text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                >
+                  <div className="w-[18px] h-[18px] flex items-center justify-center">
+                    <img src={ICON_ADD_QUOTA} alt="" className="w-[13.85px] h-[13.85px]" />
+                  </div>
+                  Add quota
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Birdie Shack capacity group */}
+          <div className="mb-6">
+            <div className="bg-white border border-border-main rounded-lg py-1 overflow-visible">
+                  {/* Group Header */}
+                  <div className="border-b border-border-main py-3 flex items-center">
+                    {/* Left: Chevron + Name - Flexible */}
+                    <div className="flex-1 min-w-0 flex items-center gap-3 pl-2">
+                      <div className="w-[26px] h-[26px] flex items-center justify-center cursor-pointer flex-shrink-0">
+                        <img src={ICON_ANGLE_DOWN} alt="" className="w-[15px] h-[9px]" />
+                      </div>
+                      <div className="flex-shrink-0">
+                        <div className="text-text-subtle text-xs">Capacity Group</div>
+                        <div className="text-text-main text-base font-semibold">Birdie Shack</div>
+                      </div>
+                    </div>
+                    
+                    {/* Quota Type */}
+                    <div className="w-[200px] flex-shrink-0"></div>
+                    
+                    {/* Quota Assignation */}
+                    <div className="w-[200px] flex-shrink-0"></div>
+                      
+                      {/* Numbers with left border */}
+                     {(() => {
+                       const groupTotals = calculateGroupTotals('Birdie Shack');
+                       return (
+                         <div className="border-l border-border-main pl-2 pr-2 flex items-center gap-0 flex-shrink-0">
+                           <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.sold}</div>
+                           <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.available}</div>
+                           <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.capacity}</div>
+                           <div className="w-[20px]"></div>
+                           <div className="w-[20px]"></div>
+                         </div>
+                       );
+                     })()}
+                   </div>
+
+                  {/* Free Capacity Row */}
+                  {(() => {
+                    const freeCapacity = calculateFreeCapacity('Birdie Shack');
+                    return (
+                      <div className="mx-2 my-2 border border-border-main rounded p-4 flex items-center min-h-[52px]">
+                        {/* Left: Name - Flexible */}
+                        <div className="flex-1 min-w-0">
+                          <div className="text-text-main text-sm font-semibold">Free capacity (no quota)</div>
+                        </div>
+                        
+                        {/* Quota Type */}
+                        <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">-</div>
+                        
+                        {/* Quota Assignation */}
+                        <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">General*</div>
+                        
+                        {/* Numbers with left border */}
+                        <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.sold}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
+                          <div className="w-[20px]"></div>
+                          <div className="w-[20px]"></div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                {/* Render Birdie Shack Quotas */}
+                {getGroupQuotas('Birdie Shack').map((quota) => {
+                  const isBlocked = quota.type === 'Blocked';
+                  return (
+                    <div 
+                      key={quota.id} 
+                      className={`mx-2 my-2 border rounded p-4 flex items-center min-h-[52px] relative ${
+                        isBlocked 
+                          ? 'bg-neutral-100 border-border-main' 
+                          : 'bg-accent-100 border-accent-200'
+                      }`}
+                    >
+                      {/* Left: Icon + Name - Flexible */}
+                      <div className="flex-1 min-w-0 flex items-center gap-1">
+                        <div className="w-[14px] h-[14px] flex-shrink-0">
+                          <img src={ICON_PIE_CHART} alt="" className="w-full h-full" />
+                        </div>
+                        <div className="text-text-main text-sm font-semibold">{quota.name}</div>
+                      </div>
+                      
+                      {/* Quota Type */}
+                      <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">{quota.type}</div>
+                      
+                      {/* Quota Assignation */}
+                      <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">
+                        {quota.assignation}
+                      </div>
+                      
+                      {/* Numbers with left border */}
+                      <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                        <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                          {isBlocked ? '-' : quota.available}
+                        </div>
+                        <div className="w-[100px] flex items-center justify-end relative">
+                          {isEditingCapacity ? (
+                            <div className="relative">
+                              <input
+                                type="number"
+                                defaultValue={quota.capacity}
+                                onChange={(e) => {
+                                  const newValue = parseInt(e.target.value);
+                                  if (!isNaN(newValue)) {
+                                    capacityEditsRef.current[quota.id] = newValue;
+                                    
+                                    // Validate
+                                    const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id);
+                                    setCapacityErrors(prev => {
+                                      if (validation.isValid) {
+                                        const newErrors = { ...prev };
+                                        delete newErrors[quota.id];
+                                        return newErrors;
+                                      }
+                                      return { ...prev, [quota.id]: validation.message };
+                                    });
+                                  }
+                                }}
+                                className={`w-[77px] h-[40px] bg-white border rounded-lg px-3 text-right text-sm text-text-main outline-none ${
+                                  capacityErrors[quota.id] ? 'border-status-danger' : 'border-border-main'
+                                }`}
+                              />
+                            </div>
+                          ) : (
+                            <span className="text-text-main text-sm font-semibold">{quota.capacity}</span>
+                          )}
+                        </div>
+                        <div className="w-[20px]"></div>
+                        <div className="w-[20px] flex items-center justify-center relative">
+                          <button 
+                            ref={(el) => { buttonRefs.current[quota.id] = el; }}
+                            onClick={() => toggleMenu(quota.id)} 
+                            className="cursor-pointer"
+                          >
+                            <img src={ICON_VERTICAL_DOTS} alt="" className="w-[3.5px] h-[13.5px]" />
+                          </button>
+                          
+                          {/* Dropdown Menu */}
+                          {openMenuId === quota.id && (
+                            <div 
+                              ref={menuRef}
+                              className={`absolute right-0 bg-white border border-neutral-100 rounded-lg shadow-lg z-50 min-w-[180px] ${
+                                menuDirection === 'up' ? 'bottom-6' : 'top-6'
+                              }`}
+                            >
+                             <button
+                               onClick={() => handleEditQuota(quota)}
+                               className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main rounded-t-lg"
+                             >
+                               <img src={ICON_EDIT} alt="" className="w-[12px] h-[12px]" />
+                               Edit quota
+                             </button>
+                              <button
+                                onClick={() => handleTransferCapacity(quota.id)}
+                                className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main"
+                              >
+                                <img src={ICON_TRANSFER} alt="" className="w-[14px] h-[8.7px]" />
+                                Transfer capacity
+                              </button>
+                              <button
+                                onClick={() => handleReplicateQuota(quota)}
+                                className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main"
+                              >
+                                <img src={ICON_COPY} alt="" className="w-[14px] h-[14px]" />
+                                Replicate quota
+                              </button>
+                              <button
+                                onClick={() => handleDeleteQuota(quota.id, quota.name)}
+                                className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main rounded-b-lg"
+                              >
+                                <img src={ICON_TRASH_CAN} alt="" className="w-[12.25px] h-[14px]" />
+                                Delete quota
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    
+                    {/* Error message */}
+                    {capacityErrors[quota.id] && isEditingCapacity && (
+                      <div className="absolute right-[60px] top-full mt-1 flex items-center gap-1">
+                        <img 
+                          src={ICON_PIE_CHART} 
+                          alt="" 
+                          className="w-3 h-3" 
+                        />
+                        <p className="text-xs text-status-danger whitespace-nowrap">{capacityErrors[quota.id]}</p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+              {/* Add Quota Link */}
+              <div className="px-2 pb-2 flex justify-end">
+                <button 
+                  onClick={() => handleAddQuota('Birdie Shack')}
+                  className="flex items-center gap-1 text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                >
+                  <div className="w-[18px] h-[18px] flex items-center justify-center">
+                    <img src={ICON_ADD_QUOTA} alt="" className="w-[13.85px] h-[13.85px]" />
+                  </div>
+                  Add quota
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Birdie Shack LB capacity group */}
+          <div className="mb-6">
+            <div className="bg-white border border-border-main rounded-lg py-1 overflow-visible">
+                  {/* Group Header */}
+                  <div className="border-b border-border-main py-3 flex items-center">
+                    {/* Left: Chevron + Name - Flexible */}
+                    <div className="flex-1 min-w-0 flex items-center gap-3 pl-2">
+                      <div className="w-[26px] h-[26px] flex items-center justify-center cursor-pointer flex-shrink-0">
+                        <img src={ICON_ANGLE_DOWN} alt="" className="w-[15px] h-[9px]" />
+                      </div>
+                      <div className="flex-shrink-0">
+                        <div className="text-text-subtle text-xs">Capacity Group</div>
+                        <div className="text-text-main text-base font-semibold">Birdie Shack LB</div>
+                      </div>
+                    </div>
+                    
+                    {/* Quota Type */}
+                    <div className="w-[200px] flex-shrink-0"></div>
+                    
+                    {/* Quota Assignation */}
+                    <div className="w-[200px] flex-shrink-0"></div>
+                      
+                      {/* Numbers with left border */}
+                     {(() => {
+                       const groupTotals = calculateGroupTotals('Birdie Shack LB');
+                       return (
+                         <div className="border-l border-border-main pl-2 pr-2 flex items-center gap-0 flex-shrink-0">
+                           <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.sold}</div>
+                           <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.available}</div>
+                           <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.capacity}</div>
+                           <div className="w-[20px]"></div>
+                           <div className="w-[20px]"></div>
+                         </div>
+                       );
+                     })()}
+                   </div>
+
+                  {/* Free Capacity Row */}
+                  {(() => {
+                    const freeCapacity = calculateFreeCapacity('Birdie Shack LB');
+                    return (
+                      <div className="mx-2 my-2 border border-border-main rounded p-4 flex items-center min-h-[52px]">
+                        {/* Left: Name - Flexible */}
+                        <div className="flex-1 min-w-0">
+                          <div className="text-text-main text-sm font-semibold">Free capacity (no quota)</div>
+                        </div>
+                        
+                        {/* Quota Type */}
+                        <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">-</div>
+                        
+                        {/* Quota Assignation */}
+                        <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">General*</div>
+                        
+                        {/* Numbers with left border */}
+                        <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.sold}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
+                          <div className="w-[20px]"></div>
+                          <div className="w-[20px]"></div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                {/* Render Birdie Shack LB Quotas */}
+                {getGroupQuotas('Birdie Shack LB').map((quota) => {
+                  const isBlocked = quota.type === 'Blocked';
+                  return (
+                    <div 
+                      key={quota.id} 
+                      className={`mx-2 my-2 border rounded p-4 flex items-center min-h-[52px] relative ${
+                        isBlocked 
+                          ? 'bg-neutral-100 border-border-main' 
+                          : 'bg-accent-100 border-accent-200'
+                      }`}
+                    >
+                      {/* Left: Icon + Name - Flexible */}
+                      <div className="flex-1 min-w-0 flex items-center gap-1">
+                        <div className="w-[14px] h-[14px] flex-shrink-0">
+                          <img src={ICON_PIE_CHART} alt="" className="w-full h-full" />
+                        </div>
+                        <div className="text-text-main text-sm font-semibold">{quota.name}</div>
+                      </div>
+                      
+                      {/* Quota Type */}
+                      <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">{quota.type}</div>
+                      
+                      {/* Quota Assignation */}
+                      <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">
+                        {quota.assignation}
+                      </div>
+                      
+                      {/* Numbers with left border */}
+                      <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                        <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                          {isBlocked ? '-' : quota.available}
+                        </div>
+                        <div className="w-[100px] flex items-center justify-end relative">
+                          {isEditingCapacity ? (
+                            <div className="relative">
+                              <input
+                                type="number"
+                                defaultValue={quota.capacity}
+                                onChange={(e) => {
+                                  const newValue = parseInt(e.target.value);
+                                  if (!isNaN(newValue)) {
+                                    capacityEditsRef.current[quota.id] = newValue;
+                                    
+                                    // Validate
+                                    const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id);
+                                    setCapacityErrors(prev => {
+                                      if (validation.isValid) {
+                                        const newErrors = { ...prev };
+                                        delete newErrors[quota.id];
+                                        return newErrors;
+                                      }
+                                      return { ...prev, [quota.id]: validation.message };
+                                    });
+                                  }
+                                }}
+                                className={`w-[77px] h-[40px] bg-white border rounded-lg px-3 text-right text-sm text-text-main outline-none ${
+                                  capacityErrors[quota.id] ? 'border-status-danger' : 'border-border-main'
+                                }`}
+                              />
+                            </div>
+                          ) : (
+                            <span className="text-text-main text-sm font-semibold">{quota.capacity}</span>
+                          )}
+                        </div>
+                        <div className="w-[20px]"></div>
+                        <div className="w-[20px] flex items-center justify-center relative">
+                          <button 
+                            ref={(el) => { buttonRefs.current[quota.id] = el; }}
+                            onClick={() => toggleMenu(quota.id)} 
+                            className="cursor-pointer"
+                          >
+                            <img src={ICON_VERTICAL_DOTS} alt="" className="w-[3.5px] h-[13.5px]" />
+                          </button>
+                          
+                          {/* Dropdown Menu */}
+                          {openMenuId === quota.id && (
+                            <div 
+                              ref={menuRef}
+                              className={`absolute right-0 bg-white border border-neutral-100 rounded-lg shadow-lg z-50 min-w-[180px] ${
+                                menuDirection === 'up' ? 'bottom-6' : 'top-6'
+                              }`}
+                            >
+                             <button
+                               onClick={() => handleEditQuota(quota)}
+                               className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main rounded-t-lg"
+                             >
+                               <img src={ICON_EDIT} alt="" className="w-[12px] h-[12px]" />
+                               Edit quota
+                             </button>
+                              <button
+                                onClick={() => handleTransferCapacity(quota.id)}
+                                className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main"
+                              >
+                                <img src={ICON_TRANSFER} alt="" className="w-[14px] h-[8.7px]" />
+                                Transfer capacity
+                              </button>
+                              <button
+                                onClick={() => handleReplicateQuota(quota)}
+                                className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main"
+                              >
+                                <img src={ICON_COPY} alt="" className="w-[14px] h-[14px]" />
+                                Replicate quota
+                              </button>
+                              <button
+                                onClick={() => handleDeleteQuota(quota.id, quota.name)}
+                                className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main rounded-b-lg"
+                              >
+                                <img src={ICON_TRASH_CAN} alt="" className="w-[12.25px] h-[14px]" />
+                                Delete quota
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    
+                    {/* Error message */}
+                    {capacityErrors[quota.id] && isEditingCapacity && (
+                      <div className="absolute right-[60px] top-full mt-1 flex items-center gap-1">
+                        <img 
+                          src={ICON_PIE_CHART} 
+                          alt="" 
+                          className="w-3 h-3" 
+                        />
+                        <p className="text-xs text-status-danger whitespace-nowrap">{capacityErrors[quota.id]}</p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+              {/* Add Quota Link */}
+              <div className="px-2 pb-2 flex justify-end">
+                <button 
+                  onClick={() => handleAddQuota('Birdie Shack LB')}
+                  className="flex items-center gap-1 text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                >
+                  <div className="w-[18px] h-[18px] flex items-center justify-center">
+                    <img src={ICON_ADD_QUOTA} alt="" className="w-[13.85px] h-[13.85px]" />
+                  </div>
+                  Add quota
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* LIV Premium All Access capacity group */}
+          <div className="mb-6">
+            <div className="bg-white border border-border-main rounded-lg py-1 overflow-visible">
+                  {/* Group Header */}
+                  <div className="border-b border-border-main py-3 flex items-center">
+                    {/* Left: Chevron + Name - Flexible */}
+                    <div className="flex-1 min-w-0 flex items-center gap-3 pl-2">
+                      <div className="w-[26px] h-[26px] flex items-center justify-center cursor-pointer flex-shrink-0">
+                        <img src={ICON_ANGLE_DOWN} alt="" className="w-[15px] h-[9px]" />
+                      </div>
+                      <div className="flex-shrink-0">
+                        <div className="text-text-subtle text-xs">Capacity Group</div>
+                        <div className="text-text-main text-base font-semibold">LIV Premium All Access</div>
+                      </div>
+                    </div>
+                    
+                    {/* Quota Type */}
+                    <div className="w-[200px] flex-shrink-0"></div>
+                    
+                    {/* Quota Assignation */}
+                    <div className="w-[200px] flex-shrink-0"></div>
+                      
+                      {/* Numbers with left border */}
+                     {(() => {
+                       const groupTotals = calculateGroupTotals('LIV Premium All Access');
+                       return (
+                         <div className="border-l border-border-main pl-2 pr-2 flex items-center gap-0 flex-shrink-0">
+                           <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.sold}</div>
+                           <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.available}</div>
+                           <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.capacity}</div>
+                           <div className="w-[20px]"></div>
+                           <div className="w-[20px]"></div>
+                         </div>
+                       );
+                     })()}
+                   </div>
+
+                  {/* Free Capacity Row */}
+                  {(() => {
+                    const freeCapacity = calculateFreeCapacity('LIV Premium All Access');
+                    return (
+                      <div className="mx-2 my-2 border border-border-main rounded p-4 flex items-center min-h-[52px]">
+                        {/* Left: Name - Flexible */}
+                        <div className="flex-1 min-w-0">
+                          <div className="text-text-main text-sm font-semibold">Free capacity (no quota)</div>
+                        </div>
+                        
+                        {/* Quota Type */}
+                        <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">-</div>
+                        
+                        {/* Quota Assignation */}
+                        <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">General*</div>
+                        
+                        {/* Numbers with left border */}
+                        <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.sold}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
+                          <div className="w-[20px]"></div>
+                          <div className="w-[20px]"></div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                {/* Render LIV Premium All Access Quotas */}
+                {getGroupQuotas('LIV Premium All Access').map((quota) => {
+                  const isBlocked = quota.type === 'Blocked';
+                  return (
+                    <div 
+                      key={quota.id} 
+                      className={`mx-2 my-2 border rounded p-4 flex items-center min-h-[52px] relative ${
+                        isBlocked 
+                          ? 'bg-neutral-100 border-border-main' 
+                          : 'bg-accent-100 border-accent-200'
+                      }`}
+                    >
+                      {/* Left: Icon + Name - Flexible */}
+                      <div className="flex-1 min-w-0 flex items-center gap-1">
+                        <div className="w-[14px] h-[14px] flex-shrink-0">
+                          <img src={ICON_PIE_CHART} alt="" className="w-full h-full" />
+                        </div>
+                        <div className="text-text-main text-sm font-semibold">{quota.name}</div>
+                      </div>
+                      
+                      {/* Quota Type */}
+                      <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">{quota.type}</div>
+                      
+                      {/* Quota Assignation */}
+                      <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">
+                        {quota.assignation}
+                      </div>
+                      
+                      {/* Numbers with left border */}
+                      <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                        <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                          {isBlocked ? '-' : quota.available}
+                        </div>
+                        <div className="w-[100px] flex items-center justify-end relative">
+                          {isEditingCapacity ? (
+                            <div className="relative">
+                              <input
+                                type="number"
+                                defaultValue={quota.capacity}
+                                onChange={(e) => {
+                                  const newValue = parseInt(e.target.value);
+                                  if (!isNaN(newValue)) {
+                                    capacityEditsRef.current[quota.id] = newValue;
+                                    
+                                    // Validate
+                                    const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id);
+                                    setCapacityErrors(prev => {
+                                      if (validation.isValid) {
+                                        const newErrors = { ...prev };
+                                        delete newErrors[quota.id];
+                                        return newErrors;
+                                      }
+                                      return { ...prev, [quota.id]: validation.message };
+                                    });
+                                  }
+                                }}
+                                className={`w-[77px] h-[40px] bg-white border rounded-lg px-3 text-right text-sm text-text-main outline-none ${
+                                  capacityErrors[quota.id] ? 'border-status-danger' : 'border-border-main'
+                                }`}
+                              />
+                            </div>
+                          ) : (
+                            <span className="text-text-main text-sm font-semibold">{quota.capacity}</span>
+                          )}
+                        </div>
+                        <div className="w-[20px]"></div>
+                        <div className="w-[20px] flex items-center justify-center relative">
+                          <button 
+                            ref={(el) => { buttonRefs.current[quota.id] = el; }}
+                            onClick={() => toggleMenu(quota.id)} 
+                            className="cursor-pointer"
+                          >
+                            <img src={ICON_VERTICAL_DOTS} alt="" className="w-[3.5px] h-[13.5px]" />
+                          </button>
+                          
+                          {/* Dropdown Menu */}
+                          {openMenuId === quota.id && (
+                            <div 
+                              ref={menuRef}
+                              className={`absolute right-0 bg-white border border-neutral-100 rounded-lg shadow-lg z-50 min-w-[180px] ${
+                                menuDirection === 'up' ? 'bottom-6' : 'top-6'
+                              }`}
+                            >
+                             <button
+                               onClick={() => handleEditQuota(quota)}
+                               className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main rounded-t-lg"
+                             >
+                               <img src={ICON_EDIT} alt="" className="w-[12px] h-[12px]" />
+                               Edit quota
+                             </button>
+                              <button
+                                onClick={() => handleTransferCapacity(quota.id)}
+                                className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main"
+                              >
+                                <img src={ICON_TRANSFER} alt="" className="w-[14px] h-[8.7px]" />
+                                Transfer capacity
+                              </button>
+                              <button
+                                onClick={() => handleReplicateQuota(quota)}
+                                className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main"
+                              >
+                                <img src={ICON_COPY} alt="" className="w-[14px] h-[14px]" />
+                                Replicate quota
+                              </button>
+                              <button
+                                onClick={() => handleDeleteQuota(quota.id, quota.name)}
+                                className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main rounded-b-lg"
+                              >
+                                <img src={ICON_TRASH_CAN} alt="" className="w-[12.25px] h-[14px]" />
+                                Delete quota
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    
+                    {/* Error message */}
+                    {capacityErrors[quota.id] && isEditingCapacity && (
+                      <div className="absolute right-[60px] top-full mt-1 flex items-center gap-1">
+                        <img 
+                          src={ICON_PIE_CHART} 
+                          alt="" 
+                          className="w-3 h-3" 
+                        />
+                        <p className="text-xs text-status-danger whitespace-nowrap">{capacityErrors[quota.id]}</p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+              {/* Add Quota Link */}
+              <div className="px-2 pb-2 flex justify-end">
+                <button 
+                  onClick={() => handleAddQuota('LIV Premium All Access')}
                   className="flex items-center gap-1 text-primary-active text-sm font-semibold hover:underline cursor-pointer"
                 >
                   <div className="w-[18px] h-[18px] flex items-center justify-center">
