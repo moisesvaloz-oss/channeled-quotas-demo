@@ -11,6 +11,7 @@ export interface Quota {
   available: number;
   capacityGroupName: string;
   timeSlot: string;
+  ticketOption?: string; // Optional: for ticket-level quotas
 }
 
 interface QuotaState {
@@ -29,7 +30,7 @@ export const useQuotaStore = create<QuotaState>()(
       addQuota: (quotaData) => {
         const newQuota: Quota = {
           ...quotaData,
-          id: `quota-${Date.now()}`,
+          id: `quota-${crypto.randomUUID()}`,
           sold: 0,
           available: quotaData.capacity,
         };

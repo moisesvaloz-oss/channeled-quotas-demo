@@ -17,13 +17,15 @@ const ICON_SEARCH = '/icons/search.svg';
 const ICON_INFO = '/icons/info.svg';
 const ICON_ANGLE_DOWN = '/icons/angle-down.svg';
 const ICON_PEN_TO_SQUARE = '/icons/pen-to-square.svg';
-const ICON_ADD_QUOTA = '/icons/add-quota.svg';
+const ICON_ADD_QUOTA = '/icons/add.svg';
+const ICON_CHEVRON_RIGHT = '/icons/chevron-right.svg';
 const ICON_VERTICAL_DOTS = '/icons/vertical-dots.svg';
 const ICON_PIE_CHART = '/icons/pie-chart.svg';
 const ICON_EDIT = '/icons/edit.svg';
 const ICON_TRANSFER = '/icons/transfer.svg';
 const ICON_COPY = '/icons/copy.svg';
 const ICON_TRASH_CAN = '/icons/trash-can.svg';
+const ICON_TICKET = '/icons/ticket.svg';
 
 // Define fixed capacity group configurations
 const CAPACITY_GROUPS = {
@@ -60,12 +62,32 @@ export default function QuotaManagement() {
   const [capacityErrors, setCapacityErrors] = useState<{ [quotaId: string]: string }>({});
   const [transferDrawerOpen, setTransferDrawerOpen] = useState(false);
   const [transferSourceQuotaId, setTransferSourceQuotaId] = useState<string>('');
+  const [selectedTicketOption, setSelectedTicketOption] = useState<string>('');
+  const [isHeaderStuck, setIsHeaderStuck] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const [collapsedGroups, setCollapsedGroups] = useState<{ [key: string]: boolean }>({});
+  const [collapsedTickets, setCollapsedTickets] = useState<{ [key: string]: boolean }>({});
 
-  const handleAddQuota = (groupName: string) => {
+  const toggleGroupCollapse = (groupName: string) => {
+    setCollapsedGroups(prev => ({
+      ...prev,
+      [groupName]: !prev[groupName]
+    }));
+  };
+
+  const toggleTicketsCollapse = (groupName: string) => {
+    setCollapsedTickets(prev => ({
+      ...prev,
+      [groupName]: !prev[groupName]
+    }));
+  };
+
+  const handleAddQuota = (groupName: string, ticketOption?: string) => {
     setSelectedGroup({ 
       name: groupName, 
       timeSlot: 'Sun 27 Jul 2025 - 10:30' 
     });
+    setSelectedTicketOption(ticketOption || '');
     setDrawerOpen(true);
   };
 
@@ -75,6 +97,7 @@ export default function QuotaManagement() {
     setDrawerOpen(false);
     setEditingQuota(null);
     setReplicatingQuota(null);
+    setSelectedTicketOption(''); // Reset ticket option on close
     if (quotaCreatedOrUpdated) {
       if (wasEditing) {
         setToastMessage('Quota successfully updated');
@@ -182,6 +205,26 @@ export default function QuotaManagement() {
     }
   }, [openMenuId]);
 
+  // Detect when header becomes sticky
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsHeaderStuck(!entry.isIntersecting);
+      },
+      { threshold: [0] }
+    );
+
+    if (sentinelRef.current) {
+      observer.observe(sentinelRef.current);
+    }
+
+    return () => {
+      if (sentinelRef.current) {
+        observer.unobserve(sentinelRef.current);
+      }
+    };
+  }, []);
+
   // Get quotas for a specific group, sorted with Blocked quotas first
   const getGroupQuotas = (groupName: string) => {
     return quotas
@@ -197,6 +240,25 @@ export default function QuotaManagement() {
         if (a.type !== 'Blocked' && b.type === 'Blocked') return 1;
         return 0; // Maintain original order for same type
       });
+  };
+
+  // Get group-level quotas (without ticketOption)
+  const getGroupLevelQuotas = (groupName: string) => {
+    return getGroupQuotas(groupName).filter(q => !q.ticketOption);
+  };
+
+  // Get ticket-level quotas for a specific ticket
+  const getTicketLevelQuotas = (groupName: string, ticketOption: string) => {
+    return getGroupQuotas(groupName).filter(q => q.ticketOption === ticketOption);
+  };
+
+  // Define ticket options for each group
+  const ticketOptions: { [key: string]: string[] } = {
+    'Club 54': ['Friday (June 26)', '3 days pass'],
+    'Fanstand': ['Friday (June 26)', '3 days pass'],
+    'Birdie Shack': [],
+    'Birdie Shack LB': [],
+    'LIV Premium All Access': []
   };
 
   // Calculate group totals
@@ -423,11 +485,16 @@ export default function QuotaManagement() {
                       Save changes
                     </button>
                   </div>
-                )}
-              </div>
+               )}
+             </div>
 
-              {/* Time Slot Header */}
-              <div className="bg-neutral-75 rounded-lg py-2 px-2 mb-6">
+             {/* Sentinel element to detect sticky state */}
+             <div ref={sentinelRef} className="h-0" />
+
+             {/* Time Slot Header */}
+             <div 
+               className={`sticky top-0 z-30 bg-neutral-75 rounded-lg py-2 px-2 mb-6 transition-shadow duration-200 ${isHeaderStuck ? 'shadow-md' : ''}`}
+             >
                 <div className="flex items-center">
                   {/* Date/Time - Flexible */}
                   <div className="flex-1 min-w-0">
@@ -445,33 +512,33 @@ export default function QuotaManagement() {
                     <div className="text-text-subtle text-xs text-center">Assignation</div>
                   </div>
                   
-                    {/* Numbers Section with left border */}
-                   {(() => {
-                     const timeSlotTotals = calculateTimeSlotTotals();
-                     return (
-                       <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
-                         <div className="w-[100px] flex flex-col items-end">
-                           <div className="flex items-center gap-1 mb-0.5">
-                             <span className="text-text-subtle text-xs">Sold</span>
-                             <img src={ICON_INFO} alt="" className="w-3 h-3" />
+                      {/* Numbers Section with left border */}
+                     {(() => {
+                       const timeSlotTotals = calculateTimeSlotTotals();
+                       return (
+                         <div className="border-l border-border-main pl-2 pr-2 flex items-center gap-0 flex-shrink-0">
+                           <div className="w-[100px] flex flex-col items-end">
+                             <div className="flex items-center gap-1 mb-0.5">
+                               <span className="text-text-subtle text-xs">Sold</span>
+                               <img src={ICON_INFO} alt="" className="w-3 h-3" />
+                             </div>
+                             <div className="text-text-main text-base font-semibold">{timeSlotTotals.sold}</div>
                            </div>
-                           <div className="text-text-main text-base font-semibold">{timeSlotTotals.sold}</div>
+                           <div className="w-[100px] flex flex-col items-end">
+                             <div className="text-text-subtle text-xs mb-0.5">Available</div>
+                             <div className="text-text-main text-base font-semibold">{timeSlotTotals.available}</div>
+                           </div>
+                           <div className="w-[100px] flex flex-col items-end">
+                             <div className="text-text-subtle text-xs mb-0.5">Capacity</div>
+                             <div className="text-text-main text-base font-semibold">{timeSlotTotals.capacity}</div>
+                           </div>
+                           <div className="w-[20px]"></div>
+                           <div className="w-[20px] flex items-center justify-center">
+                             <img src={ICON_PEN_TO_SQUARE} alt="" className="w-4 h-4" />
+                           </div>
                          </div>
-                         <div className="w-[100px] flex flex-col items-end">
-                           <div className="text-text-subtle text-xs mb-0.5">Available</div>
-                           <div className="text-text-main text-base font-semibold">{timeSlotTotals.available}</div>
-                         </div>
-                         <div className="w-[100px] flex flex-col items-end">
-                           <div className="text-text-subtle text-xs mb-0.5">Capacity</div>
-                           <div className="text-text-main text-base font-semibold">{timeSlotTotals.capacity}</div>
-                         </div>
-                         <div className="w-[20px]"></div>
-                         <div className="w-[20px] flex items-center justify-center">
-                           <img src={ICON_PEN_TO_SQUARE} alt="" className="w-4 h-4" />
-                         </div>
-                       </div>
-                     );
-                   })()}
+                       );
+                     })()}
                 </div>
               </div>
 
@@ -480,11 +547,18 @@ export default function QuotaManagement() {
             {/* Club 54 Group */}
             <div className="bg-white border border-border-main rounded-lg py-1 overflow-visible">
                   {/* Group Header */}
-                  <div className="border-b border-border-main py-3 flex items-center">
+                  <div className={`px-2 py-3 flex items-center ${!collapsedGroups['Club 54'] ? 'border-b border-border-main' : ''}`}>
                     {/* Left: Chevron + Name - Flexible */}
-                    <div className="flex-1 min-w-0 flex items-center gap-3 pl-2">
-                      <div className="w-[26px] h-[26px] flex items-center justify-center cursor-pointer flex-shrink-0">
-                        <img src={ICON_ANGLE_DOWN} alt="" className="w-[15px] h-[9px]" />
+                    <div className="flex-1 min-w-0 flex items-center gap-3">
+                      <div 
+                        className="w-[26px] h-[26px] flex items-center justify-center cursor-pointer flex-shrink-0"
+                        onClick={() => toggleGroupCollapse('Club 54')}
+                      >
+                        <img 
+                          src={ICON_ANGLE_DOWN} 
+                          alt="" 
+                          className={`w-[15px] h-[9px] transition-transform duration-200 ${collapsedGroups['Club 54'] ? '-rotate-90' : ''}`} 
+                        />
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
@@ -506,20 +580,22 @@ export default function QuotaManagement() {
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.sold}</div>
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.available}</div>
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.capacity}</div>
-                           <div className="w-[20px]"></div>
-                           <div className="w-[20px]"></div>
+                           <div className="w-[40px]"></div>
                          </div>
                        );
                      })()}
                    </div>
 
+              {/* Collapsible Content */}
+              <div className={`transition-all duration-200 ease-out ${collapsedGroups['Club 54'] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
                   {/* Free Capacity Row */}
                   {(() => {
                     const freeCapacity = calculateFreeCapacity('Club 54');
                     return (
-                      <div className="mx-2 my-2 border border-border-main rounded p-4 flex items-center min-h-[52px]">
+                      <div className="mx-2 my-2 border border-border-main rounded px-2 py-4 flex items-center min-h-[52px]">
                         {/* Left: Name - Flexible */}
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 flex items-center gap-1">
+                          <div className="w-[14px]"></div>
                           <div className="text-text-main text-sm font-semibold">Free capacity (no quota)</div>
                         </div>
                         
@@ -534,20 +610,19 @@ export default function QuotaManagement() {
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.sold}</div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
-                          <div className="w-[20px]"></div>
-                          <div className="w-[20px]"></div>
+                          <div className="w-[40px]"></div>
                         </div>
                       </div>
                     );
                   })()}
 
-              {/* Render Club 54 Quotas */}
-              {getGroupQuotas('Club 54').map((quota) => {
+              {/* Render Club 54 Group-Level Quotas (without ticketOption) */}
+              {getGroupLevelQuotas('Club 54').map((quota) => {
                 const isBlocked = quota.type === 'Blocked';
                 return (
                   <div 
                     key={quota.id} 
-                    className={`mx-2 my-2 border rounded p-4 flex items-center min-h-[52px] relative ${
+                    className={`mx-2 my-2 border rounded px-2 py-4 flex items-center min-h-[52px] relative ${
                       isBlocked 
                         ? 'bg-neutral-100 border-border-main' 
                         : 'bg-accent-100 border-accent-200'
@@ -685,16 +760,219 @@ export default function QuotaManagement() {
                   Add quota
                 </button>
               </div>
+
+              {/* Tickets Section Divider */}
+              {ticketOptions['Club 54'] && ticketOptions['Club 54'].length > 0 && (
+                <>
+                  <div className="mx-2 my-4 border-t border-dashed border-border-main"></div>
+                  <div className="pl-6">
+
+                  {/* Tickets Section Header */}
+                  <div 
+                    className="mx-2 mb-3 flex items-center gap-2 cursor-pointer"
+                    onClick={() => toggleTicketsCollapse('Club 54')}
+                  >
+                    <div className="w-[18px] h-[18px] flex items-center justify-center">
+                      <img 
+                        src={ICON_CHEVRON_RIGHT} 
+                        alt="" 
+                        className={`w-[7px] h-[14px] transition-transform duration-200 ${collapsedTickets['Club 54'] ? '' : 'rotate-90'}`} 
+                      />
+                    </div>
+                    <h4 className="text-sm text-text-subtle">Tickets</h4>
+                  </div>
+
+                  {/* Collapsible Tickets Content */}
+                  <div className={`transition-all duration-200 ease-out ${collapsedTickets['Club 54'] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
+                  {/* Render each ticket type */}
+                  {ticketOptions['Club 54'].map((ticketOption) => (
+                    <div key={ticketOption} className="mb-4">
+                      {/* Ticket Header Row */}
+                      <div className="mx-2 my-2 bg-neutral-75 rounded px-2 py-3 flex items-center">
+                        {/* Left: Icon + Name - Flexible */}
+                        <div className="flex-1 min-w-0 flex items-center gap-2">
+                          <div className="w-[18px] h-[18px] flex items-center justify-center">
+                            <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
+                          </div>
+                          <div className="text-text-main text-sm font-semibold">Club 54 | {ticketOption}</div>
+                        </div>
+                        
+                        {/* Quota Type */}
+                        <div className="w-[200px] flex-shrink-0"></div>
+                        
+                        {/* Quota Assignation */}
+                        <div className="w-[200px] flex-shrink-0"></div>
+                        
+                        {/* Numbers with left border */}
+                        <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">0</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">0</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">0</div>
+                          <div className="w-[40px]"></div>
+                        </div>
+                      </div>
+
+                      {/* Render Ticket-Level Quotas */}
+                      {getTicketLevelQuotas('Club 54', ticketOption).map((quota) => {
+                        const isBlocked = quota.type === 'Blocked';
+                        return (
+                          <div 
+                            key={quota.id} 
+                            className={`mx-2 my-2 border rounded px-2 py-4 flex items-center min-h-[52px] relative ${
+                              isBlocked 
+                                ? 'bg-neutral-100 border-border-main' 
+                                : 'bg-accent-100 border-accent-200'
+                            }`}
+                          >
+                            {/* Quota content - same as group-level quotas */}
+                            <div className="flex-1 min-w-0 flex items-center gap-1">
+                              <div className="w-[14px] h-[14px] flex-shrink-0">
+                                <img src={ICON_PIE_CHART} alt="" className="w-full h-full" />
+                              </div>
+                              <div className="text-text-main text-sm font-semibold">{quota.name}</div>
+                            </div>
+                            
+                            <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">{quota.type}</div>
+                            
+                            <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">
+                              {quota.assignation}
+                            </div>
+                            
+                            <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                                {isBlocked ? '-' : quota.available}
+                              </div>
+                              <div className="w-[100px] flex items-center justify-end relative">
+                                {isEditingCapacity ? (
+                                  <div className="relative">
+                                    <input
+                                      type="number"
+                                      defaultValue={quota.capacity}
+                                      onChange={(e) => {
+                                        const newValue = parseInt(e.target.value);
+                                        if (!isNaN(newValue)) {
+                                          capacityEditsRef.current[quota.id] = newValue;
+                                          const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id);
+                                          setCapacityErrors(prev => {
+                                            if (validation.isValid) {
+                                              const newErrors = { ...prev };
+                                              delete newErrors[quota.id];
+                                              return newErrors;
+                                            }
+                                            return { ...prev, [quota.id]: validation.message };
+                                          });
+                                        }
+                                      }}
+                                      className={`w-[77px] h-[40px] bg-white border rounded-lg px-3 text-right text-sm text-text-main outline-none ${
+                                        capacityErrors[quota.id] ? 'border-status-danger' : 'border-border-main'
+                                      }`}
+                                    />
+                                  </div>
+                                ) : (
+                                  <span className="text-text-main text-sm font-semibold">{quota.capacity}</span>
+                                )}
+                              </div>
+                              <div className="w-[20px]"></div>
+                              <div className="w-[20px] flex items-center justify-center relative">
+                                <button 
+                                  ref={(el) => { buttonRefs.current[quota.id] = el; }}
+                                  onClick={() => toggleMenu(quota.id)} 
+                                  className="cursor-pointer"
+                                >
+                                  <img src={ICON_VERTICAL_DOTS} alt="" className="w-[3.5px] h-[13.5px]" />
+                                </button>
+                                
+                                {openMenuId === quota.id && (
+                                  <div 
+                                    ref={menuRef}
+                                    className={`absolute right-0 bg-white border border-neutral-100 rounded-lg shadow-lg z-50 min-w-[180px] ${
+                                      menuDirection === 'up' ? 'bottom-6' : 'top-6'
+                                    }`}
+                                  >
+                                     <button
+                                       onClick={() => handleEditQuota(quota)}
+                                       className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main rounded-t-lg"
+                                     >
+                                       <img src={ICON_EDIT} alt="" className="w-[12px] h-[12px]" />
+                                       Edit quota
+                                     </button>
+                                    <button
+                                      onClick={() => handleTransferCapacity(quota.id)}
+                                      className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main"
+                                    >
+                                      <img src={ICON_TRANSFER} alt="" className="w-[14px] h-[8.7px]" />
+                                      Transfer capacity
+                                    </button>
+                                    <button
+                                      onClick={() => handleReplicateQuota(quota)}
+                                      className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main"
+                                    >
+                                      <img src={ICON_COPY} alt="" className="w-[14px] h-[14px]" />
+                                      Replicate quota
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteQuota(quota.id, quota.name)}
+                                      className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main rounded-b-lg"
+                                    >
+                                      <img src={ICON_TRASH_CAN} alt="" className="w-[12.25px] h-[14px]" />
+                                      Delete quota
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {capacityErrors[quota.id] && isEditingCapacity && (
+                              <div className="absolute right-[60px] top-full mt-1 flex items-center gap-1">
+                                <img 
+                                  src={ICON_PIE_CHART} 
+                                  alt="" 
+                                  className="w-3 h-3" 
+                                />
+                                <p className="text-xs text-status-danger whitespace-nowrap">{capacityErrors[quota.id]}</p>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+
+                      {/* Add Quota for This Ticket Link */}
+                      <div className="ml-4 px-2 pb-2 flex justify-end">
+                        <button 
+                          onClick={() => handleAddQuota('Club 54', ticketOption)}
+                          className="flex items-center gap-1 text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                        >
+                          <div className="w-[18px] h-[18px] flex items-center justify-center">
+                            <img src={ICON_ADD_QUOTA} alt="" className="w-[13.85px] h-[13.85px]" />
+                          </div>
+                          Add quota
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  </div>
+                  </div>
+                </>
+              )}
+              </div>
             </div>
 
             {/* Fanstand Group */}
             <div className="bg-white border border-border-main rounded-lg py-1 overflow-visible">
                   {/* Group Header */}
-                  <div className="border-b border-border-main py-3 flex items-center">
+                  <div className={`px-2 py-3 flex items-center ${!collapsedGroups['Fanstand'] ? 'border-b border-border-main' : ''}`}>
                     {/* Left: Chevron + Name - Flexible */}
-                    <div className="flex-1 min-w-0 flex items-center gap-3 pl-2">
-                      <div className="w-[26px] h-[26px] flex items-center justify-center cursor-pointer flex-shrink-0">
-                        <img src={ICON_ANGLE_DOWN} alt="" className="w-[15px] h-[9px]" />
+                    <div className="flex-1 min-w-0 flex items-center gap-3">
+                      <div 
+                        className="w-[26px] h-[26px] flex items-center justify-center cursor-pointer flex-shrink-0"
+                        onClick={() => toggleGroupCollapse('Fanstand')}
+                      >
+                        <img 
+                          src={ICON_ANGLE_DOWN} 
+                          alt="" 
+                          className={`w-[15px] h-[9px] transition-transform duration-200 ${collapsedGroups['Fanstand'] ? '-rotate-90' : ''}`} 
+                        />
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
@@ -716,20 +994,22 @@ export default function QuotaManagement() {
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.sold}</div>
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.available}</div>
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.capacity}</div>
-                           <div className="w-[20px]"></div>
-                           <div className="w-[20px]"></div>
+                           <div className="w-[40px]"></div>
                          </div>
                        );
                      })()}
                    </div>
 
+              {/* Collapsible Content */}
+              <div className={`transition-all duration-200 ease-out ${collapsedGroups['Fanstand'] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
                   {/* Free Capacity Row */}
                   {(() => {
                     const freeCapacity = calculateFreeCapacity('Fanstand');
                     return (
-                      <div className="mx-2 my-2 border border-border-main rounded p-4 flex items-center min-h-[52px]">
+                      <div className="mx-2 my-2 border border-border-main rounded px-2 py-4 flex items-center min-h-[52px]">
                         {/* Left: Name - Flexible */}
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 flex items-center gap-1">
+                          <div className="w-[14px]"></div>
                           <div className="text-text-main text-sm font-semibold">Free capacity (no quota)</div>
                         </div>
                         
@@ -744,20 +1024,19 @@ export default function QuotaManagement() {
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.sold}</div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
-                          <div className="w-[20px]"></div>
-                          <div className="w-[20px]"></div>
+                          <div className="w-[40px]"></div>
                         </div>
                       </div>
                     );
                   })()}
 
-                {/* Render Fanstand Quotas */}
-                {getGroupQuotas('Fanstand').map((quota) => {
+                {/* Render Fanstand Group-Level Quotas (without ticketOption) */}
+                {getGroupLevelQuotas('Fanstand').map((quota) => {
                   const isBlocked = quota.type === 'Blocked';
                   return (
                     <div 
                       key={quota.id} 
-                      className={`mx-2 my-2 border rounded p-4 flex items-center min-h-[52px] relative ${
+                      className={`mx-2 my-2 border rounded px-2 py-4 flex items-center min-h-[52px] relative ${
                         isBlocked 
                           ? 'bg-neutral-100 border-border-main' 
                           : 'bg-accent-100 border-accent-200'
@@ -780,7 +1059,7 @@ export default function QuotaManagement() {
                       </div>
                       
                       {/* Numbers with left border */}
-                      <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                      <div className="border-l border-border-main pl-2 pr-2 flex items-center gap-0 flex-shrink-0">
                         <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
                         <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
                           {isBlocked ? '-' : quota.available}
@@ -893,20 +1172,221 @@ export default function QuotaManagement() {
                     <img src={ICON_ADD_QUOTA} alt="" className="w-[13.85px] h-[13.85px]" />
                   </div>
                   Add quota
-                </button>
-              </div>
-            </div>
-          </div>
+                 </button>
+               </div>
 
-          {/* Birdie Shack capacity group */}
-          <div className="mb-6">
+              {/* Tickets Section Divider */}
+              {ticketOptions['Fanstand'] && ticketOptions['Fanstand'].length > 0 && (
+                <>
+                  <div className="mx-2 my-4 border-t border-dashed border-border-main"></div>
+                  <div className="pl-6">
+
+                  {/* Tickets Section Header */}
+                  <div 
+                    className="mx-2 mb-3 flex items-center gap-2 cursor-pointer"
+                    onClick={() => toggleTicketsCollapse('Fanstand')}
+                  >
+                    <div className="w-[18px] h-[18px] flex items-center justify-center">
+                      <img 
+                        src={ICON_CHEVRON_RIGHT} 
+                        alt="" 
+                        className={`w-[7px] h-[14px] transition-transform duration-200 ${collapsedTickets['Fanstand'] ? '' : 'rotate-90'}`} 
+                      />
+                    </div>
+                    <h4 className="text-sm text-text-subtle">Tickets</h4>
+                  </div>
+
+                  {/* Collapsible Tickets Content */}
+                  <div className={`transition-all duration-200 ease-out ${collapsedTickets['Fanstand'] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
+                  {/* Render each ticket type */}
+                  {ticketOptions['Fanstand'].map((ticketOption) => (
+                    <div key={ticketOption} className="mb-4">
+                      {/* Ticket Header Row */}
+                      <div className="mx-2 my-2 bg-neutral-75 rounded px-2 py-3 flex items-center">
+                        {/* Left: Icon + Name - Flexible */}
+                        <div className="flex-1 min-w-0 flex items-center gap-2">
+                          <div className="w-[18px] h-[18px] flex items-center justify-center">
+                            <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
+                          </div>
+                          <div className="text-text-main text-sm font-semibold">Fanstand | {ticketOption}</div>
+                        </div>
+                        
+                        {/* Quota Type */}
+                        <div className="w-[200px] flex-shrink-0"></div>
+                        
+                        {/* Quota Assignation */}
+                        <div className="w-[200px] flex-shrink-0"></div>
+                        
+                        {/* Numbers with left border */}
+                        <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">0</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">0</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">0</div>
+                          <div className="w-[40px]"></div>
+                        </div>
+                      </div>
+
+                      {/* Render Ticket-Level Quotas */}
+                      {getTicketLevelQuotas('Fanstand', ticketOption).map((quota) => {
+                        const isBlocked = quota.type === 'Blocked';
+                        return (
+                          <div 
+                            key={quota.id} 
+                            className={`mx-2 my-2 border rounded px-2 py-4 flex items-center min-h-[52px] relative ${
+                              isBlocked 
+                                ? 'bg-neutral-100 border-border-main' 
+                                : 'bg-accent-100 border-accent-200'
+                            }`}
+                          >
+                            {/* Quota content - same as group-level quotas */}
+                            <div className="flex-1 min-w-0 flex items-center gap-1">
+                              <div className="w-[14px] h-[14px] flex-shrink-0">
+                                <img src={ICON_PIE_CHART} alt="" className="w-full h-full" />
+                              </div>
+                              <div className="text-text-main text-sm font-semibold">{quota.name}</div>
+                            </div>
+                            
+                            <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">{quota.type}</div>
+                            
+                            <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">
+                              {quota.assignation}
+                            </div>
+                            
+                            <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                                {isBlocked ? '-' : quota.available}
+                              </div>
+                              <div className="w-[100px] flex items-center justify-end relative">
+                                {isEditingCapacity ? (
+                                  <div className="relative">
+                                    <input
+                                      type="number"
+                                      defaultValue={quota.capacity}
+                                      onChange={(e) => {
+                                        const newValue = parseInt(e.target.value);
+                                        if (!isNaN(newValue)) {
+                                          capacityEditsRef.current[quota.id] = newValue;
+                                          const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id);
+                                          setCapacityErrors(prev => {
+                                            if (validation.isValid) {
+                                              const newErrors = { ...prev };
+                                              delete newErrors[quota.id];
+                                              return newErrors;
+                                            }
+                                            return { ...prev, [quota.id]: validation.message };
+                                          });
+                                        }
+                                      }}
+                                      className={`w-[77px] h-[40px] bg-white border rounded-lg px-3 text-right text-sm text-text-main outline-none ${
+                                        capacityErrors[quota.id] ? 'border-status-danger' : 'border-border-main'
+                                      }`}
+                                    />
+                                  </div>
+                                ) : (
+                                  <span className="text-text-main text-sm font-semibold">{quota.capacity}</span>
+                                )}
+                              </div>
+                              <div className="w-[20px]"></div>
+                              <div className="w-[20px] flex items-center justify-center relative">
+                                <button 
+                                  ref={(el) => { buttonRefs.current[quota.id] = el; }}
+                                  onClick={() => toggleMenu(quota.id)} 
+                                  className="cursor-pointer"
+                                >
+                                  <img src={ICON_VERTICAL_DOTS} alt="" className="w-[3.5px] h-[13.5px]" />
+                                </button>
+                                
+                                {openMenuId === quota.id && (
+                                  <div 
+                                    ref={menuRef}
+                                    className={`absolute right-0 bg-white border border-neutral-100 rounded-lg shadow-lg z-50 min-w-[180px] ${
+                                      menuDirection === 'up' ? 'bottom-6' : 'top-6'
+                                    }`}
+                                  >
+                                     <button
+                                       onClick={() => handleEditQuota(quota)}
+                                       className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main rounded-t-lg"
+                                     >
+                                       <img src={ICON_EDIT} alt="" className="w-[12px] h-[12px]" />
+                                       Edit quota
+                                     </button>
+                                    <button
+                                      onClick={() => handleTransferCapacity(quota.id)}
+                                      className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main"
+                                    >
+                                      <img src={ICON_TRANSFER} alt="" className="w-[14px] h-[8.7px]" />
+                                      Transfer capacity
+                                    </button>
+                                    <button
+                                      onClick={() => handleReplicateQuota(quota)}
+                                      className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main"
+                                    >
+                                      <img src={ICON_COPY} alt="" className="w-[14px] h-[14px]" />
+                                      Replicate quota
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteQuota(quota.id, quota.name)}
+                                      className="w-full flex items-center gap-2 px-3 py-3 hover:bg-[#E6F4FF] text-sm text-text-main rounded-b-lg"
+                                    >
+                                      <img src={ICON_TRASH_CAN} alt="" className="w-[12.25px] h-[14px]" />
+                                      Delete quota
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {capacityErrors[quota.id] && isEditingCapacity && (
+                              <div className="absolute right-[60px] top-full mt-1 flex items-center gap-1">
+                                <img 
+                                  src={ICON_PIE_CHART} 
+                                  alt="" 
+                                  className="w-3 h-3" 
+                                />
+                                <p className="text-xs text-status-danger whitespace-nowrap">{capacityErrors[quota.id]}</p>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+
+                      {/* Add Quota for This Ticket Link */}
+                      <div className="ml-4 px-2 pb-2 flex justify-end">
+                        <button 
+                          onClick={() => handleAddQuota('Fanstand', ticketOption)}
+                          className="flex items-center gap-1 text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                        >
+                          <div className="w-[18px] h-[18px] flex items-center justify-center">
+                            <img src={ICON_ADD_QUOTA} alt="" className="w-[13.85px] h-[13.85px]" />
+                          </div>
+                          Add quota
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  </div>
+                  </div>
+                </>
+              )}
+              </div>
+             </div>
+
+           {/* Birdie Shack capacity group */}
             <div className="bg-white border border-border-main rounded-lg py-1 overflow-visible">
                   {/* Group Header */}
-                  <div className="border-b border-border-main py-3 flex items-center">
+                  <div className={`px-2 py-3 flex items-center ${!collapsedGroups['Birdie Shack'] ? 'border-b border-border-main' : ''}`}>
                     {/* Left: Chevron + Name - Flexible */}
-                    <div className="flex-1 min-w-0 flex items-center gap-3 pl-2">
-                      <div className="w-[26px] h-[26px] flex items-center justify-center cursor-pointer flex-shrink-0">
-                        <img src={ICON_ANGLE_DOWN} alt="" className="w-[15px] h-[9px]" />
+                    <div className="flex-1 min-w-0 flex items-center gap-3">
+                      <div 
+                        className="w-[26px] h-[26px] flex items-center justify-center cursor-pointer flex-shrink-0"
+                        onClick={() => toggleGroupCollapse('Birdie Shack')}
+                      >
+                        <img 
+                          src={ICON_ANGLE_DOWN} 
+                          alt="" 
+                          className={`w-[15px] h-[9px] transition-transform duration-200 ${collapsedGroups['Birdie Shack'] ? '-rotate-90' : ''}`} 
+                        />
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
@@ -928,20 +1408,22 @@ export default function QuotaManagement() {
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.sold}</div>
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.available}</div>
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.capacity}</div>
-                           <div className="w-[20px]"></div>
-                           <div className="w-[20px]"></div>
+                           <div className="w-[40px]"></div>
                          </div>
                        );
                      })()}
                    </div>
 
-                  {/* Free Capacity Row */}
+              {/* Collapsible Content */}
+              <div className={`transition-all duration-200 ease-out ${collapsedGroups['Birdie Shack'] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
+                   {/* Free Capacity Row */}
                   {(() => {
                     const freeCapacity = calculateFreeCapacity('Birdie Shack');
                     return (
-                      <div className="mx-2 my-2 border border-border-main rounded p-4 flex items-center min-h-[52px]">
+                      <div className="mx-2 my-2 border border-border-main rounded px-2 py-4 flex items-center min-h-[52px]">
                         {/* Left: Name - Flexible */}
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 flex items-center gap-1">
+                          <div className="w-[14px]"></div>
                           <div className="text-text-main text-sm font-semibold">Free capacity (no quota)</div>
                         </div>
                         
@@ -956,8 +1438,7 @@ export default function QuotaManagement() {
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.sold}</div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
-                          <div className="w-[20px]"></div>
-                          <div className="w-[20px]"></div>
+                          <div className="w-[40px]"></div>
                         </div>
                       </div>
                     );
@@ -969,7 +1450,7 @@ export default function QuotaManagement() {
                   return (
                     <div 
                       key={quota.id} 
-                      className={`mx-2 my-2 border rounded p-4 flex items-center min-h-[52px] relative ${
+                      className={`mx-2 my-2 border rounded px-2 py-4 flex items-center min-h-[52px] relative ${
                         isBlocked 
                           ? 'bg-neutral-100 border-border-main' 
                           : 'bg-accent-100 border-accent-200'
@@ -992,7 +1473,7 @@ export default function QuotaManagement() {
                       </div>
                       
                       {/* Numbers with left border */}
-                      <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                      <div className="border-l border-border-main pl-2 pr-2 flex items-center gap-0 flex-shrink-0">
                         <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
                         <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
                           {isBlocked ? '-' : quota.available}
@@ -1107,18 +1588,24 @@ export default function QuotaManagement() {
                   Add quota
                 </button>
               </div>
+              </div>
             </div>
-          </div>
 
-          {/* Birdie Shack LB capacity group */}
-          <div className="mb-6">
+           {/* Birdie Shack LB capacity group */}
             <div className="bg-white border border-border-main rounded-lg py-1 overflow-visible">
                   {/* Group Header */}
-                  <div className="border-b border-border-main py-3 flex items-center">
+                  <div className={`px-2 py-3 flex items-center ${!collapsedGroups['Birdie Shack LB'] ? 'border-b border-border-main' : ''}`}>
                     {/* Left: Chevron + Name - Flexible */}
-                    <div className="flex-1 min-w-0 flex items-center gap-3 pl-2">
-                      <div className="w-[26px] h-[26px] flex items-center justify-center cursor-pointer flex-shrink-0">
-                        <img src={ICON_ANGLE_DOWN} alt="" className="w-[15px] h-[9px]" />
+                    <div className="flex-1 min-w-0 flex items-center gap-3">
+                      <div 
+                        className="w-[26px] h-[26px] flex items-center justify-center cursor-pointer flex-shrink-0"
+                        onClick={() => toggleGroupCollapse('Birdie Shack LB')}
+                      >
+                        <img 
+                          src={ICON_ANGLE_DOWN} 
+                          alt="" 
+                          className={`w-[15px] h-[9px] transition-transform duration-200 ${collapsedGroups['Birdie Shack LB'] ? '-rotate-90' : ''}`} 
+                        />
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
@@ -1140,20 +1627,22 @@ export default function QuotaManagement() {
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.sold}</div>
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.available}</div>
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.capacity}</div>
-                           <div className="w-[20px]"></div>
-                           <div className="w-[20px]"></div>
+                           <div className="w-[40px]"></div>
                          </div>
                        );
                      })()}
                    </div>
 
-                  {/* Free Capacity Row */}
+              {/* Collapsible Content */}
+              <div className={`transition-all duration-200 ease-out ${collapsedGroups['Birdie Shack LB'] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
+                   {/* Free Capacity Row */}
                   {(() => {
                     const freeCapacity = calculateFreeCapacity('Birdie Shack LB');
                     return (
-                      <div className="mx-2 my-2 border border-border-main rounded p-4 flex items-center min-h-[52px]">
+                      <div className="mx-2 my-2 border border-border-main rounded px-2 py-4 flex items-center min-h-[52px]">
                         {/* Left: Name - Flexible */}
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 flex items-center gap-1">
+                          <div className="w-[14px]"></div>
                           <div className="text-text-main text-sm font-semibold">Free capacity (no quota)</div>
                         </div>
                         
@@ -1168,8 +1657,7 @@ export default function QuotaManagement() {
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.sold}</div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
-                          <div className="w-[20px]"></div>
-                          <div className="w-[20px]"></div>
+                          <div className="w-[40px]"></div>
                         </div>
                       </div>
                     );
@@ -1181,7 +1669,7 @@ export default function QuotaManagement() {
                   return (
                     <div 
                       key={quota.id} 
-                      className={`mx-2 my-2 border rounded p-4 flex items-center min-h-[52px] relative ${
+                      className={`mx-2 my-2 border rounded px-2 py-4 flex items-center min-h-[52px] relative ${
                         isBlocked 
                           ? 'bg-neutral-100 border-border-main' 
                           : 'bg-accent-100 border-accent-200'
@@ -1204,7 +1692,7 @@ export default function QuotaManagement() {
                       </div>
                       
                       {/* Numbers with left border */}
-                      <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                      <div className="border-l border-border-main pl-2 pr-2 flex items-center gap-0 flex-shrink-0">
                         <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
                         <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
                           {isBlocked ? '-' : quota.available}
@@ -1319,18 +1807,24 @@ export default function QuotaManagement() {
                   Add quota
                 </button>
               </div>
+              </div>
             </div>
-          </div>
 
-          {/* LIV Premium All Access capacity group */}
-          <div className="mb-6">
+           {/* LIV Premium All Access capacity group */}
             <div className="bg-white border border-border-main rounded-lg py-1 overflow-visible">
                   {/* Group Header */}
-                  <div className="border-b border-border-main py-3 flex items-center">
+                  <div className={`px-2 py-3 flex items-center ${!collapsedGroups['LIV Premium All Access'] ? 'border-b border-border-main' : ''}`}>
                     {/* Left: Chevron + Name - Flexible */}
-                    <div className="flex-1 min-w-0 flex items-center gap-3 pl-2">
-                      <div className="w-[26px] h-[26px] flex items-center justify-center cursor-pointer flex-shrink-0">
-                        <img src={ICON_ANGLE_DOWN} alt="" className="w-[15px] h-[9px]" />
+                    <div className="flex-1 min-w-0 flex items-center gap-3">
+                      <div 
+                        className="w-[26px] h-[26px] flex items-center justify-center cursor-pointer flex-shrink-0"
+                        onClick={() => toggleGroupCollapse('LIV Premium All Access')}
+                      >
+                        <img 
+                          src={ICON_ANGLE_DOWN} 
+                          alt="" 
+                          className={`w-[15px] h-[9px] transition-transform duration-200 ${collapsedGroups['LIV Premium All Access'] ? '-rotate-90' : ''}`} 
+                        />
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
@@ -1352,20 +1846,22 @@ export default function QuotaManagement() {
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.sold}</div>
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.available}</div>
                            <div className="w-[100px] flex items-center justify-end text-text-main text-base font-semibold">{groupTotals.capacity}</div>
-                           <div className="w-[20px]"></div>
-                           <div className="w-[20px]"></div>
+                           <div className="w-[40px]"></div>
                          </div>
                        );
                      })()}
                    </div>
 
-                  {/* Free Capacity Row */}
+              {/* Collapsible Content */}
+              <div className={`transition-all duration-200 ease-out ${collapsedGroups['LIV Premium All Access'] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
+                   {/* Free Capacity Row */}
                   {(() => {
                     const freeCapacity = calculateFreeCapacity('LIV Premium All Access');
                     return (
-                      <div className="mx-2 my-2 border border-border-main rounded p-4 flex items-center min-h-[52px]">
+                      <div className="mx-2 my-2 border border-border-main rounded px-2 py-4 flex items-center min-h-[52px]">
                         {/* Left: Name - Flexible */}
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 flex items-center gap-1">
+                          <div className="w-[14px]"></div>
                           <div className="text-text-main text-sm font-semibold">Free capacity (no quota)</div>
                         </div>
                         
@@ -1380,8 +1876,7 @@ export default function QuotaManagement() {
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.sold}</div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
-                          <div className="w-[20px]"></div>
-                          <div className="w-[20px]"></div>
+                          <div className="w-[40px]"></div>
                         </div>
                       </div>
                     );
@@ -1393,7 +1888,7 @@ export default function QuotaManagement() {
                   return (
                     <div 
                       key={quota.id} 
-                      className={`mx-2 my-2 border rounded p-4 flex items-center min-h-[52px] relative ${
+                      className={`mx-2 my-2 border rounded px-2 py-4 flex items-center min-h-[52px] relative ${
                         isBlocked 
                           ? 'bg-neutral-100 border-border-main' 
                           : 'bg-accent-100 border-accent-200'
@@ -1416,7 +1911,7 @@ export default function QuotaManagement() {
                       </div>
                       
                       {/* Numbers with left border */}
-                      <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                      <div className="border-l border-border-main pl-2 pr-2 flex items-center gap-0 flex-shrink-0">
                         <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
                         <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
                           {isBlocked ? '-' : quota.available}
@@ -1531,8 +2026,8 @@ export default function QuotaManagement() {
                   Add quota
                 </button>
               </div>
+              </div>
             </div>
-          </div>
         </div>
           </div>
         </div>
@@ -1547,6 +2042,7 @@ export default function QuotaManagement() {
          editingQuota={editingQuota}
          replicatingQuota={replicatingQuota}
          validateCapacity={validateCapacity}
+         initialTicketOption={selectedTicketOption}
        />
 
        {/* Transfer Capacity Drawer */}
@@ -1572,5 +2068,6 @@ export default function QuotaManagement() {
           onCancel={cancelDeleteQuota}
         />
       </div>
+    </div>
     );
   }

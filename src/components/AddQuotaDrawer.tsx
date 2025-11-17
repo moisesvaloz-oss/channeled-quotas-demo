@@ -21,9 +21,10 @@ interface AddQuotaDrawerProps {
     maxAvailable: number;
     message: string;
   };
+  initialTicketOption?: string;
 }
 
-export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, timeSlot, editingQuota, replicatingQuota, validateCapacity }: AddQuotaDrawerProps) {
+export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, timeSlot, editingQuota, replicatingQuota, validateCapacity, initialTicketOption }: AddQuotaDrawerProps) {
   const addQuota = useQuotaStore((state) => state.addQuota);
   const updateQuota = useQuotaStore((state) => state.updateQuota);
   
@@ -35,6 +36,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
   const [capacity, setCapacity] = useState('');
   const [quotaType, setQuotaType] = useState('');
   const [quotaTypeOpen, setQuotaTypeOpen] = useState(false);
+  const [ticketOption, setTicketOption] = useState('');
   const [quotaNameFocused, setQuotaNameFocused] = useState(false);
   const [capacityFocused, setCapacityFocused] = useState(false);
   const [applicationOption, setApplicationOption] = useState('');
@@ -147,6 +149,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
       setQuotaName(sourceQuota.name);
       setCapacity(sourceQuota.capacity.toString());
       setQuotaType(sourceQuota.type);
+      setTicketOption(sourceQuota.ticketOption || '');
       
       // Parse assignation to set application fields
       if (sourceQuota.assignation && sourceQuota.assignation !== 'No assignation') {
@@ -177,8 +180,9 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
       setApplicationOption('');
       setSelectedApplicationValues([]);
       setReplicationOption('');
+      setTicketOption(initialTicketOption || '');
     }
-  }, [editingQuota, replicatingQuota]);
+  }, [editingQuota, replicatingQuota, initialTicketOption]);
 
   // Reset isClosing when drawer opens
   useEffect(() => {
@@ -1032,6 +1036,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                     assignation,
                     capacityGroupName,
                     timeSlot,
+                    ...(ticketOption && { ticketOption }),
                   });
                 } else if (replicatingQuota) {
                   // Replicate quota to selected time slots
@@ -1045,6 +1050,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                       assignation,
                       capacityGroupName,
                       timeSlot: 'All future time slots',
+                      ...(ticketOption && { ticketOption }),
                     });
                   } else if (replicationOption === 'specific') {
                     // Create quota for each date range that has dates selected
@@ -1060,6 +1066,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                           assignation,
                           capacityGroupName,
                           timeSlot: replicatedTimeSlot,
+                          ...(ticketOption && { ticketOption }),
                         });
                       }
                     });
@@ -1073,6 +1080,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                     assignation,
                     capacityGroupName,
                     timeSlot,
+                    ...(ticketOption && { ticketOption }),
                   });
                 }
 
