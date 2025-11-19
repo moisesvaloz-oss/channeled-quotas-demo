@@ -16,6 +16,7 @@ const ICON_CLOCK = '/icons/clock.svg';
 const ICON_SEARCH = '/icons/search.svg';
 const ICON_INFO = '/icons/info.svg';
 const ICON_ANGLE_DOWN = '/icons/angle-down.svg';
+const ICON_CHEVRON_DOWN = '/icons/chevron-down.svg';
 const ICON_PEN_TO_SQUARE = '/icons/pen-to-square.svg';
 const ICON_VERTICAL_DOTS = '/icons/vertical-dots.svg';
 const ICON_PIE_CHART = '/icons/pie-chart.svg';
@@ -783,9 +784,9 @@ export default function QuotaManagement() {
                               onClick={() => toggleTicketCollapse(ticketKey)}
                             >
                               <img 
-                                src={ICON_ANGLE_DOWN} 
+                                src={ICON_CHEVRON_DOWN} 
                                 alt="" 
-                                className={`w-[15px] h-[9px] transition-transform duration-200 ${collapsedTickets[ticketKey] ? '-rotate-90' : ''}`} 
+                                className={`w-[14px] h-[7px] transition-transform duration-200 ${collapsedTickets[ticketKey] ? '-rotate-90' : ''}`} 
                               />
                             </div>
                             <div className="w-[18px] h-[18px] flex items-center justify-center">
@@ -1182,9 +1183,9 @@ export default function QuotaManagement() {
                               onClick={() => toggleTicketCollapse(ticketKey)}
                             >
                               <img 
-                                src={ICON_ANGLE_DOWN} 
+                                src={ICON_CHEVRON_DOWN} 
                                 alt="" 
-                                className={`w-[15px] h-[9px] transition-transform duration-200 ${collapsedTickets[ticketKey] ? '-rotate-90' : ''}`} 
+                                className={`w-[14px] h-[7px] transition-transform duration-200 ${collapsedTickets[ticketKey] ? '-rotate-90' : ''}`} 
                               />
                             </div>
                             <div className="w-[18px] h-[18px] flex items-center justify-center">
