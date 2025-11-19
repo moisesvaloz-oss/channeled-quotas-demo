@@ -758,14 +758,13 @@ export default function QuotaManagement() {
               {/* Tickets Section */}
               {showTicketTypes && ticketOptions['Club 54'] && ticketOptions['Club 54'].length > 0 && (
                 <>
-                  <div className="mx-2 my-4 border-t border-dashed border-border-main"></div>
                   <div className="pl-6">
 
                   {/* Render each ticket type */}
                   {ticketOptions['Club 54'].map((ticketOption) => (
                     <div key={ticketOption} className="mb-4">
                       {/* Ticket Header Row */}
-                      <div className="mx-2 my-2 bg-neutral-75 rounded px-2 py-3 flex items-center">
+                      <div className="mx-2 my-2 px-2 py-3 flex items-center">
                         {/* Left: Icon + Name - Flexible */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
@@ -1142,14 +1141,13 @@ export default function QuotaManagement() {
               {/* Tickets Section */}
               {showTicketTypes && ticketOptions['Fanstand'] && ticketOptions['Fanstand'].length > 0 && (
                 <>
-                  <div className="mx-2 my-4 border-t border-dashed border-border-main"></div>
                   <div className="pl-6">
 
                   {/* Render each ticket type */}
                   {ticketOptions['Fanstand'].map((ticketOption) => (
                     <div key={ticketOption} className="mb-4">
                       {/* Ticket Header Row */}
-                      <div className="mx-2 my-2 bg-neutral-75 rounded px-2 py-3 flex items-center">
+                      <div className="mx-2 my-2 px-2 py-3 flex items-center">
                         {/* Left: Icon + Name - Flexible */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
