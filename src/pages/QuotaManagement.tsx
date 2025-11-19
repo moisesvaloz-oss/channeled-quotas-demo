@@ -67,6 +67,7 @@ export default function QuotaManagement() {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [collapsedGroups, setCollapsedGroups] = useState<{ [key: string]: boolean }>({});
   const [collapsedTickets, setCollapsedTickets] = useState<{ [key: string]: boolean }>({});
+  const [showTicketTypes, setShowTicketTypes] = useState(true);
 
   const toggleGroupCollapse = (groupName: string) => {
     setCollapsedGroups(prev => ({
@@ -436,6 +437,16 @@ export default function QuotaManagement() {
                   </div>
                 </div>
 
+                <label className="flex items-center gap-2 cursor-pointer ml-4">
+                  <input
+                    type="checkbox"
+                    checked={showTicketTypes}
+                    onChange={(e) => setShowTicketTypes(e.target.checked)}
+                    className="w-4 h-4 rounded border-border-main text-primary-active focus:ring-primary-active cursor-pointer"
+                  />
+                  <span className="text-sm text-text-main font-medium">Show Ticket types</span>
+                </label>
+
                 <div className="flex-1"></div>
 
                 {!isEditingCapacity ? (
@@ -761,29 +772,12 @@ export default function QuotaManagement() {
                 </button>
               </div>
 
-              {/* Tickets Section Divider */}
-              {ticketOptions['Club 54'] && ticketOptions['Club 54'].length > 0 && (
+              {/* Tickets Section */}
+              {showTicketTypes && ticketOptions['Club 54'] && ticketOptions['Club 54'].length > 0 && (
                 <>
                   <div className="mx-2 my-4 border-t border-dashed border-border-main"></div>
                   <div className="pl-6">
 
-                  {/* Tickets Section Header */}
-                  <div 
-                    className="mx-2 mb-3 flex items-center gap-2 cursor-pointer"
-                    onClick={() => toggleTicketsCollapse('Club 54')}
-                  >
-                    <div className="w-[18px] h-[18px] flex items-center justify-center">
-                      <img 
-                        src={ICON_CHEVRON_RIGHT} 
-                        alt="" 
-                        className={`w-[7px] h-[14px] transition-transform duration-200 ${collapsedTickets['Club 54'] ? '' : 'rotate-90'}`} 
-                      />
-                    </div>
-                    <h4 className="text-sm text-text-subtle">Tickets</h4>
-                  </div>
-
-                  {/* Collapsible Tickets Content */}
-                  <div className={`transition-all duration-200 ease-out ${collapsedTickets['Club 54'] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
                   {/* Render each ticket type */}
                   {ticketOptions['Club 54'].map((ticketOption) => (
                     <div key={ticketOption} className="mb-4">
@@ -951,7 +945,6 @@ export default function QuotaManagement() {
                       </div>
                     </div>
                   ))}
-                  </div>
                   </div>
                 </>
               )}
@@ -1175,29 +1168,12 @@ export default function QuotaManagement() {
                  </button>
                </div>
 
-              {/* Tickets Section Divider */}
-              {ticketOptions['Fanstand'] && ticketOptions['Fanstand'].length > 0 && (
+              {/* Tickets Section */}
+              {showTicketTypes && ticketOptions['Fanstand'] && ticketOptions['Fanstand'].length > 0 && (
                 <>
                   <div className="mx-2 my-4 border-t border-dashed border-border-main"></div>
                   <div className="pl-6">
 
-                  {/* Tickets Section Header */}
-                  <div 
-                    className="mx-2 mb-3 flex items-center gap-2 cursor-pointer"
-                    onClick={() => toggleTicketsCollapse('Fanstand')}
-                  >
-                    <div className="w-[18px] h-[18px] flex items-center justify-center">
-                      <img 
-                        src={ICON_CHEVRON_RIGHT} 
-                        alt="" 
-                        className={`w-[7px] h-[14px] transition-transform duration-200 ${collapsedTickets['Fanstand'] ? '' : 'rotate-90'}`} 
-                      />
-                    </div>
-                    <h4 className="text-sm text-text-subtle">Tickets</h4>
-                  </div>
-
-                  {/* Collapsible Tickets Content */}
-                  <div className={`transition-all duration-200 ease-out ${collapsedTickets['Fanstand'] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
                   {/* Render each ticket type */}
                   {ticketOptions['Fanstand'].map((ticketOption) => (
                     <div key={ticketOption} className="mb-4">
@@ -1365,7 +1341,6 @@ export default function QuotaManagement() {
                       </div>
                     </div>
                   ))}
-                  </div>
                   </div>
                 </>
               )}
