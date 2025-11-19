@@ -17,8 +17,6 @@ const ICON_SEARCH = '/icons/search.svg';
 const ICON_INFO = '/icons/info.svg';
 const ICON_ANGLE_DOWN = '/icons/angle-down.svg';
 const ICON_PEN_TO_SQUARE = '/icons/pen-to-square.svg';
-const ICON_ADD_QUOTA = '/icons/add.svg';
-const ICON_CHEVRON_RIGHT = '/icons/chevron-right.svg';
 const ICON_VERTICAL_DOTS = '/icons/vertical-dots.svg';
 const ICON_PIE_CHART = '/icons/pie-chart.svg';
 const ICON_EDIT = '/icons/edit.svg';
@@ -66,18 +64,10 @@ export default function QuotaManagement() {
   const [isHeaderStuck, setIsHeaderStuck] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [collapsedGroups, setCollapsedGroups] = useState<{ [key: string]: boolean }>({});
-  const [collapsedTickets, setCollapsedTickets] = useState<{ [key: string]: boolean }>({});
   const [showTicketTypes, setShowTicketTypes] = useState(true);
 
   const toggleGroupCollapse = (groupName: string) => {
     setCollapsedGroups(prev => ({
-      ...prev,
-      [groupName]: !prev[groupName]
-    }));
-  };
-
-  const toggleTicketsCollapse = (groupName: string) => {
-    setCollapsedTickets(prev => ({
       ...prev,
       [groupName]: !prev[groupName]
     }));
@@ -573,7 +563,15 @@ export default function QuotaManagement() {
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
-                        <div className="text-text-main text-base font-semibold">Club 54</div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-text-main text-base font-semibold">Club 54</div>
+                          <button 
+                            onClick={() => handleAddQuota('Club 54')}
+                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                          >
+                            + Add quota
+                          </button>
+                        </div>
                       </div>
                     </div>
                     
@@ -759,19 +757,6 @@ export default function QuotaManagement() {
                 );
               })}
 
-              {/* Add Quota Link */}
-              <div className="px-2 pb-2 flex justify-end">
-                <button 
-                  onClick={() => handleAddQuota('Club 54')}
-                  className="flex items-center gap-1 text-primary-active text-sm font-semibold hover:underline cursor-pointer"
-                >
-                  <div className="w-[18px] h-[18px] flex items-center justify-center">
-                    <img src={ICON_ADD_QUOTA} alt="" className="w-[13.85px] h-[13.85px]" />
-                  </div>
-                  Add quota
-                </button>
-              </div>
-
               {/* Tickets Section */}
               {showTicketTypes && ticketOptions['Club 54'] && ticketOptions['Club 54'].length > 0 && (
                 <>
@@ -789,6 +774,12 @@ export default function QuotaManagement() {
                             <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
                           </div>
                           <div className="text-text-main text-sm font-semibold">Club 54 | {ticketOption}</div>
+                          <button 
+                            onClick={() => handleAddQuota('Club 54', ticketOption)}
+                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                          >
+                            + Add quota
+                          </button>
                         </div>
                         
                         {/* Quota Type */}
@@ -930,19 +921,6 @@ export default function QuotaManagement() {
                           </div>
                         );
                       })}
-
-                      {/* Add Quota for This Ticket Link */}
-                      <div className="ml-4 px-2 pb-2 flex justify-end">
-                        <button 
-                          onClick={() => handleAddQuota('Club 54', ticketOption)}
-                          className="flex items-center gap-1 text-primary-active text-sm font-semibold hover:underline cursor-pointer"
-                        >
-                          <div className="w-[18px] h-[18px] flex items-center justify-center">
-                            <img src={ICON_ADD_QUOTA} alt="" className="w-[13.85px] h-[13.85px]" />
-                          </div>
-                          Add quota
-                        </button>
-                      </div>
                     </div>
                   ))}
                   </div>
@@ -969,7 +947,15 @@ export default function QuotaManagement() {
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
-                        <div className="text-text-main text-base font-semibold">Fanstand</div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-text-main text-base font-semibold">Fanstand</div>
+                          <button 
+                            onClick={() => handleAddQuota('Fanstand')}
+                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                          >
+                            + Add quota
+                          </button>
+                        </div>
                       </div>
                     </div>
                     
@@ -1155,19 +1141,6 @@ export default function QuotaManagement() {
                 );
               })}
 
-              {/* Add Quota Link */}
-              <div className="px-2 pb-2 flex justify-end">
-                <button 
-                  onClick={() => handleAddQuota('Fanstand')}
-                  className="flex items-center gap-1 text-primary-active text-sm font-semibold hover:underline cursor-pointer"
-                >
-                  <div className="w-[18px] h-[18px] flex items-center justify-center">
-                    <img src={ICON_ADD_QUOTA} alt="" className="w-[13.85px] h-[13.85px]" />
-                  </div>
-                  Add quota
-                 </button>
-               </div>
-
               {/* Tickets Section */}
               {showTicketTypes && ticketOptions['Fanstand'] && ticketOptions['Fanstand'].length > 0 && (
                 <>
@@ -1185,6 +1158,12 @@ export default function QuotaManagement() {
                             <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
                           </div>
                           <div className="text-text-main text-sm font-semibold">Fanstand | {ticketOption}</div>
+                          <button 
+                            onClick={() => handleAddQuota('Fanstand', ticketOption)}
+                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                          >
+                            + Add quota
+                          </button>
                         </div>
                         
                         {/* Quota Type */}
@@ -1326,19 +1305,6 @@ export default function QuotaManagement() {
                           </div>
                         );
                       })}
-
-                      {/* Add Quota for This Ticket Link */}
-                      <div className="ml-4 px-2 pb-2 flex justify-end">
-                        <button 
-                          onClick={() => handleAddQuota('Fanstand', ticketOption)}
-                          className="flex items-center gap-1 text-primary-active text-sm font-semibold hover:underline cursor-pointer"
-                        >
-                          <div className="w-[18px] h-[18px] flex items-center justify-center">
-                            <img src={ICON_ADD_QUOTA} alt="" className="w-[13.85px] h-[13.85px]" />
-                          </div>
-                          Add quota
-                        </button>
-                      </div>
                     </div>
                   ))}
                   </div>
@@ -1365,7 +1331,15 @@ export default function QuotaManagement() {
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
-                        <div className="text-text-main text-base font-semibold">Birdie Shack</div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-text-main text-base font-semibold">Birdie Shack</div>
+                          <button 
+                            onClick={() => handleAddQuota('Birdie Shack')}
+                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                          >
+                            + Add quota
+                          </button>
+                        </div>
                       </div>
                     </div>
                     
@@ -1550,19 +1524,6 @@ export default function QuotaManagement() {
                   </div>
                 );
               })}
-
-              {/* Add Quota Link */}
-              <div className="px-2 pb-2 flex justify-end">
-                <button 
-                  onClick={() => handleAddQuota('Birdie Shack')}
-                  className="flex items-center gap-1 text-primary-active text-sm font-semibold hover:underline cursor-pointer"
-                >
-                  <div className="w-[18px] h-[18px] flex items-center justify-center">
-                    <img src={ICON_ADD_QUOTA} alt="" className="w-[13.85px] h-[13.85px]" />
-                  </div>
-                  Add quota
-                </button>
-              </div>
               </div>
             </div>
 
@@ -1584,7 +1545,15 @@ export default function QuotaManagement() {
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
-                        <div className="text-text-main text-base font-semibold">Birdie Shack LB</div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-text-main text-base font-semibold">Birdie Shack LB</div>
+                          <button 
+                            onClick={() => handleAddQuota('Birdie Shack LB')}
+                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                          >
+                            + Add quota
+                          </button>
+                        </div>
                       </div>
                     </div>
                     
@@ -1769,19 +1738,6 @@ export default function QuotaManagement() {
                   </div>
                 );
               })}
-
-              {/* Add Quota Link */}
-              <div className="px-2 pb-2 flex justify-end">
-                <button 
-                  onClick={() => handleAddQuota('Birdie Shack LB')}
-                  className="flex items-center gap-1 text-primary-active text-sm font-semibold hover:underline cursor-pointer"
-                >
-                  <div className="w-[18px] h-[18px] flex items-center justify-center">
-                    <img src={ICON_ADD_QUOTA} alt="" className="w-[13.85px] h-[13.85px]" />
-                  </div>
-                  Add quota
-                </button>
-              </div>
               </div>
             </div>
 
@@ -1803,7 +1759,15 @@ export default function QuotaManagement() {
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
-                        <div className="text-text-main text-base font-semibold">LIV Premium All Access</div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-text-main text-base font-semibold">LIV Premium All Access</div>
+                          <button 
+                            onClick={() => handleAddQuota('LIV Premium All Access')}
+                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                          >
+                            + Add quota
+                          </button>
+                        </div>
                       </div>
                     </div>
                     
@@ -1988,19 +1952,6 @@ export default function QuotaManagement() {
                   </div>
                 );
               })}
-
-              {/* Add Quota Link */}
-              <div className="px-2 pb-2 flex justify-end">
-                <button 
-                  onClick={() => handleAddQuota('LIV Premium All Access')}
-                  className="flex items-center gap-1 text-primary-active text-sm font-semibold hover:underline cursor-pointer"
-                >
-                  <div className="w-[18px] h-[18px] flex items-center justify-center">
-                    <img src={ICON_ADD_QUOTA} alt="" className="w-[13.85px] h-[13.85px]" />
-                  </div>
-                  Add quota
-                </button>
-              </div>
               </div>
             </div>
         </div>
