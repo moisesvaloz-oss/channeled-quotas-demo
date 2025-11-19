@@ -563,15 +563,13 @@ export default function QuotaManagement() {
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
-                        <div className="flex items-center gap-2">
-                          <div className="text-text-main text-base font-semibold">Club 54</div>
-                          <button 
-                            onClick={() => handleAddQuota('Club 54')}
-                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
-                          >
-                            + Add quota
-                          </button>
-                        </div>
+                        <div className="text-text-main text-base font-semibold">Club 54</div>
+                        <button 
+                          onClick={() => handleAddQuota('Club 54')}
+                          className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                        >
+                          + Add quota
+                        </button>
                       </div>
                     </div>
                     
@@ -769,14 +767,16 @@ export default function QuotaManagement() {
                       {/* Ticket Header Row */}
                       <div className="mx-2 my-2 bg-neutral-75 rounded px-2 py-3 flex items-center">
                         {/* Left: Icon + Name - Flexible */}
-                        <div className="flex-1 min-w-0 flex items-center gap-2">
-                          <div className="w-[18px] h-[18px] flex items-center justify-center">
-                            <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <div className="w-[18px] h-[18px] flex items-center justify-center">
+                              <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
+                            </div>
+                            <div className="text-text-main text-sm font-semibold">Club 54 | {ticketOption}</div>
                           </div>
-                          <div className="text-text-main text-sm font-semibold">Club 54 | {ticketOption}</div>
                           <button 
                             onClick={() => handleAddQuota('Club 54', ticketOption)}
-                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer ml-[26px]"
                           >
                             + Add quota
                           </button>
@@ -947,15 +947,13 @@ export default function QuotaManagement() {
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
-                        <div className="flex items-center gap-2">
-                          <div className="text-text-main text-base font-semibold">Fanstand</div>
-                          <button 
-                            onClick={() => handleAddQuota('Fanstand')}
-                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
-                          >
-                            + Add quota
-                          </button>
-                        </div>
+                        <div className="text-text-main text-base font-semibold">Fanstand</div>
+                        <button 
+                          onClick={() => handleAddQuota('Fanstand')}
+                          className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                        >
+                          + Add quota
+                        </button>
                       </div>
                     </div>
                     
@@ -1153,14 +1151,16 @@ export default function QuotaManagement() {
                       {/* Ticket Header Row */}
                       <div className="mx-2 my-2 bg-neutral-75 rounded px-2 py-3 flex items-center">
                         {/* Left: Icon + Name - Flexible */}
-                        <div className="flex-1 min-w-0 flex items-center gap-2">
-                          <div className="w-[18px] h-[18px] flex items-center justify-center">
-                            <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <div className="w-[18px] h-[18px] flex items-center justify-center">
+                              <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
+                            </div>
+                            <div className="text-text-main text-sm font-semibold">Fanstand | {ticketOption}</div>
                           </div>
-                          <div className="text-text-main text-sm font-semibold">Fanstand | {ticketOption}</div>
                           <button 
                             onClick={() => handleAddQuota('Fanstand', ticketOption)}
-                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer ml-[26px]"
                           >
                             + Add quota
                           </button>
@@ -1331,15 +1331,13 @@ export default function QuotaManagement() {
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
-                        <div className="flex items-center gap-2">
-                          <div className="text-text-main text-base font-semibold">Birdie Shack</div>
-                          <button 
-                            onClick={() => handleAddQuota('Birdie Shack')}
-                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
-                          >
-                            + Add quota
-                          </button>
-                        </div>
+                        <div className="text-text-main text-base font-semibold">Birdie Shack</div>
+                        <button 
+                          onClick={() => handleAddQuota('Birdie Shack')}
+                          className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                        >
+                          + Add quota
+                        </button>
                       </div>
                     </div>
                     
@@ -1545,15 +1543,13 @@ export default function QuotaManagement() {
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
-                        <div className="flex items-center gap-2">
-                          <div className="text-text-main text-base font-semibold">Birdie Shack LB</div>
-                          <button 
-                            onClick={() => handleAddQuota('Birdie Shack LB')}
-                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
-                          >
-                            + Add quota
-                          </button>
-                        </div>
+                        <div className="text-text-main text-base font-semibold">Birdie Shack LB</div>
+                        <button 
+                          onClick={() => handleAddQuota('Birdie Shack LB')}
+                          className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                        >
+                          + Add quota
+                        </button>
                       </div>
                     </div>
                     
@@ -1759,15 +1755,13 @@ export default function QuotaManagement() {
                       </div>
                       <div className="flex-shrink-0">
                         <div className="text-text-subtle text-xs">Capacity Group</div>
-                        <div className="flex items-center gap-2">
-                          <div className="text-text-main text-base font-semibold">LIV Premium All Access</div>
-                          <button 
-                            onClick={() => handleAddQuota('LIV Premium All Access')}
-                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
-                          >
-                            + Add quota
-                          </button>
-                        </div>
+                        <div className="text-text-main text-base font-semibold">LIV Premium All Access</div>
+                        <button 
+                          onClick={() => handleAddQuota('LIV Premium All Access')}
+                          className="text-primary-active text-sm font-semibold hover:underline cursor-pointer"
+                        >
+                          + Add quota
+                        </button>
                       </div>
                     </div>
                     
