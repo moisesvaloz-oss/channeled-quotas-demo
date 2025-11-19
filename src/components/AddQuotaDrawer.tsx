@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useQuotaStore } from '../stores/quotaStore';
 import type { Quota } from '../stores/quotaStore';
+import { useBusinessStore } from '../stores/businessStore';
 
 // Icon assets
 const ICON_CHEVRON_DOWN = '/icons/chevron-down.svg';
@@ -27,6 +28,7 @@ interface AddQuotaDrawerProps {
 export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, timeSlot, editingQuota, replicatingQuota, validateCapacity, initialTicketOption }: AddQuotaDrawerProps) {
   const addQuota = useQuotaStore((state) => state.addQuota);
   const updateQuota = useQuotaStore((state) => state.updateQuota);
+  const businesses = useBusinessStore((state) => state.businesses);
   
   const [isClosing, setIsClosing] = useState(false);
   const [capacityError, setCapacityError] = useState<string>('');
@@ -83,19 +85,8 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
     'LIV GOLF DEPOSITS'
   ];
   
-  const businessOptions = [
-    'Complimentary - Marketing',
-    'Complimentary - Employee',
-    'Consignment - Logitix',
-    'Consignment - EBG',
-    'LIV Golf - Marketing',
-    'LIV Golf - Partnership',
-    'Partnership Fulfillment - Google',
-    'Partnership Fulfillment - HSBC',
-    'Sales Rep - Liam Ackerman',
-    'Sales Rep - Aaron Clarke',
-    'Ticket Ops - Joe Occorso'
-  ];
+  // Get business names from the business store
+  const businessOptions = businesses.filter(b => b.enabled).map(b => b.name);
   
   const getApplicationOptions = () => {
     if (applicationOption === 'channel-type') return channelTypeOptions;
