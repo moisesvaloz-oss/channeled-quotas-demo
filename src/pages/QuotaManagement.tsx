@@ -64,12 +64,20 @@ export default function QuotaManagement() {
   const [isHeaderStuck, setIsHeaderStuck] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [collapsedGroups, setCollapsedGroups] = useState<{ [key: string]: boolean }>({});
+  const [collapsedTickets, setCollapsedTickets] = useState<{ [key: string]: boolean }>({});
   const [showTicketTypes, setShowTicketTypes] = useState(true);
 
   const toggleGroupCollapse = (groupName: string) => {
     setCollapsedGroups(prev => ({
       ...prev,
       [groupName]: !prev[groupName]
+    }));
+  };
+
+  const toggleTicketCollapse = (ticketKey: string) => {
+    setCollapsedTickets(prev => ({
+      ...prev,
+      [ticketKey]: !prev[ticketKey]
     }));
   };
 
@@ -761,13 +769,25 @@ export default function QuotaManagement() {
                   <div className="pl-6">
 
                   {/* Render each ticket type */}
-                  {ticketOptions['Club 54'].map((ticketOption) => (
+                  {ticketOptions['Club 54'].map((ticketOption) => {
+                    const ticketKey = `Club 54-${ticketOption}`;
+                    return (
                     <div key={ticketOption} className="mb-4">
                       {/* Ticket Header Row */}
                       <div className="mx-2 my-2 px-2 py-3 flex items-center">
-                        {/* Left: Icon + Name - Flexible */}
+                        {/* Left: Chevron + Icon + Name - Flexible */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
+                            <div 
+                              className="w-[18px] h-[18px] flex items-center justify-center cursor-pointer flex-shrink-0"
+                              onClick={() => toggleTicketCollapse(ticketKey)}
+                            >
+                              <img 
+                                src={ICON_ANGLE_DOWN} 
+                                alt="" 
+                                className={`w-[15px] h-[9px] transition-transform duration-200 ${collapsedTickets[ticketKey] ? '-rotate-90' : ''}`} 
+                              />
+                            </div>
                             <div className="w-[18px] h-[18px] flex items-center justify-center">
                               <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
                             </div>
@@ -775,7 +795,7 @@ export default function QuotaManagement() {
                           </div>
                           <button 
                             onClick={() => handleAddQuota('Club 54', ticketOption)}
-                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer ml-[26px]"
+                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer ml-[44px]"
                           >
                             + Add quota
                           </button>
@@ -796,6 +816,8 @@ export default function QuotaManagement() {
                         </div>
                       </div>
 
+                      {/* Collapsible Quotas Section */}
+                      <div className={`transition-all duration-200 ease-out ${collapsedTickets[ticketKey] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
                       {/* Render Ticket-Level Quotas */}
                       {getTicketLevelQuotas('Club 54', ticketOption).map((quota) => {
                         const isBlocked = quota.type === 'Blocked';
@@ -920,8 +942,10 @@ export default function QuotaManagement() {
                           </div>
                         );
                       })}
+                      </div>
                     </div>
-                  ))}
+                    );
+                  })}
                   </div>
                 </>
               )}
@@ -1144,13 +1168,25 @@ export default function QuotaManagement() {
                   <div className="pl-6">
 
                   {/* Render each ticket type */}
-                  {ticketOptions['Fanstand'].map((ticketOption) => (
+                  {ticketOptions['Fanstand'].map((ticketOption) => {
+                    const ticketKey = `Fanstand-${ticketOption}`;
+                    return (
                     <div key={ticketOption} className="mb-4">
                       {/* Ticket Header Row */}
                       <div className="mx-2 my-2 px-2 py-3 flex items-center">
-                        {/* Left: Icon + Name - Flexible */}
+                        {/* Left: Chevron + Icon + Name - Flexible */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
+                            <div 
+                              className="w-[18px] h-[18px] flex items-center justify-center cursor-pointer flex-shrink-0"
+                              onClick={() => toggleTicketCollapse(ticketKey)}
+                            >
+                              <img 
+                                src={ICON_ANGLE_DOWN} 
+                                alt="" 
+                                className={`w-[15px] h-[9px] transition-transform duration-200 ${collapsedTickets[ticketKey] ? '-rotate-90' : ''}`} 
+                              />
+                            </div>
                             <div className="w-[18px] h-[18px] flex items-center justify-center">
                               <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
                             </div>
@@ -1158,7 +1194,7 @@ export default function QuotaManagement() {
                           </div>
                           <button 
                             onClick={() => handleAddQuota('Fanstand', ticketOption)}
-                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer ml-[26px]"
+                            className="text-primary-active text-sm font-semibold hover:underline cursor-pointer ml-[44px]"
                           >
                             + Add quota
                           </button>
@@ -1179,6 +1215,8 @@ export default function QuotaManagement() {
                         </div>
                       </div>
 
+                      {/* Collapsible Quotas Section */}
+                      <div className={`transition-all duration-200 ease-out ${collapsedTickets[ticketKey] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
                       {/* Render Ticket-Level Quotas */}
                       {getTicketLevelQuotas('Fanstand', ticketOption).map((quota) => {
                         const isBlocked = quota.type === 'Blocked';
@@ -1303,8 +1341,10 @@ export default function QuotaManagement() {
                           </div>
                         );
                       })}
+                      </div>
                     </div>
-                  ))}
+                    );
+                  })}
                   </div>
                 </>
               )}
