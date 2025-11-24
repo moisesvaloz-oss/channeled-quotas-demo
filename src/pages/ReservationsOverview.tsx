@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 
@@ -8,6 +8,9 @@ const ICON_SEARCH = '/icons/search.svg';
 const ICON_CHEVRON_DOWN = '/icons/chevron-down.svg';
 const ICON_INFO = '/icons/info.svg';
 const ICON_CLOSE = '/icons/close.svg';
+const ICON_CHECK = '/icons/check.svg';
+
+const STATUS_OPTIONS = ['To be paid', 'Paid', 'Cancelled', 'Expired'];
 
 export default function ReservationsOverview() {
   const [showGuideBanner, setShowGuideBanner] = useState(true);
@@ -15,6 +18,42 @@ export default function ReservationsOverview() {
   const [selectedVenue, setSelectedVenue] = useState('Bolingbrook Golf Club');
   const [globalSearch, setGlobalSearch] = useState('LIV Golf Chicago 2025');
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Status Dropdown State
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>(['To be paid', 'Paid']);
+  const [statusSearchQuery, setStatusSearchQuery] = useState('');
+  const statusDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target as Node)) {
+        setIsStatusDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const toggleStatus = (status: string) => {
+    setSelectedStatuses(prev => 
+      prev.includes(status) 
+        ? prev.filter(s => s !== status)
+        : [...prev, status]
+    );
+  };
+
+  const filteredStatusOptions = STATUS_OPTIONS.filter(status => 
+    status.toLowerCase().includes(statusSearchQuery.toLowerCase())
+  );
+
+  const getStatusLabel = () => {
+    if (selectedStatuses.length === 0) return 'Select status';
+    if (selectedStatuses.length === STATUS_OPTIONS.length) return 'All statuses';
+    return selectedStatuses.join(', ');
+  };
 
   return (
     <div className="h-screen flex flex-col bg-neutral-50">
@@ -72,7 +111,7 @@ export default function ReservationsOverview() {
 
           {/* Main Content Area - Matching QuotaManagement padding and shadow EXACTLY */}
           <div className="p-4">
-            <div className="bg-white rounded-lg shadow-[0px_6px_6px_0px_rgba(0,70,121,0.2)] p-6 min-h-[600px] flex flex-col">
+            <div className="bg-white rounded-lg shadow-[0px_6px_6px_0px_rgba(0,70,121,0.2)] p-6 min-h-[600px] flex flex-col overflow-visible">
                 
                 {/* Header Section */}
                 <div className="flex items-center justify-between mb-6">
@@ -83,7 +122,7 @@ export default function ReservationsOverview() {
                 </div>
 
                 {/* Filters Bar */}
-                <div className="flex items-center gap-4 mb-6">
+                <div className="flex items-center gap-4 mb-6 relative z-20">
                   {/* Date Filter - Dark Blue Pill Button */}
                   <button className="h-10 flex items-center gap-2 bg-background-contrast text-white px-4 rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
                     <span>Next 3 months</span>
@@ -104,10 +143,73 @@ export default function ReservationsOverview() {
                     </div>
                   </div>
 
-                  {/* Status Dropdown */}
-                  <div className="w-48 h-10 px-3 rounded-lg bg-neutral-100 flex items-center justify-between cursor-pointer hover:bg-neutral-200 transition-colors">
-                      <span className="text-text-subtle text-sm">To be paid, Paid</span>
-                      <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle" />
+                  {/* Status Dropdown - Multi-select */}
+                  <div className="relative w-48" ref={statusDropdownRef}>
+                    <div 
+                      onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+                      className={`w-full h-10 px-3 rounded-lg flex items-center justify-between cursor-pointer transition-colors ${
+                        isStatusDropdownOpen 
+                          ? 'bg-white border border-action-primary ring-1 ring-action-primary' 
+                          : 'bg-neutral-100 hover:bg-neutral-200'
+                      }`}
+                    >
+                        <div className="flex flex-col justify-center truncate pr-2">
+                           {/* When open, it shows Label + Search (in menu) - Wait, screenshot shows input IN menu. Button shows Label? 
+                               Screenshot: "To be paid, Paid" in the button. 
+                               If selected, show value. 
+                               If open, button still shows value?
+                               Screenshot of OPEN state:
+                               The button becomes part of the card? 
+                               Actually, the screenshot shows the dropdown menu OVERLAPPING the button or replacing it visually?
+                               It looks like a standard dropdown menu attached to the button.
+                               The button text is "To be paid, Paid".
+                           */}
+                           <span className="text-text-subtle text-sm truncate">{getStatusLabel()}</span>
+                        </div>
+                        <img 
+                          src={ICON_CHEVRON_DOWN} 
+                          alt="" 
+                          className={`w-3 h-1.5 text-text-subtle transition-transform duration-200 ${isStatusDropdownOpen ? 'rotate-180' : ''}`} 
+                        />
+                    </div>
+
+                    {/* Dropdown Menu */}
+                    {isStatusDropdownOpen && (
+                      <div className="absolute top-full left-0 w-[240px] mt-1 bg-white rounded-lg shadow-lg border border-border-main py-2 z-50">
+                        {/* Search inside dropdown */}
+                        <div className="px-3 pb-2 border-b border-border-main mb-2">
+                           <input
+                            type="text"
+                            value={statusSearchQuery}
+                            onChange={(e) => setStatusSearchQuery(e.target.value)}
+                            className="w-full text-sm border-none p-0 focus:ring-0 placeholder:text-text-subtle text-text-main"
+                            placeholder="Search"
+                            autoFocus
+                          />
+                        </div>
+                        
+                        {/* Options */}
+                        <div className="max-h-[200px] overflow-y-auto">
+                          {filteredStatusOptions.map(status => {
+                            const isSelected = selectedStatuses.includes(status);
+                            return (
+                              <div 
+                                key={status}
+                                onClick={() => toggleStatus(status)}
+                                className={`px-3 py-2 flex items-center gap-3 cursor-pointer hover:bg-neutral-50 ${isSelected ? 'bg-[#EEF7FC]' : ''}`}
+                              >
+                                <div className={`w-4 h-4 rounded-[4px] border flex items-center justify-center transition-colors ${
+                                  isSelected ? 'bg-action-primary border-action-primary' : 'bg-white border-border-main'
+                                }`}>
+                                  {isSelected && <img src={ICON_CHECK} alt="" className="w-2.5 h-2.5 invert" />}
+                                </div>
+                                <span className="text-sm text-text-main">{status}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Business Type Dropdown */}
@@ -118,7 +220,7 @@ export default function ReservationsOverview() {
                 </div>
 
                 {/* Results Count & Actions */}
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-3 mb-4 relative z-10">
                   <span className="text-sm font-semibold text-text-main">0 reservations with the filters applied</span>
                   <button className="p-1.5 hover:bg-neutral-100 rounded transition-colors">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -130,7 +232,7 @@ export default function ReservationsOverview() {
                 </div>
 
                 {/* Main Table Area - Matching Businesses style */}
-                <div className="w-full rounded-lg overflow-hidden border border-border-main flex flex-col flex-1">
+                <div className="w-full rounded-lg overflow-hidden border border-border-main flex flex-col flex-1 relative z-0">
                    {/* Table Header */}
                    <div className="bg-neutral-75 px-4 py-3 grid grid-cols-[auto_1fr_1fr_auto_1fr_auto_auto_auto_auto] gap-4 text-sm font-semibold text-text-subtle items-center border-b border-border-main">
                       <div className="flex items-center gap-1 cursor-pointer hover:text-text-main">
