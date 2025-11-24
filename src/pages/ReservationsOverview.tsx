@@ -55,17 +55,17 @@ export default function ReservationsOverview() {
                  </svg>
               </div>
 
-              {/* Venue Dropdown */}
-              <div className="bg-white border border-border-main rounded-sm h-14 px-3 flex flex-col justify-center relative flex-1 max-w-[386px] cursor-pointer">
+              {/* Venue Dropdown - Narrower width */}
+              <div className="bg-white border border-border-main rounded-sm h-14 px-3 flex flex-col justify-center relative w-[240px] cursor-pointer flex-none">
                 <label className="text-text-subtle text-xs font-semibold absolute top-0 left-3">Venue</label>
-                <div className="pt-4 text-text-main text-base">{selectedVenue}</div>
+                <div className="pt-4 text-text-main text-base truncate pr-4">{selectedVenue}</div>
                 <svg className="absolute right-3 top-[18px] w-5 h-5 text-text-main" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
               </div>
 
-              {/* Show Button - Styled as Pill Button per screenshot */}
-              <button className="h-14 px-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-text-subtle font-semibold text-base transition-colors whitespace-nowrap border-none">
+              {/* Show Button - Outlined and Wider */}
+              <button className="h-14 w-[200px] rounded-full bg-transparent border-2 border-white text-white font-semibold text-base hover:bg-white/10 transition-colors whitespace-nowrap flex-none">
                 Show
               </button>
             </div>
