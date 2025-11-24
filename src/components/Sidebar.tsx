@@ -1,9 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 export default function Sidebar() {
   const [reservationsOpen, setReservationsOpen] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname.includes('businesses') || location.pathname.includes('reservations')) {
+      setReservationsOpen(true);
+    }
+  }, [location.pathname]);
 
   const menuItems = [
     { name: 'Events List', path: '/', active: false },
@@ -37,6 +43,8 @@ export default function Sidebar() {
     { name: 'Rules', path: '/reservations/rules' },
     { name: 'Businesses', path: '/businesses' },
   ];
+
+  const isReservationsActive = location.pathname.includes('businesses') || location.pathname.includes('reservations');
 
   return (
     <div className="w-sidebar bg-background-contrast border-r border-border-contrast h-full flex flex-col">
@@ -76,7 +84,7 @@ export default function Sidebar() {
           {/* Reservations with submenu */}
           <div className="flex flex-col">
             <div 
-              className={`px-3 h-10 flex items-center gap-1 rounded-sm cursor-pointer ${reservationsOpen || location.pathname.includes('businesses') ? 'bg-background-secondary' : ''}`}
+              className={`px-3 h-10 flex items-center gap-1 rounded-sm cursor-pointer ${isReservationsActive ? 'bg-background-secondary' : ''}`}
               onClick={() => setReservationsOpen(!reservationsOpen)}
             >
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
