@@ -172,7 +172,7 @@ export default function ReservationsOverview() {
                             type="text"
                             value={statusSearchQuery}
                             onChange={(e) => setStatusSearchQuery(e.target.value)}
-                            className="w-full text-sm border-none p-0 focus:ring-0 placeholder:text-text-subtle text-text-main"
+                            className="w-full text-sm border border-text-main rounded-sm px-2 py-1 focus:ring-0 placeholder:text-text-subtle text-text-main"
                             placeholder="Search"
                             autoFocus
                           />
