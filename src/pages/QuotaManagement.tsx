@@ -1991,9 +1991,8 @@ export default function QuotaManagement() {
         </div>
           </div>
         </div>
+        <Footer />
       </div>
-
-      <Footer />
 
        {/* Add Quota Drawer */}
        <AddQuotaDrawer
