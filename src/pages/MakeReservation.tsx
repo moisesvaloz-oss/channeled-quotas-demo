@@ -39,8 +39,7 @@ export default function MakeReservation() {
 
   const handleContinue = () => {
     if (selectedBusinessId) {
-      // TODO: Navigate to next step
-      console.log('Continuing with business:', selectedBusinessId);
+      navigate('/reservations/create/event');
     }
   };
 
