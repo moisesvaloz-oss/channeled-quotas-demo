@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
+import { useCartStore } from '../stores/cartStore';
 
 const ICON_CALENDAR = '/icons/calendar.svg';
 const ICON_CHEVRON_UP = '/icons/angle-down.svg'; // Rotation needed
 
 export default function TicketSelection() {
   const navigate = useNavigate();
+  const { addItem, clearCart } = useCartStore();
   
   const [selectedDate, setSelectedDate] = useState('Sat 8 Aug');
   const [selectedTime, setSelectedTime] = useState('9:00');
@@ -28,15 +30,15 @@ export default function TicketSelection() {
     {
       name: 'Fanstand',
       tickets: [
-        { id: 'fanstand-fri', name: 'Fanstand | Friday (June 26)', price: 45.00, available: 9919 },
-        { id: 'fanstand-3day', name: 'Fanstand | 3 days pass', price: 120.00, available: 500 }
+        { id: 'fanstand-fri', name: 'Fanstand | Friday (June 26)', price: 287.00, available: 9919 },
+        { id: 'fanstand-3day', name: 'Fanstand | 3 days pass', price: 680.00, available: 500 }
       ]
     },
     {
       name: 'Club 54',
       tickets: [
-        { id: 'club54-fri', name: 'Club 54 | Friday (June 26)', price: 250.00, available: 100 },
-        { id: 'club54-3day', name: 'Club 54 | 3 days pass', price: 600.00, available: 50 }
+        { id: 'club54-fri', name: 'Club 54 | Friday (June 26)', price: 1031.00, available: 100 },
+        { id: 'club54-3day', name: 'Club 54 | 3 days pass', price: 2890.00, available: 50 }
       ]
     }
   ];
@@ -304,7 +306,32 @@ export default function TicketSelection() {
 
                   {/* Add to Cart Button */}
                   <button 
-                      onClick={() => totalTickets > 0 && navigate('/reservations/create/checkout')}
+                      onClick={() => {
+                        if (totalTickets > 0) {
+                          // Clear cart first
+                          clearCart();
+                          
+                          // Add each selected ticket to cart
+                          ticketSections.forEach(section => {
+                            section.tickets.forEach(ticket => {
+                              const count = ticketCounts[ticket.id] || 0;
+                              if (count > 0) {
+                                addItem({
+                                  id: ticket.id,
+                                  ticketName: ticket.name,
+                                  date: selectedDate,
+                                  time: selectedTime,
+                                  quantity: count,
+                                  price: ticket.price,
+                                  bookingFee: 0.00
+                                });
+                              }
+                            });
+                          });
+                          
+                          navigate('/reservations/create/checkout');
+                        }
+                      }}
                       className={`w-full py-3 rounded-lg text-sm font-bold transition-colors ${
                           totalTickets > 0 
                               ? 'bg-action-primary text-white hover:bg-action-primary-hover' 

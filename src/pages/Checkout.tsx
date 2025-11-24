@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
+import { useCartStore } from '../stores/cartStore';
 
 export default function Checkout() {
   const navigate = useNavigate();
+  const { items: cartItems, clearCart, getTotal } = useCartStore();
   
   const [email, setEmail] = useState('mvaloz@feverup.com');
   const [firstName, setFirstName] = useState('Gabriel');
@@ -14,18 +16,7 @@ export default function Checkout() {
   const [acceptContact, setAcceptContact] = useState(true);
   const [overridePrice, setOverridePrice] = useState(false);
 
-  // Mock cart data
-  const cartItems = [
-    {
-      date: '8 Aug 2026 - 09:00',
-      ticket: 'Grounds Pass | Friday (August 8)',
-      quantity: 1,
-      price: 45.00,
-      bookingFee: 0.00
-    }
-  ];
-
-  const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+  const total = getTotal();
 
   return (
     <div className="h-screen flex flex-col bg-neutral-50">
@@ -80,38 +71,47 @@ export default function Checkout() {
                   <div className="bg-white rounded-lg border border-border-main p-6">
                     <div className="flex justify-between items-center mb-6">
                       <h2 className="text-xl font-semibold text-text-main">Cart</h2>
-                      <button className="text-primary-active text-sm font-semibold hover:underline">
+                      <button 
+                        onClick={clearCart}
+                        className="text-primary-active text-sm font-semibold hover:underline"
+                      >
                         Clear all
                       </button>
                     </div>
 
                     {/* Cart Items */}
-                    {cartItems.map((item, index) => (
-                      <div key={index} className="mb-6">
-                        <div className="text-sm font-semibold text-text-main mb-3">
-                          {item.date}
-                        </div>
-                        
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <div className="text-sm text-text-main mb-1">
-                              {item.quantity}x &nbsp; {item.ticket}
-                            </div>
-                            <div className="text-xs text-text-subtle">
-                              Booking fee per ticket: ${item.bookingFee.toFixed(2)}
-                            </div>
-                          </div>
-                          <div className="flex flex-col items-end gap-1">
-                            <div className="text-base font-semibold text-text-main">
-                              ${item.price.toFixed(2)}
-                            </div>
-                            <div className="text-xs text-text-subtle">
-                              ${item.bookingFee.toFixed(2)}
-                            </div>
-                          </div>
-                        </div>
+                    {cartItems.length === 0 ? (
+                      <div className="text-center py-8 text-text-subtle">
+                        Your cart is empty
                       </div>
-                    ))}
+                    ) : (
+                      cartItems.map((item, index) => (
+                        <div key={index} className="mb-6">
+                          <div className="text-sm font-semibold text-text-main mb-3">
+                            {item.date} - {item.time}
+                          </div>
+                          
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="text-sm text-text-main mb-1">
+                                {item.quantity}x &nbsp; {item.ticketName}
+                              </div>
+                              <div className="text-xs text-text-subtle">
+                                Booking fee per ticket: ${item.bookingFee.toFixed(2)}
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-end gap-1">
+                              <div className="text-base font-semibold text-text-main">
+                                ${(item.price * item.quantity).toFixed(2)}
+                              </div>
+                              <div className="text-xs text-text-subtle">
+                                ${(item.bookingFee * item.quantity).toFixed(2)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
 
                     {/* Override Booking Price */}
                     <div className="border-t border-border-main pt-6 mb-6">
