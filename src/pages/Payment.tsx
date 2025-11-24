@@ -10,6 +10,8 @@ export default function Payment() {
   
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('bank-card');
   const [cardNumber, setCardNumber] = useState('');
+  const [markAsPaidMethod, setMarkAsPaidMethod] = useState('card');
+  const [paymentDetails, setPaymentDetails] = useState('');
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   const total = getTotal();
@@ -333,6 +335,106 @@ export default function Payment() {
                     </label>
                   </div>
 
+                  {/* Mark as Paid Options (only shown for mark-paid) */}
+                  {selectedPaymentMethod === 'mark-paid' && (
+                    <div className="mb-6">
+                      <p className="text-sm text-text-main mb-3">
+                        Select how the payment was received.
+                      </p>
+                      <p className="text-sm text-text-main mb-4">
+                        Fever is not responsible for manually processed payments.
+                      </p>
+
+                      {/* Payment Method Buttons */}
+                      <div className="grid grid-cols-4 gap-3 mb-6">
+                        {/* Card */}
+                        <button
+                          onClick={() => setMarkAsPaidMethod('card')}
+                          className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-colors ${
+                            markAsPaidMethod === 'card'
+                              ? 'bg-[#a8f5e8] border-[#a8f5e8]'
+                              : 'bg-neutral-50 border-border-main hover:border-text-subtle'
+                          }`}
+                        >
+                          <svg width="32" height="24" viewBox="0 0 32 24" fill="none" className="text-text-main">
+                            <rect x="1" y="1" width="30" height="22" rx="2" stroke="currentColor" strokeWidth="2"/>
+                            <rect x="1" y="6" width="30" height="4" fill="currentColor"/>
+                            <rect x="4" y="14" width="8" height="2" fill="currentColor"/>
+                          </svg>
+                          <span className="text-sm font-semibold text-text-main">Card</span>
+                        </button>
+
+                        {/* Cash */}
+                        <button
+                          onClick={() => setMarkAsPaidMethod('cash')}
+                          className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-colors ${
+                            markAsPaidMethod === 'cash'
+                              ? 'bg-[#a8f5e8] border-[#a8f5e8]'
+                              : 'bg-neutral-50 border-border-main hover:border-text-subtle'
+                          }`}
+                        >
+                          <svg width="32" height="24" viewBox="0 0 32 24" fill="none" className="text-text-main">
+                            <rect x="2" y="4" width="28" height="16" rx="1" stroke="currentColor" strokeWidth="2"/>
+                            <rect x="6" y="8" width="4" height="8" fill="currentColor"/>
+                            <rect x="12" y="8" width="4" height="8" fill="currentColor"/>
+                            <rect x="18" y="8" width="4" height="8" fill="currentColor"/>
+                          </svg>
+                          <span className="text-sm font-semibold text-text-main">Cash</span>
+                        </button>
+
+                        {/* Bank Transfer */}
+                        <button
+                          onClick={() => setMarkAsPaidMethod('bank-transfer')}
+                          className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-colors ${
+                            markAsPaidMethod === 'bank-transfer'
+                              ? 'bg-[#a8f5e8] border-[#a8f5e8]'
+                              : 'bg-neutral-50 border-border-main hover:border-text-subtle'
+                          }`}
+                        >
+                          <svg width="32" height="24" viewBox="0 0 32 24" fill="none" className="text-text-main">
+                            <rect x="1" y="1" width="30" height="22" rx="2" stroke="currentColor" strokeWidth="2"/>
+                            <path d="M6 8h10M6 12h8M6 16h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
+                          <span className="text-sm font-semibold text-text-main">Bank Transfer</span>
+                        </button>
+
+                        {/* Fever Bank Transfer */}
+                        <button
+                          onClick={() => setMarkAsPaidMethod('fever-bank-transfer')}
+                          className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-colors ${
+                            markAsPaidMethod === 'fever-bank-transfer'
+                              ? 'bg-[#a8f5e8] border-[#a8f5e8]'
+                              : 'bg-neutral-50 border-border-main hover:border-text-subtle'
+                          }`}
+                        >
+                          <svg width="32" height="24" viewBox="0 0 32 24" fill="none" className="text-text-main">
+                            <rect x="1" y="1" width="30" height="22" rx="2" stroke="currentColor" strokeWidth="2"/>
+                            <path d="M6 8h10M6 12h8M6 16h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                            <text x="24" y="18" fontSize="10" fontWeight="bold" fill="currentColor">F</text>
+                          </svg>
+                          <span className="text-sm font-semibold text-text-main text-center">fever<br/>Bank transfer</span>
+                        </button>
+                      </div>
+
+                      {/* Payment Details Textarea */}
+                      <div>
+                        <label className="block text-sm font-semibold text-text-main mb-2">
+                          Payment Details
+                        </label>
+                        <textarea
+                          value={paymentDetails}
+                          onChange={(e) => setPaymentDetails(e.target.value)}
+                          placeholder="Add payment details (e.g., date, reference, amount). Details will be stored with the transaction."
+                          rows={4}
+                          className="w-full px-3 py-2 rounded-lg border border-border-main text-sm resize-none focus:outline-none focus:border-primary-main focus:ring-1 focus:ring-primary-main"
+                        />
+                        <p className="text-xs text-text-subtle mt-2">
+                          Add payment details (e.g., date, reference, amount). Details will be stored with the transaction.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Card Input (only shown for bank-card) */}
                   {selectedPaymentMethod === 'bank-card' && (
                     <div className="mb-6">
@@ -391,7 +493,7 @@ export default function Payment() {
                       onClick={handlePayment}
                       className="flex-1 h-12 rounded-full bg-action-primary text-white font-semibold hover:bg-action-primary-hover transition-colors"
                     >
-                      Pay
+                      {selectedPaymentMethod === 'mark-paid' ? 'Mark as paid' : 'Pay'}
                     </button>
                   </div>
                 </div>
