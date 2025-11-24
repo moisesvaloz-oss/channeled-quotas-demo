@@ -173,7 +173,7 @@ export default function TicketSelection() {
                                 }`}
                             >
                                 {isSelected && (
-                                  <div className="absolute top-0 right-0 w-4 h-4 bg-primary-main" style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)' }}></div>
+                                  <div className="absolute top-[1px] right-[1px] w-3.5 h-3.5 bg-primary-main rounded-tr-[5px]" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%)' }}></div>
                                 )}
                                 <div className={`text-xs font-semibold ${isSelected ? 'text-primary-main' : ''}`}>{d.day}</div>
                                 <div className={`text-sm ${isSelected ? 'text-primary-main font-bold' : ''}`}>{d.date}</div>
@@ -206,7 +206,7 @@ export default function TicketSelection() {
                         }`}
                     >
                         {selectedTime === '9:00' && (
-                          <div className="absolute top-0 right-0 w-3 h-3 bg-primary-main" style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)' }}></div>
+                          <div className="absolute top-[1px] right-[1px] w-3.5 h-3.5 bg-primary-main rounded-tr-[5px]" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%)' }}></div>
                         )}
                         9:00
                     </button>
@@ -231,9 +231,9 @@ export default function TicketSelection() {
                                             : 'border-border-main text-text-subtle hover:border-text-subtle'
                                     }`}
                                 >
-                                    {isSelected && (
-                                      <div className="absolute top-0 right-0 w-3 h-3 bg-primary-main" style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)' }}></div>
-                                    )}
+                                {isSelected && (
+                                  <div className="absolute top-[1px] right-[1px] w-3.5 h-3.5 bg-primary-main rounded-tr-[5px]" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%)' }}></div>
+                                )}
                                     {section.name}
                                 </button>
                               );
