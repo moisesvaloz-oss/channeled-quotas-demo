@@ -24,7 +24,7 @@ export default function Footer() {
             <div className="flex flex-col gap-2">
               <h3 className="font-bold mb-2">Partners' support contact</h3>
               <a href="tel:(667) 244-3490" className="text-white hover:underline">(667) 244-3490</a>
-              <span className="text-text-subtle">Monday to Friday (08:00 - 20:30)</span>
+              <span className="text-white">Monday to Friday (08:00 - 20:30)</span>
               <a href="#" className="text-white hover:underline">Send us a message</a>
             </div>
           </div>
