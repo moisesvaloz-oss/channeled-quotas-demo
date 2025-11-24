@@ -17,61 +17,79 @@ export default function ReservationsOverview() {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
-    <div className="h-screen flex flex-col bg-background-main">
+    <div className="h-screen flex flex-col bg-neutral-50">
       <Header />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 overflow-auto flex flex-col bg-neutral-50">
-          {/* Hero Section - Refined to match screenshot */}
+        <div className="flex-1 overflow-auto">
+          {/* Hero Section - EXACT copy of QuotaManagement style */}
           <div className="bg-background-contrast p-6">
-            <div className="mb-3">
-              <h1 className="text-white text-lg font-bold">Reservations</h1>
+            <div className="mb-4">
+              <p className="text-neutral-100 text-base">Reservations</p>
+              <h1 className="text-white text-2xl font-semibold">Overview</h1>
             </div>
-            <div className="flex gap-4 items-end">
+            <div className="flex gap-6">
               {/* City Dropdown */}
-              <div className="bg-white rounded h-10 px-3 flex items-center justify-between cursor-pointer w-[200px]">
-                <span className="text-text-main text-sm">{selectedCity}</span>
-                <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle" />
+              <div className="bg-white border border-border-main rounded-sm h-14 px-3 flex flex-col justify-center relative flex-1 max-w-[386px] cursor-pointer">
+                <label className="text-text-subtle text-xs font-semibold absolute top-0 left-3">City</label>
+                <div className="pt-4 text-text-main text-base">{selectedCity}</div>
+                <svg className="absolute right-3 top-[18px] w-5 h-5 text-text-main" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
               </div>
 
-              {/* Global Search - Event Input */}
-              <div className="bg-white rounded h-10 px-3 flex items-center justify-between flex-1">
-                 <input
-                  type="text"
-                  value={globalSearch}
-                  onChange={(e) => setGlobalSearch(e.target.value)}
-                  className="w-full h-full bg-transparent border-none text-sm text-text-main placeholder:text-text-subtle focus:ring-0 p-0"
-                  placeholder="Select a city and search for an event"
-                />
-                <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle ml-2 flex-shrink-0" />
+              {/* Global Search */}
+              <div className="bg-white border border-border-main rounded-sm h-14 px-3 flex flex-col justify-center relative flex-1">
+                 <label className="text-text-subtle text-xs font-semibold absolute top-0 left-3">Search or type event</label>
+                 <div className="pt-4 flex items-center w-full">
+                   <input
+                    type="text"
+                    value={globalSearch}
+                    onChange={(e) => setGlobalSearch(e.target.value)}
+                    className="w-full h-full bg-transparent border-none text-base text-text-main placeholder:text-transparent focus:ring-0 p-0"
+                    placeholder="Search or type event"
+                  />
+                 </div>
+                 <svg className="absolute right-3 top-[18px] w-5 h-5 text-text-main pointer-events-none" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                 </svg>
               </div>
 
               {/* Venue Dropdown */}
-              <div className="bg-white rounded h-10 px-3 flex items-center justify-between cursor-pointer w-[200px]">
-                <span className="text-text-main text-sm">{selectedVenue}</span>
-                <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle" />
+              <div className="bg-white border border-border-main rounded-sm h-14 px-3 flex flex-col justify-center relative flex-1 max-w-[386px] cursor-pointer">
+                <label className="text-text-subtle text-xs font-semibold absolute top-0 left-3">Venue</label>
+                <div className="pt-4 text-text-main text-base">{selectedVenue}</div>
+                <svg className="absolute right-3 top-[18px] w-5 h-5 text-text-main" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
               </div>
 
-              {/* Show Button */}
-              <button className="bg-neutral-100 hover:bg-neutral-200 text-text-main px-8 h-10 rounded font-semibold text-sm transition-colors">
+              {/* Show Button - Added to the right */}
+              <button className="bg-neutral-100 hover:bg-neutral-200 text-text-main px-8 h-14 rounded-sm font-semibold text-sm transition-colors border border-transparent whitespace-nowrap">
                 Show
               </button>
             </div>
           </div>
 
-          {/* Main Content Area - Matching Businesses padding */}
-          <div className="p-8">
-            <div className="bg-white rounded-lg shadow-sm border border-border-main p-6 min-h-[600px] flex flex-col">
+          {/* Main Content Area - Matching QuotaManagement padding and shadow EXACTLY */}
+          <div className="p-4">
+            <div className="bg-white rounded-lg shadow-[0px_6px_6px_0px_rgba(0,70,121,0.2)] p-6 min-h-[600px] flex flex-col">
                 
                 {/* Header Section */}
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-text-main">Reservations Overview</h2>
+                  <h2 className="text-2xl font-bold text-text-main">Reservations Overview</h2>
                   <button className="bg-action-primary hover:bg-action-primary-hover text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-colors">
                     Make a reservation
                   </button>
                 </div>
 
-                {/* Filters Bar - Refined to match screenshot (Light Grey, No Borders, Slimmer) */}
+                {/* Filters Bar - Kept visually consistent with previous feedback (light grey, h-10) or revert to QuotaManagement style?
+                    User said "styling is all off like a cheap knockoff" about the previous version.
+                    BUT "Businesses" style was p-8.
+                    Now I'm using QuotaManagement structure (p-4).
+                    I will keep the inner filters matching the "Businesses" / refined style (h-10, bg-neutral-100) as that seemed to be the direction for the *content* area in the screenshot.
+                    The screenshot showed the hero inputs as white and the content filters as grey.
+                */}
                 <div className="flex items-center gap-4 mb-6">
                   {/* Date Filter - Black Pill Button */}
                   <button className="h-10 flex items-center gap-2 bg-neutral-900 text-white px-4 rounded-md text-sm font-medium hover:bg-neutral-800 transition-colors">
@@ -176,7 +194,7 @@ export default function ReservationsOverview() {
               </button>
             </div>
           )}
-        </main>
+        </div>
       </div>
     </div>
   );
