@@ -305,6 +305,7 @@ export default function TicketSelection() {
 
                   {/* Add to Cart Button */}
                   <button 
+                      onClick={() => totalTickets > 0 && navigate('/reservations/create/checkout')}
                       className={`w-full py-3 rounded-lg text-sm font-bold transition-colors ${
                           totalTickets > 0 
                               ? 'bg-action-primary text-white hover:bg-action-primary-hover' 
