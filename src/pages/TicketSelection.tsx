@@ -17,7 +17,6 @@ export default function TicketSelection() {
   const [selectedTicketType, setSelectedTicketType] = useState('Grounds Pass');
   const [ticketCount, setTicketCount] = useState(0);
   const [selectedTab, setSelectedTab] = useState('Fanstand');
-  const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
 
   const tabs = ['Fanstand', 'Birdie Shack', 'Birdie Shack Loge Box', 'Club 54', 'LIV Premium - All Access Hospitality', 'Suite on 18'];
   
@@ -116,28 +115,7 @@ export default function TicketSelection() {
                     </div>
                   </div>
 
-                  {/* Event Description Accordion */}
-                  <div className="border-b border-border-main">
-                    <button 
-                      onClick={() => setIsDescriptionOpen(!isDescriptionOpen)}
-                      className="w-full flex items-center justify-between py-3 text-sm font-bold text-text-main hover:bg-neutral-50 transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        <img src={ICON_INFO} alt="" className="w-4 h-4" />
-                        <span>Event description</span>
-                      </div>
-                      <img 
-                        src={ICON_CHEVRON_UP} 
-                        alt="" 
-                        className={`w-3 h-3 text-text-main transition-transform duration-200 ${isDescriptionOpen ? 'rotate-180' : ''}`} 
-                      />
-                    </button>
-                    {isDescriptionOpen && (
-                      <div className="pb-4 text-sm text-text-subtle">
-                        Join us for LIV Golf Chicago 2026 at Bolingbrook Golf Club. Experience world-class golf and entertainment.
-                      </div>
-                    )}
-                  </div>
+                  {/* Event Description Accordion - Removed as per request (mobile only) */}
 
                   {/* Date & hour */}
                   <div>
