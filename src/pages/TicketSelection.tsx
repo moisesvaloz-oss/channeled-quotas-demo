@@ -255,38 +255,38 @@ export default function TicketSelection() {
                                    <div className="absolute bottom-[-6px] left-[-6px] w-3 h-3 bg-neutral-50 rounded-full border border-border-main z-20"></div>
                                 </div>
                                 
-                                {/* Counter (Right) */}
-                                <div className="w-[180px] flex items-center justify-center p-4 bg-white z-0">
-                                    <div className="flex items-center gap-3">
-                                        {/* Minus Button */}
-                                        <button 
-                                            onClick={() => updateTicketCount(ticket.id, -1)}
-                                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-                                                count > 0 ? 'bg-neutral-100 hover:bg-neutral-200 text-text-main' : 'bg-neutral-50 text-border-main cursor-not-allowed'
-                                            }`}
-                                            disabled={count === 0}
-                                        >
-                                            <svg width="12" height="2" viewBox="0 0 10 2" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M0 1H10" stroke="currentColor" strokeWidth="1.5"/>
-                                            </svg>
-                                        </button>
-                                        
-                                        {/* Count Display Box */}
-                                        <div className="w-12 h-12 border border-border-main rounded-lg flex items-center justify-center bg-white text-base font-medium text-text-main">
-                                          {count}
-                                        </div>
-                                        
-                                        {/* Plus Button */}
-                                        <button 
-                                            onClick={() => updateTicketCount(ticket.id, 1)}
-                                            className="w-10 h-10 rounded-full bg-primary-main hover:bg-primary-active flex items-center justify-center text-white transition-colors"
-                                        >
-                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                              <path d="M6 0V12M0 6H12" stroke="currentColor" strokeWidth="1.5"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
+                                      {/* Counter (Right) */}
+                                      <div className="w-[180px] flex items-center justify-center p-4 bg-white z-0">
+                                          <div className="flex items-center gap-3">
+                                              {/* Minus Button */}
+                                              <button 
+                                                  onClick={() => updateTicketCount(ticket.id, -1)}
+                                                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                                                      count > 0 ? 'bg-[#e6f4ff] text-[#0079ca] hover:bg-[#dbefff]' : 'bg-neutral-50 text-border-main cursor-not-allowed'
+                                                  }`}
+                                                  disabled={count === 0}
+                                              >
+                                                  <svg width="10" height="2" viewBox="0 0 10 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                      <path d="M0 1H10" stroke="currentColor" strokeWidth="1.5"/>
+                                                  </svg>
+                                              </button>
+                                              
+                                              {/* Count Display Box - Removed border */}
+                                              <div className="w-8 h-8 flex items-center justify-center bg-transparent text-base font-medium text-text-main">
+                                                {count}
+                                              </div>
+                                              
+                                              {/* Plus Button */}
+                                              <button 
+                                                  onClick={() => updateTicketCount(ticket.id, 1)}
+                                                  className="w-8 h-8 rounded-full bg-[#e6f4ff] text-[#0079ca] hover:bg-[#dbefff] flex items-center justify-center transition-colors"
+                                              >
+                                                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M6 0V12M0 6H12" stroke="currentColor" strokeWidth="1.5"/>
+                                                  </svg>
+                                              </button>
+                                          </div>
+                                      </div>
                             </div>
                           );
                         })}
