@@ -25,8 +25,7 @@ export default function ReservationsOverview() {
           {/* Hero Section - EXACT copy of QuotaManagement style */}
           <div className="bg-background-contrast p-6">
             <div className="mb-4">
-              <p className="text-neutral-100 text-base">Reservations</p>
-              <h1 className="text-white text-2xl font-semibold">Overview</h1>
+              <h1 className="text-white text-2xl font-bold">Reservations</h1>
             </div>
             <div className="flex gap-6">
               {/* City Dropdown */}
