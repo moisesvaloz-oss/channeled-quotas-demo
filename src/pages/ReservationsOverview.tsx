@@ -13,6 +13,7 @@ const ICON_CHECK = '/icons/check.svg';
 const STATUS_OPTIONS = ['To be paid', 'Paid', 'Cancelled', 'Expired'];
 
 export default function ReservationsOverview() {
+  // Force refresh
   const [showGuideBanner, setShowGuideBanner] = useState(true);
   const [selectedCity, setSelectedCity] = useState('Chicago');
   const [selectedVenue, setSelectedVenue] = useState('Bolingbrook Golf Club');
@@ -22,7 +23,6 @@ export default function ReservationsOverview() {
   // Status Dropdown State
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>(['To be paid', 'Paid']);
-  const [statusSearchQuery, setStatusSearchQuery] = useState('');
   const statusDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -44,10 +44,6 @@ export default function ReservationsOverview() {
         : [...prev, status]
     );
   };
-
-  const filteredStatusOptions = STATUS_OPTIONS.filter(status => 
-    status.toLowerCase().includes(statusSearchQuery.toLowerCase())
-  );
 
   const getStatusLabel = () => {
     if (selectedStatuses.length === 0) return 'Select status';
@@ -165,33 +161,25 @@ export default function ReservationsOverview() {
 
                     {/* Dropdown Menu */}
                     {isStatusDropdownOpen && (
-                      <div className="absolute top-full left-0 w-[240px] mt-1 bg-white rounded-lg shadow-lg border border-border-main py-2 z-50">
-                        {/* Search inside dropdown */}
-                        <div className="px-3 py-2">
-                           <input
-                            type="text"
-                            value={statusSearchQuery}
-                            onChange={(e) => setStatusSearchQuery(e.target.value)}
-                            className="w-full text-sm border border-text-main rounded-sm px-2 py-1 focus:ring-0 placeholder:text-text-subtle text-text-main"
-                            placeholder="Search"
-                            autoFocus
-                          />
-                        </div>
-                        
-                        {/* Options */}
-                        <div className="max-h-[200px] overflow-y-auto">
-                          {filteredStatusOptions.map(status => {
+                      <div className="absolute top-full left-0 w-[240px] mt-1 bg-white rounded-md shadow-lg border border-border-main z-50">
+                        {/* Options - No search bar */}
+                        <div className="max-h-[200px] overflow-y-auto py-1">
+                          {STATUS_OPTIONS.map(status => {
                             const isSelected = selectedStatuses.includes(status);
                             return (
                               <div 
                                 key={status}
                                 onClick={() => toggleStatus(status)}
-                                className={`px-3 py-2 flex items-center gap-3 cursor-pointer hover:bg-neutral-50 ${isSelected ? 'bg-[#EEF7FC]' : ''}`}
+                                className={`px-3 py-2 flex items-center gap-2.5 cursor-pointer hover:bg-neutral-50 transition-colors ${isSelected ? 'bg-blue-50' : ''}`}
                               >
-                                <div className={`w-4 h-4 rounded-[4px] border flex items-center justify-center transition-colors ${
-                                  isSelected ? 'bg-action-primary border-action-primary' : 'bg-white border-border-main'
+                                <div className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 ${
+                                  isSelected ? 'bg-action-primary border-action-primary' : 'bg-white border-gray-300'
                                 }`}>
-                                  {isSelected && <img src={ICON_CHECK} alt="" className="w-2.5 h-2.5 invert" />}
+                                  {isSelected && (
+                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                  )}
                                 </div>
                                 <span className="text-sm text-text-main">{status}</span>
                               </div>
