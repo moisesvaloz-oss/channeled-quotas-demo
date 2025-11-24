@@ -84,8 +84,8 @@ export default function ReservationsOverview() {
 
                 {/* Filters Bar */}
                 <div className="flex items-center gap-4 mb-6">
-                  {/* Date Filter - Black Pill Button */}
-                  <button className="h-10 flex items-center gap-2 bg-neutral-900 text-white px-4 rounded-md text-sm font-medium hover:bg-neutral-800 transition-colors">
+                  {/* Date Filter - Dark Blue Pill Button */}
+                  <button className="h-10 flex items-center gap-2 bg-background-contrast text-white px-4 rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
                     <span>Next 3 months</span>
                     <img src={ICON_CALENDAR} alt="" className="w-4 h-4 invert" />
                   </button>
