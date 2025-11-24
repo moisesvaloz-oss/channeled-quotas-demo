@@ -64,8 +64,8 @@ export default function ReservationsOverview() {
                 </svg>
               </div>
 
-              {/* Show Button - Added to the right */}
-              <button className="bg-neutral-100 hover:bg-neutral-200 text-text-main px-8 h-14 rounded-sm font-semibold text-sm transition-colors border border-transparent whitespace-nowrap">
+              {/* Show Button - Styled as Pill Button per screenshot */}
+              <button className="h-14 px-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-text-subtle font-semibold text-base transition-colors whitespace-nowrap border-none">
                 Show
               </button>
             </div>
@@ -83,13 +83,7 @@ export default function ReservationsOverview() {
                   </button>
                 </div>
 
-                {/* Filters Bar - Kept visually consistent with previous feedback (light grey, h-10) or revert to QuotaManagement style?
-                    User said "styling is all off like a cheap knockoff" about the previous version.
-                    BUT "Businesses" style was p-8.
-                    Now I'm using QuotaManagement structure (p-4).
-                    I will keep the inner filters matching the "Businesses" / refined style (h-10, bg-neutral-100) as that seemed to be the direction for the *content* area in the screenshot.
-                    The screenshot showed the hero inputs as white and the content filters as grey.
-                */}
+                {/* Filters Bar */}
                 <div className="flex items-center gap-4 mb-6">
                   {/* Date Filter - Black Pill Button */}
                   <button className="h-10 flex items-center gap-2 bg-neutral-900 text-white px-4 rounded-md text-sm font-medium hover:bg-neutral-800 transition-colors">
