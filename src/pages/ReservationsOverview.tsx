@@ -92,7 +92,7 @@ export default function ReservationsOverview() {
 
                   {/* Search Input */}
                   <div className="flex-1 relative max-w-md">
-                    <div className="w-full h-10 px-3 rounded-md bg-neutral-100 flex items-center">
+                    <div className="w-full h-10 px-3 rounded-lg bg-neutral-100 flex items-center">
                          <img src={ICON_SEARCH} alt="" className="w-4 h-4 text-text-subtle opacity-50 mr-2" />
                          <input
                           type="text"
@@ -105,13 +105,13 @@ export default function ReservationsOverview() {
                   </div>
 
                   {/* Status Dropdown */}
-                  <div className="w-48 h-10 px-3 rounded-md bg-neutral-100 flex items-center justify-between cursor-pointer hover:bg-neutral-200 transition-colors">
+                  <div className="w-48 h-10 px-3 rounded-lg bg-neutral-100 flex items-center justify-between cursor-pointer hover:bg-neutral-200 transition-colors">
                       <span className="text-text-subtle text-sm">To be paid, Paid</span>
                       <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle" />
                   </div>
 
                   {/* Business Type Dropdown */}
-                  <div className="w-48 h-10 px-3 rounded-md bg-neutral-100 flex items-center justify-between cursor-pointer hover:bg-neutral-200 transition-colors">
+                  <div className="w-48 h-10 px-3 rounded-lg bg-neutral-100 flex items-center justify-between cursor-pointer hover:bg-neutral-200 transition-colors">
                       <span className="text-text-subtle text-sm">Business Type</span>
                       <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle" />
                   </div>
