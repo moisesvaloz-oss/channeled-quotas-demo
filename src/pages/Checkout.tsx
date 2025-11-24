@@ -304,10 +304,7 @@ export default function Checkout() {
                         Back
                       </button>
                       <button
-                        onClick={() => {
-                          // Handle continue action
-                          alert('Reservation completed!');
-                        }}
+                        onClick={() => navigate('/reservations/create/payment')}
                         className="flex-1 h-12 rounded-full bg-action-primary text-white font-semibold hover:bg-action-primary-hover transition-colors"
                       >
                         Continue
