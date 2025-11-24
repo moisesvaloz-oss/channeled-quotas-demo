@@ -196,9 +196,9 @@ export default function Payment() {
                 <div className="bg-white rounded-lg border border-border-main p-6">
                   <h3 className="text-lg font-bold text-text-main mb-6">Select your payment method</h3>
 
-                  <div className="space-y-3 mb-6">
+                  <div className="grid grid-cols-3 gap-4 mb-6">
                     {/* Bank Card */}
-                    <label className={`border-2 rounded-lg p-4 cursor-pointer flex items-center gap-3 transition-colors ${
+                    <label className={`border-2 rounded-lg p-4 cursor-pointer flex flex-col gap-2 transition-colors ${
                       selectedPaymentMethod === 'bank-card' 
                         ? 'border-primary-main bg-blue-50' 
                         : 'border-border-main hover:border-text-subtle'
@@ -218,14 +218,14 @@ export default function Payment() {
                           <div className="w-3 h-3 rounded-full bg-primary-main"></div>
                         )}
                       </div>
-                      <div className="flex-1">
+                      <div>
                         <div className="text-sm font-semibold text-text-main">Bank Card</div>
                         <div className="text-xs text-text-subtle">Manually enter data</div>
                       </div>
                     </label>
 
                     {/* Payment Link */}
-                    <label className={`border-2 rounded-lg p-4 cursor-pointer flex items-center gap-3 transition-colors ${
+                    <label className={`border-2 rounded-lg p-4 cursor-pointer flex flex-col gap-2 transition-colors ${
                       selectedPaymentMethod === 'payment-link' 
                         ? 'border-primary-main bg-blue-50' 
                         : 'border-border-main hover:border-text-subtle'
@@ -245,14 +245,14 @@ export default function Payment() {
                           <div className="w-3 h-3 rounded-full bg-primary-main"></div>
                         )}
                       </div>
-                      <div className="flex-1">
+                      <div>
                         <div className="text-sm font-semibold text-text-main">Payment link</div>
                         <div className="text-xs text-text-subtle">Send link to the customer</div>
                       </div>
                     </label>
 
                     {/* Pay at Box Office */}
-                    <label className={`border-2 rounded-lg p-4 cursor-pointer flex items-center gap-3 transition-colors ${
+                    <label className={`border-2 rounded-lg p-4 cursor-pointer flex flex-col gap-2 transition-colors ${
                       selectedPaymentMethod === 'box-office' 
                         ? 'border-primary-main bg-blue-50' 
                         : 'border-border-main hover:border-text-subtle'
@@ -272,14 +272,14 @@ export default function Payment() {
                           <div className="w-3 h-3 rounded-full bg-primary-main"></div>
                         )}
                       </div>
-                      <div className="flex-1">
+                      <div>
                         <div className="text-sm font-semibold text-text-main">Pay at the box office</div>
                         <div className="text-xs text-text-subtle">Bank card or cash</div>
                       </div>
                     </label>
 
                     {/* Mark as Paid */}
-                    <label className={`border-2 rounded-lg p-4 cursor-pointer flex items-center gap-3 transition-colors ${
+                    <label className={`border-2 rounded-lg p-4 cursor-pointer flex flex-col gap-2 transition-colors ${
                       selectedPaymentMethod === 'mark-paid' 
                         ? 'border-primary-main bg-blue-50' 
                         : 'border-border-main hover:border-text-subtle'
@@ -299,14 +299,14 @@ export default function Payment() {
                           <div className="w-3 h-3 rounded-full bg-primary-main"></div>
                         )}
                       </div>
-                      <div className="flex-1">
+                      <div>
                         <div className="text-sm font-semibold text-text-main">Mark as paid</div>
                         <div className="text-xs text-text-subtle">Payment is made manually</div>
                       </div>
                     </label>
 
                     {/* Pay Later */}
-                    <label className={`border-2 rounded-lg p-4 cursor-pointer flex items-center gap-3 transition-colors ${
+                    <label className={`border-2 rounded-lg p-4 cursor-pointer flex flex-col gap-2 transition-colors ${
                       selectedPaymentMethod === 'pay-later' 
                         ? 'border-primary-main bg-blue-50' 
                         : 'border-border-main hover:border-text-subtle'
@@ -326,7 +326,7 @@ export default function Payment() {
                           <div className="w-3 h-3 rounded-full bg-primary-main"></div>
                         )}
                       </div>
-                      <div className="flex-1">
+                      <div>
                         <div className="text-sm font-semibold text-text-main">Pay later</div>
                         <div className="text-xs text-text-subtle">Confirm now, pay later</div>
                       </div>
