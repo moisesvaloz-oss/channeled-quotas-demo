@@ -72,11 +72,11 @@ export default function TicketSelection() {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 bg-neutral-50 p-8">
-            <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex-1 bg-neutral-50 p-8 overflow-x-hidden">
+            <div className="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-8">
               
               {/* Left Column: Event Info & Description (Visuals) */}
-              <div className="w-full lg:w-auto lg:flex-[2.5] flex flex-col gap-6">
+              <div className="w-full lg:flex-1 lg:max-w-[60%] flex flex-col gap-6">
                 
                 {/* Tabs & Content */}
                 <div className="bg-white rounded-lg shadow-sm border border-border-main min-h-[500px] flex flex-col">
@@ -117,7 +117,7 @@ export default function TicketSelection() {
               </div>
 
               {/* Right Column: Selector Component */}
-              <div className="w-full lg:w-auto lg:flex-1 flex flex-col gap-6 lg:min-w-[400px]">
+              <div className="w-full lg:w-[480px] lg:flex-none flex flex-col gap-6">
                 
                 <div className="bg-white rounded-lg shadow-sm border border-border-main p-6 space-y-6">
                   
