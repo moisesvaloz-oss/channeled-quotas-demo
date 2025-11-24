@@ -262,6 +262,19 @@ export default function QuotaManagement() {
     'LIV Premium All Access': []
   };
 
+  // Define ticket type capacities (sold, available, total)
+  // Note: 3 day passes have lower capacity since they bundle multiple single-day tickets
+  const ticketTypeCapacities: { [key: string]: { [ticket: string]: { sold: number; available: number; total: number } } } = {
+    'Club 54': {
+      'Friday (June 26)': { sold: 150, available: 250, total: 400 },
+      '3 days pass': { sold: 50, available: 150, total: 200 }
+    },
+    'Fanstand': {
+      'Friday (June 26)': { sold: 280, available: 420, total: 700 },
+      '3 days pass': { sold: 120, available: 180, total: 300 }
+    }
+  };
+
   // Calculate group totals
   const calculateGroupTotals = (groupName: string) => {
     const groupConfig = CAPACITY_GROUPS[groupName as keyof typeof CAPACITY_GROUPS];
@@ -811,9 +824,15 @@ export default function QuotaManagement() {
                         
                         {/* Numbers with left border */}
                         <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">0</div>
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">0</div>
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">0</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                            {ticketTypeCapacities['Club 54']?.[ticketOption]?.sold || 0}
+                          </div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                            {ticketTypeCapacities['Club 54']?.[ticketOption]?.available || 0}
+                          </div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                            {ticketTypeCapacities['Club 54']?.[ticketOption]?.total || 0}
+                          </div>
                           <div className="w-[40px]"></div>
                         </div>
                       </div>
@@ -1210,9 +1229,15 @@ export default function QuotaManagement() {
                         
                         {/* Numbers with left border */}
                         <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">0</div>
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">0</div>
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">0</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                            {ticketTypeCapacities['Fanstand']?.[ticketOption]?.sold || 0}
+                          </div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                            {ticketTypeCapacities['Fanstand']?.[ticketOption]?.available || 0}
+                          </div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                            {ticketTypeCapacities['Fanstand']?.[ticketOption]?.total || 0}
+                          </div>
                           <div className="w-[40px]"></div>
                         </div>
                       </div>
