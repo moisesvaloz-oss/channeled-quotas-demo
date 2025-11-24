@@ -50,7 +50,7 @@ export default function TicketSelection() {
             <div className="flex gap-8">
               
               {/* Left Column: Event Info & Description */}
-              <div className="flex-1 flex flex-col gap-6">
+              <div className="flex-[2] flex flex-col gap-6">
                 
                 {/* Event Card */}
                 <div className="bg-white rounded-lg shadow-sm border border-border-main p-4 flex gap-4">
@@ -111,7 +111,7 @@ export default function TicketSelection() {
               </div>
 
               {/* Right Column: Selectors */}
-              <div className="w-[440px] flex flex-col gap-6">
+              <div className="flex-1 flex flex-col gap-6">
                 
                 <div className="bg-white rounded-lg shadow-sm border border-border-main p-8">
                   <h3 className="text-base font-bold text-text-main mb-4">Date & hour</h3>
