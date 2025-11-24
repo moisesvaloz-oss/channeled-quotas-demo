@@ -1,13 +1,9 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
 
 const ICON_CHEVRON_DOWN = '/icons/chevron-down.svg';
-const ICON_BACK = '/icons/back-arrow.svg'; // Need to check if this exists, otherwise use chevron rotated
-const ICON_SORT = '/icons/transfer-arrows.svg'; // Using transfer-arrows as sort icon placeholder or vertical-dots? 
-// Actually I'll check available icons first.
 
 export default function SelectEvent() {
   const navigate = useNavigate();

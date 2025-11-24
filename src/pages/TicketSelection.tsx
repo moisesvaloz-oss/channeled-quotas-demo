@@ -6,8 +6,6 @@ import Footer from '../components/Footer';
 
 const ICON_CALENDAR = '/icons/calendar.svg';
 const ICON_CHEVRON_UP = '/icons/angle-down.svg'; // Rotation needed
-const ICON_ADD = '/icons/add.svg';
-const ICON_INFO = '/icons/info.svg';
 
 export default function TicketSelection() {
   const navigate = useNavigate();

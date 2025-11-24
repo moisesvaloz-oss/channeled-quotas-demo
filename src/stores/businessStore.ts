@@ -37,7 +37,7 @@ const defaultBusinesses: Business[] = [
 
 export const useBusinessStore = create<BusinessState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       businesses: defaultBusinesses,
       addBusiness: (business) =>
         set((state) => ({

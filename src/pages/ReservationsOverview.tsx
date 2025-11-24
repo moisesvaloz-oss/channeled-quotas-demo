@@ -10,7 +10,6 @@ const ICON_SEARCH = '/icons/search.svg';
 const ICON_CHEVRON_DOWN = '/icons/chevron-down.svg';
 const ICON_INFO = '/icons/info.svg';
 const ICON_CLOSE = '/icons/close.svg';
-const ICON_CHECK = '/icons/check.svg';
 
 const STATUS_OPTIONS = ['To be paid', 'Paid', 'Cancelled', 'Expired'];
 
@@ -18,8 +17,8 @@ export default function ReservationsOverview() {
   const navigate = useNavigate();
   // Force refresh
   const [showGuideBanner, setShowGuideBanner] = useState(true);
-  const [selectedCity, setSelectedCity] = useState('Chicago');
-  const [selectedVenue, setSelectedVenue] = useState('Bolingbrook Golf Club');
+  const [selectedCity] = useState('Chicago');
+  const [selectedVenue] = useState('Bolingbrook Golf Club');
   const [globalSearch, setGlobalSearch] = useState('LIV Golf Chicago 2025');
   const [searchQuery, setSearchQuery] = useState('');
   
