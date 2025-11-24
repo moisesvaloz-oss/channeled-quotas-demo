@@ -154,16 +154,6 @@ export default function ReservationsOverview() {
                       }`}
                     >
                         <div className="flex flex-col justify-center truncate pr-2">
-                           {/* When open, it shows Label + Search (in menu) - Wait, screenshot shows input IN menu. Button shows Label? 
-                               Screenshot: "To be paid, Paid" in the button. 
-                               If selected, show value. 
-                               If open, button still shows value?
-                               Screenshot of OPEN state:
-                               The button becomes part of the card? 
-                               Actually, the screenshot shows the dropdown menu OVERLAPPING the button or replacing it visually?
-                               It looks like a standard dropdown menu attached to the button.
-                               The button text is "To be paid, Paid".
-                           */}
                            <span className="text-text-subtle text-sm truncate">{getStatusLabel()}</span>
                         </div>
                         <img 
@@ -177,7 +167,7 @@ export default function ReservationsOverview() {
                     {isStatusDropdownOpen && (
                       <div className="absolute top-full left-0 w-[240px] mt-1 bg-white rounded-lg shadow-lg border border-border-main py-2 z-50">
                         {/* Search inside dropdown */}
-                        <div className="px-3 pb-2 border-b border-border-main mb-2">
+                        <div className="px-3 py-2">
                            <input
                             type="text"
                             value={statusSearchQuery}
