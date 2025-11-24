@@ -157,54 +157,60 @@ export default function TicketSelection() {
                       </div>
                     </div>
 
-                    {/* Date Pills */}
-                    <div className="flex gap-2 mb-6">
-                      {dates.map((d) => {
-                          const label = `${d.day} ${d.date}`;
-                          const isSelected = selectedDate === label;
-                          return (
-                              <button
-                                  key={label}
-                                  onClick={() => setSelectedDate(label)}
-                                  className={`flex-1 py-2 px-1 rounded-lg border text-center transition-all ${
-                                      isSelected 
-                                          ? 'border-primary-main bg-white ring-1 ring-primary-main text-primary-main' 
-                                          : 'border-border-main text-text-subtle hover:border-text-subtle'
-                                  }`}
-                              >
-                                  <div className={`text-xs font-semibold ${isSelected ? 'text-primary-main' : ''}`}>{d.day}</div>
-                                  <div className={`text-sm ${isSelected ? 'text-primary-main font-bold' : ''}`}>{d.date}</div>
-                              </button>
-                          )
-                      })}
-                    </div>
+                  {/* Date Pills */}
+                  <div className="flex gap-2 mb-6">
+                    {dates.map((d) => {
+                        const label = `${d.day} ${d.date}`;
+                        const isSelected = selectedDate === label;
+                        return (
+                            <button
+                                key={label}
+                                onClick={() => setSelectedDate(label)}
+                                className={`flex-1 py-2 px-1 rounded-lg border text-center transition-all relative overflow-hidden ${
+                                    isSelected 
+                                        ? 'border-primary-main bg-white text-primary-main' 
+                                        : 'border-border-main text-text-subtle hover:border-text-subtle'
+                                }`}
+                            >
+                                {isSelected && (
+                                  <div className="absolute top-0 right-0 w-4 h-4 bg-primary-main" style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)' }}></div>
+                                )}
+                                <div className={`text-xs font-semibold ${isSelected ? 'text-primary-main' : ''}`}>{d.day}</div>
+                                <div className={`text-sm ${isSelected ? 'text-primary-main font-bold' : ''}`}>{d.date}</div>
+                            </button>
+                        )
+                    })}
+                  </div>
 
-                    {/* Time Section */}
-                    <div className="mb-3 flex items-center justify-between border-b border-border-main pb-0">
-                      <div className="flex gap-4">
-                        <button className="text-sm font-bold text-primary-main border-b-2 border-primary-main pb-2">
-                          Morning
-                        </button>
-                        {/* Add hidden tabs if needed */}
-                      </div>
-                      <span className="text-xs text-text-subtle mb-2">7:00 to 14:59</span>
-                      <button className="w-6 h-6 bg-neutral-100 rounded-full flex items-center justify-center mb-2">
-                          <img src={ICON_CHEVRON_UP} alt="" className="w-3 h-3 rotate-180 opacity-50" />
+                  {/* Time Section */}
+                  <div className="mb-3 flex items-center justify-between border-b border-border-main pb-0">
+                    <div className="flex gap-4">
+                      <button className="text-sm font-bold text-primary-main border-b-2 border-primary-main pb-2">
+                        Morning
                       </button>
+                      {/* Add hidden tabs if needed */}
                     </div>
-                    
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                          onClick={() => setSelectedTime('9:00')}
-                          className={`px-6 py-2 rounded-lg border text-sm font-medium transition-all ${
-                              selectedTime === '9:00'
-                                  ? 'border-primary-main bg-white ring-1 ring-primary-main text-primary-main'
-                                  : 'border-border-main text-text-main hover:border-text-subtle'
-                          }`}
-                      >
-                          9:00
-                      </button>
-                    </div>
+                    <span className="text-xs text-text-subtle mb-2">7:00 to 14:59</span>
+                    <button className="w-6 h-6 bg-neutral-100 rounded-full flex items-center justify-center mb-2">
+                        <img src={ICON_CHEVRON_UP} alt="" className="w-3 h-3 rotate-180 opacity-50" />
+                    </button>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                        onClick={() => setSelectedTime('9:00')}
+                        className={`px-6 py-2 rounded-lg border text-sm font-medium transition-all relative overflow-hidden ${
+                            selectedTime === '9:00'
+                                ? 'border-primary-main bg-white text-primary-main'
+                                : 'border-border-main text-text-main hover:border-text-subtle'
+                        }`}
+                    >
+                        {selectedTime === '9:00' && (
+                          <div className="absolute top-0 right-0 w-3 h-3 bg-primary-main" style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)' }}></div>
+                        )}
+                        9:00
+                    </button>
+                  </div>
                   </div>
 
                   {/* Choose tickets */}
@@ -213,19 +219,25 @@ export default function TicketSelection() {
                       
                       {/* Ticket Group Pills */}
                       <div className="flex flex-wrap gap-2 mb-4">
-                          {ticketSections.map(section => (
-                              <button
-                                  key={section.name}
-                                  onClick={() => setSelectedTicketSection(section.name)}
-                                  className={`px-4 py-2 rounded-lg border text-xs font-medium transition-all ${
-                                      selectedTicketSection === section.name
-                                          ? 'border-primary-main text-primary-main bg-white'
-                                          : 'border-border-main text-text-subtle hover:border-text-subtle'
-                                  }`}
-                              >
-                                  {section.name}
-                              </button>
-                          ))}
+                          {ticketSections.map(section => {
+                              const isSelected = selectedTicketSection === section.name;
+                              return (
+                                <button
+                                    key={section.name}
+                                    onClick={() => setSelectedTicketSection(section.name)}
+                                    className={`px-4 py-2 rounded-lg border text-xs font-medium transition-all relative overflow-hidden ${
+                                        isSelected
+                                            ? 'border-primary-main text-primary-main bg-white'
+                                            : 'border-border-main text-text-subtle hover:border-text-subtle'
+                                    }`}
+                                >
+                                    {isSelected && (
+                                      <div className="absolute top-0 right-0 w-3 h-3 bg-primary-main" style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)' }}></div>
+                                    )}
+                                    {section.name}
+                                </button>
+                              );
+                          })}
                       </div>
 
                       {/* Tickets List for Selected Group */}
