@@ -233,38 +233,59 @@ export default function TicketSelection() {
                         {ticketSections.find(s => s.name === selectedTicketSection)?.tickets.map((ticket) => {
                           const count = ticketCounts[ticket.id] || 0;
                           return (
-                            <div key={ticket.id} className="border border-border-main rounded-lg p-3 flex items-center justify-between bg-white relative overflow-hidden">
-                                {/* Dashed separator visual */}
-                                <div className="absolute right-[120px] top-0 bottom-0 w-px border-l border-dashed border-border-main"></div>
+                            <div key={ticket.id} className="bg-white rounded-lg border border-border-main relative overflow-hidden flex">
                                 
-                                <div className="flex-1 pr-4">
-                                    <div className="text-sm font-bold text-text-main mb-0.5">{ticket.name}</div>
-                                    <div className="text-xs text-text-subtle mb-0.5">{ticket.available} available tickets left</div>
-                                    <button className="text-xs text-primary-main hover:underline mb-1 font-semibold">See more</button>
-                                    <div className="text-sm font-bold text-text-main">${ticket.price.toFixed(2)}</div>
+                                {/* Ticket Info (Left) */}
+                                <div className="flex-1 p-4 pr-8">
+                                    <div className="text-base font-bold text-text-main mb-1">{ticket.name.split('|')[1] ? ticket.name.split('|')[1].trim() : ticket.name}</div>
+                                    <div className="text-sm text-text-subtle mb-2">{ticket.available} available tickets left</div>
+                                    <button className="text-sm text-primary-main hover:underline font-semibold block mb-2">See more</button>
+                                    <div className="text-base font-bold text-text-main">${ticket.price.toFixed(2)}</div>
+                                </div>
+
+                                {/* Visual Divider & Notches */}
+                                <div className="relative w-px flex flex-col items-center">
+                                  {/* Dashed Line */}
+                                  <div className="h-full border-l border-dashed border-border-main absolute top-0 bottom-0 left-0"></div>
+                                  {/* Top Notch */}
+                                  <div className="absolute top-[-6px] left-[-6px] w-3 h-3 rounded-full bg-neutral-50 border-b border-border-main box-content z-10"></div>
+                                  <div className="absolute top-[-7px] left-[-7px] w-[13px] h-[13px] rounded-full border border-border-main bg-neutral-50 z-10 clip-bottom-half"></div>
+                                  {/* Bottom Notch - Simplified to just a circle on top for now as CSS masks are complex */}
+                                   <div className="absolute top-[-6px] left-[-6px] w-3 h-3 bg-neutral-50 rounded-full border border-border-main z-20"></div>
+                                   <div className="absolute bottom-[-6px] left-[-6px] w-3 h-3 bg-neutral-50 rounded-full border border-border-main z-20"></div>
                                 </div>
                                 
-                                <div className="flex items-center gap-2 pl-4 z-10 bg-white">
-                                    <button 
-                                        onClick={() => updateTicketCount(ticket.id, -1)}
-                                        className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-                                            count > 0 ? 'bg-neutral-100 hover:bg-neutral-200 text-text-main' : 'bg-neutral-50 text-border-main cursor-not-allowed'
-                                        }`}
-                                        disabled={count === 0}
-                                    >
-                                        <svg width="10" height="2" viewBox="0 0 10 2" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M0 1H10" stroke="currentColor" strokeWidth="2"/>
-                                        </svg>
-                                    </button>
-                                    
-                                    <span className="w-6 text-center text-sm font-medium">{count}</span>
-                                    
-                                    <button 
-                                        onClick={() => updateTicketCount(ticket.id, 1)}
-                                        className="w-8 h-8 rounded-full bg-primary-main hover:bg-primary-active flex items-center justify-center text-white transition-colors"
-                                    >
-                                        <img src={ICON_ADD} alt="" className="w-3 h-3 brightness-0 invert" />
-                                    </button>
+                                {/* Counter (Right) */}
+                                <div className="w-[180px] flex items-center justify-center p-4 bg-white z-0">
+                                    <div className="flex items-center gap-3">
+                                        {/* Minus Button */}
+                                        <button 
+                                            onClick={() => updateTicketCount(ticket.id, -1)}
+                                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+                                                count > 0 ? 'bg-neutral-100 hover:bg-neutral-200 text-text-main' : 'bg-neutral-50 text-border-main cursor-not-allowed'
+                                            }`}
+                                            disabled={count === 0}
+                                        >
+                                            <svg width="12" height="2" viewBox="0 0 10 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M0 1H10" stroke="currentColor" strokeWidth="1.5"/>
+                                            </svg>
+                                        </button>
+                                        
+                                        {/* Count Display Box */}
+                                        <div className="w-12 h-12 border border-border-main rounded-lg flex items-center justify-center bg-white text-base font-medium text-text-main">
+                                          {count}
+                                        </div>
+                                        
+                                        {/* Plus Button */}
+                                        <button 
+                                            onClick={() => updateTicketCount(ticket.id, 1)}
+                                            className="w-10 h-10 rounded-full bg-primary-main hover:bg-primary-active flex items-center justify-center text-white transition-colors"
+                                        >
+                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                              <path d="M6 0V12M0 6H12" stroke="currentColor" strokeWidth="1.5"/>
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                           );
