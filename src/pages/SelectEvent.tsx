@@ -102,7 +102,7 @@ export default function SelectEvent() {
                   <div className="flex-1">
                     <div className="text-base font-semibold text-text-main mb-1">{event.name}</div>
                     <div className="text-xs text-text-subtle">{event.city} - {event.location}</div>
-                    <div className="text-xs text-text-subtle">Secret 00000</div>
+                    <div className="text-xs text-text-subtle">2001 Rodeo Drive, Bolingbrook 60490</div>
                   </div>
                   <div className="w-48 text-sm text-text-main whitespace-pre-line">
                     {event.dates}
