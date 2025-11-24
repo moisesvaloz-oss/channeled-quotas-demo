@@ -105,7 +105,7 @@ export default function Sidebar() {
             
             {/* Reservations Submenu */}
             <div className={`overflow-hidden transition-all duration-200 ease-out ${reservationsOpen ? 'max-h-[500px]' : 'max-h-0'}`}>
-              <div className="pl-6 flex flex-col">
+              <div className="pl-6 flex flex-col mt-1">
                 {reservationsSubItems.map((subItem, index) => (
                   <Link 
                     key={index} 
