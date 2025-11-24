@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 
@@ -13,6 +14,7 @@ const ICON_CHECK = '/icons/check.svg';
 const STATUS_OPTIONS = ['To be paid', 'Paid', 'Cancelled', 'Expired'];
 
 export default function ReservationsOverview() {
+  const navigate = useNavigate();
   // Force refresh
   const [showGuideBanner, setShowGuideBanner] = useState(true);
   const [selectedCity, setSelectedCity] = useState('Chicago');
@@ -112,7 +114,10 @@ export default function ReservationsOverview() {
                 {/* Header Section */}
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-text-main">Reservations Overview</h2>
-                  <button className="bg-action-primary hover:bg-action-primary-hover text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-colors">
+                  <button 
+                    onClick={() => navigate('/reservations/create')}
+                    className="bg-action-primary hover:bg-action-primary-hover text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-colors"
+                  >
                     Make a reservation
                   </button>
                 </div>

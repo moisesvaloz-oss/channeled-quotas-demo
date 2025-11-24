@@ -3,6 +3,7 @@ import LandingPage from './pages/LandingPage';
 import QuotaManagement from './pages/QuotaManagement';
 import Businesses from './pages/Businesses';
 import ReservationsOverview from './pages/ReservationsOverview';
+import MakeReservation from './pages/MakeReservation';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/quota-management" element={<QuotaManagement />} />
         <Route path="/businesses" element={<Businesses />} />
         <Route path="/reservations/overview" element={<ReservationsOverview />} />
+        <Route path="/reservations/create" element={<MakeReservation />} />
       </Routes>
     </Router>
   );
