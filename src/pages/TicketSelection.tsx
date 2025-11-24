@@ -16,6 +16,7 @@ export default function TicketSelection() {
   const [selectedTime, setSelectedTime] = useState('9:00');
   const [ticketCounts, setTicketCounts] = useState<{ [key: string]: number }>({});
   const [selectedTab, setSelectedTab] = useState('Fanstand');
+  const [selectedTicketSection, setSelectedTicketSection] = useState('Fanstand');
 
   const tabs = ['Fanstand', 'Birdie Shack', 'Birdie Shack Loge Box', 'Club 54', 'LIV Premium - All Access Hospitality', 'Suite on 18'];
   
@@ -210,53 +211,64 @@ export default function TicketSelection() {
                   <div className="pt-4 border-t border-border-main">
                       <h3 className="text-sm font-bold text-text-main mb-3">Choose tickets</h3>
                       
-                      <div className="space-y-6">
-                        {ticketSections.map((section) => (
-                          <div key={section.name}>
-                            <h4 className="text-sm font-bold text-text-main mb-3">{section.name}</h4>
-                            <div className="space-y-3">
-                              {section.tickets.map((ticket) => {
-                                const count = ticketCounts[ticket.id] || 0;
-                                return (
-                                  <div key={ticket.id} className="border border-border-main rounded-lg p-3 flex items-center justify-between bg-white relative overflow-hidden">
-                                      {/* Dashed separator visual */}
-                                      <div className="absolute right-[120px] top-0 bottom-0 w-px border-l border-dashed border-border-main"></div>
-                                      
-                                      <div className="flex-1 pr-4">
-                                          <div className="text-sm font-bold text-text-main mb-0.5">{ticket.name}</div>
-                                          <div className="text-xs text-text-subtle mb-0.5">{ticket.available} available tickets left</div>
-                                          <button className="text-xs text-primary-main hover:underline mb-1 font-semibold">See more</button>
-                                          <div className="text-sm font-bold text-text-main">${ticket.price.toFixed(2)}</div>
-                                      </div>
-                                      
-                                      <div className="flex items-center gap-2 pl-4 z-10 bg-white">
-                                          <button 
-                                              onClick={() => updateTicketCount(ticket.id, -1)}
-                                              className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-                                                  count > 0 ? 'bg-neutral-100 hover:bg-neutral-200 text-text-main' : 'bg-neutral-50 text-border-main cursor-not-allowed'
-                                              }`}
-                                              disabled={count === 0}
-                                          >
-                                              <svg width="10" height="2" viewBox="0 0 10 2" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                  <path d="M0 1H10" stroke="currentColor" strokeWidth="2"/>
-                                              </svg>
-                                          </button>
-                                          
-                                          <span className="w-6 text-center text-sm font-medium">{count}</span>
-                                          
-                                          <button 
-                                              onClick={() => updateTicketCount(ticket.id, 1)}
-                                              className="w-8 h-8 rounded-full bg-primary-main hover:bg-primary-active flex items-center justify-center text-white transition-colors"
-                                          >
-                                              <img src={ICON_ADD} alt="" className="w-3 h-3 brightness-0 invert" />
-                                          </button>
-                                      </div>
-                                  </div>
-                                );
-                              })}
+                      {/* Ticket Group Pills */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                          {ticketSections.map(section => (
+                              <button
+                                  key={section.name}
+                                  onClick={() => setSelectedTicketSection(section.name)}
+                                  className={`px-4 py-2 rounded-lg border text-xs font-medium transition-all ${
+                                      selectedTicketSection === section.name
+                                          ? 'border-primary-main text-primary-main bg-white'
+                                          : 'border-border-main text-text-subtle hover:border-text-subtle'
+                                  }`}
+                              >
+                                  {section.name}
+                              </button>
+                          ))}
+                      </div>
+
+                      {/* Tickets List for Selected Group */}
+                      <div className="space-y-3">
+                        {ticketSections.find(s => s.name === selectedTicketSection)?.tickets.map((ticket) => {
+                          const count = ticketCounts[ticket.id] || 0;
+                          return (
+                            <div key={ticket.id} className="border border-border-main rounded-lg p-3 flex items-center justify-between bg-white relative overflow-hidden">
+                                {/* Dashed separator visual */}
+                                <div className="absolute right-[120px] top-0 bottom-0 w-px border-l border-dashed border-border-main"></div>
+                                
+                                <div className="flex-1 pr-4">
+                                    <div className="text-sm font-bold text-text-main mb-0.5">{ticket.name}</div>
+                                    <div className="text-xs text-text-subtle mb-0.5">{ticket.available} available tickets left</div>
+                                    <button className="text-xs text-primary-main hover:underline mb-1 font-semibold">See more</button>
+                                    <div className="text-sm font-bold text-text-main">${ticket.price.toFixed(2)}</div>
+                                </div>
+                                
+                                <div className="flex items-center gap-2 pl-4 z-10 bg-white">
+                                    <button 
+                                        onClick={() => updateTicketCount(ticket.id, -1)}
+                                        className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                                            count > 0 ? 'bg-neutral-100 hover:bg-neutral-200 text-text-main' : 'bg-neutral-50 text-border-main cursor-not-allowed'
+                                        }`}
+                                        disabled={count === 0}
+                                    >
+                                        <svg width="10" height="2" viewBox="0 0 10 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0 1H10" stroke="currentColor" strokeWidth="2"/>
+                                        </svg>
+                                    </button>
+                                    
+                                    <span className="w-6 text-center text-sm font-medium">{count}</span>
+                                    
+                                    <button 
+                                        onClick={() => updateTicketCount(ticket.id, 1)}
+                                        className="w-8 h-8 rounded-full bg-primary-main hover:bg-primary-active flex items-center justify-center text-white transition-colors"
+                                    >
+                                        <img src={ICON_ADD} alt="" className="w-3 h-3 brightness-0 invert" />
+                                    </button>
+                                </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                   </div>
 
