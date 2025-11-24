@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
+import Footer from '../components/Footer';
 import AddBusinessDrawer from '../components/AddBusinessDrawer';
 import type { BusinessFormData } from '../components/AddBusinessDrawer';
 import { useBusinessStore } from '../stores/businessStore';
@@ -260,6 +261,8 @@ export default function Businesses() {
               </div>
             </div>
           </div>
+          
+          <Footer />
         </main>
       </div>
 

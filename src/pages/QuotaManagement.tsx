@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
+import Footer from '../components/Footer';
 import AddQuotaDrawer from '../components/AddQuotaDrawer';
 import TransferCapacityDrawer from '../components/TransferCapacityDrawer';
 import Toast from '../components/Toast';
@@ -1991,6 +1992,8 @@ export default function QuotaManagement() {
           </div>
         </div>
       </div>
+
+      <Footer />
 
        {/* Add Quota Drawer */}
        <AddQuotaDrawer

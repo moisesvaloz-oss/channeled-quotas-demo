@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
+import Footer from '../components/Footer';
 
 // Icon assets
 const ICON_CALENDAR = '/icons/calendar.svg';
@@ -272,6 +273,8 @@ export default function ReservationsOverview() {
               </button>
             </div>
           )}
+
+          <Footer />
         </div>
       </div>
     </div>

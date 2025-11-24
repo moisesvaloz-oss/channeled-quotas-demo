@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
+import Footer from '../components/Footer';
 import { useBusinessStore } from '../stores/businessStore';
 
 // Placeholder illustration since we don't have the asset
@@ -134,6 +135,8 @@ export default function MakeReservation() {
               </div>
             </div>
           </div>
+          
+          <Footer />
         </div>
       </div>
     </div>

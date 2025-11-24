@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
+import Footer from '../components/Footer';
 
 // Icon assets
 const ICON_TICKET = '/icons/ticket.svg';
@@ -336,6 +337,8 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+          
+          <Footer />
         </main>
       </div>
     </div>
