@@ -47,7 +47,7 @@ export default function TicketSelection() {
 
           {/* Main Content */}
           <div className="flex-1 bg-neutral-50 p-8">
-            <div className="flex gap-6">
+            <div className="flex gap-8">
               
               {/* Left Column: Event Info & Description */}
               <div className="flex-1 flex flex-col gap-6">
@@ -111,9 +111,9 @@ export default function TicketSelection() {
               </div>
 
               {/* Right Column: Selectors */}
-              <div className="w-[400px] flex flex-col gap-6">
+              <div className="w-[440px] flex flex-col gap-6">
                 
-                <div className="bg-white rounded-lg shadow-sm border border-border-main p-6">
+                <div className="bg-white rounded-lg shadow-sm border border-border-main p-8">
                   <h3 className="text-base font-bold text-text-main mb-4">Date & hour</h3>
                   
                   {/* Date Picker Input */}
@@ -172,7 +172,7 @@ export default function TicketSelection() {
                 </div>
 
                 {/* Choose tickets */}
-                <div className="bg-white rounded-lg shadow-sm border border-border-main p-6">
+                <div className="bg-white rounded-lg shadow-sm border border-border-main p-8">
                     <h3 className="text-base font-bold text-text-main mb-4">Choose tickets</h3>
                     
                     {/* Ticket Type Pills */}
