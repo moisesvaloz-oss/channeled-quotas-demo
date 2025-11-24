@@ -22,49 +22,38 @@ export default function ReservationsOverview() {
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
         <main className="flex-1 overflow-auto flex flex-col bg-neutral-50">
-          {/* Hero Section - Matching QuotaManagement exactly */}
+          {/* Hero Section - Refined to match screenshot */}
           <div className="bg-background-contrast p-6">
-            <div className="mb-4">
-              <h1 className="text-white text-2xl font-semibold">Reservations</h1>
+            <div className="mb-3">
+              <h1 className="text-white text-lg font-bold">Reservations</h1>
             </div>
-            <div className="flex gap-6">
+            <div className="flex gap-4 items-end">
               {/* City Dropdown */}
-              <div className="bg-white border border-border-main rounded-sm h-14 px-3 flex flex-col justify-center relative w-[200px]">
-                <label className="text-text-subtle text-xs font-semibold absolute top-0 left-3">City</label>
-                <div className="pt-4 flex items-center justify-between cursor-pointer">
-                  <span className="text-text-main text-base">{selectedCity}</span>
-                  <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle" />
-                </div>
+              <div className="bg-white rounded h-10 px-3 flex items-center justify-between cursor-pointer w-[200px]">
+                <span className="text-text-main text-sm">{selectedCity}</span>
+                <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle" />
               </div>
 
-              {/* Global Search - Matching QuotaManagement style with pre-filled value */}
-              <div className="bg-white border border-border-main rounded-sm h-14 px-3 flex flex-col justify-center relative flex-1">
-                 <label className="text-text-subtle text-xs font-semibold absolute top-0 left-3">
-                   Search or type event
-                 </label>
-                 <div className="pt-4 flex items-center justify-between w-full">
-                   <input
-                    type="text"
-                    value={globalSearch}
-                    onChange={(e) => setGlobalSearch(e.target.value)}
-                    className="w-full h-full bg-transparent border-none text-base text-text-main placeholder:text-transparent focus:ring-0 p-0"
-                    placeholder="Search or type event"
-                  />
-                  <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle ml-2 flex-shrink-0" />
-                 </div>
+              {/* Global Search - Event Input */}
+              <div className="bg-white rounded h-10 px-3 flex items-center justify-between flex-1">
+                 <input
+                  type="text"
+                  value={globalSearch}
+                  onChange={(e) => setGlobalSearch(e.target.value)}
+                  className="w-full h-full bg-transparent border-none text-sm text-text-main placeholder:text-text-subtle focus:ring-0 p-0"
+                  placeholder="Select a city and search for an event"
+                />
+                <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle ml-2 flex-shrink-0" />
               </div>
 
               {/* Venue Dropdown */}
-              <div className="bg-white border border-border-main rounded-sm h-14 px-3 flex flex-col justify-center relative w-[200px]">
-                <label className="text-text-subtle text-xs font-semibold absolute top-0 left-3">Venue</label>
-                <div className="pt-4 flex items-center justify-between cursor-pointer">
-                  <span className="text-text-main text-base">{selectedVenue}</span>
-                  <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle" />
-                </div>
+              <div className="bg-white rounded h-10 px-3 flex items-center justify-between cursor-pointer w-[200px]">
+                <span className="text-text-main text-sm">{selectedVenue}</span>
+                <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle" />
               </div>
 
               {/* Show Button */}
-              <button className="bg-neutral-100 hover:bg-neutral-200 text-text-main px-8 h-14 rounded-sm font-semibold text-sm transition-colors border border-transparent">
+              <button className="bg-neutral-100 hover:bg-neutral-200 text-text-main px-8 h-10 rounded font-semibold text-sm transition-colors">
                 Show
               </button>
             </div>
@@ -76,60 +65,44 @@ export default function ReservationsOverview() {
                 
                 {/* Header Section */}
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-text-main">Reservations Overview</h2>
+                  <h2 className="text-xl font-bold text-text-main">Reservations Overview</h2>
                   <button className="bg-action-primary hover:bg-action-primary-hover text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-colors">
                     Make a reservation
                   </button>
                 </div>
 
-                {/* Filters Bar */}
+                {/* Filters Bar - Refined to match screenshot (Light Grey, No Borders, Slimmer) */}
                 <div className="flex items-center gap-4 mb-6">
                   {/* Date Filter - Black Pill Button */}
-                  <button className="h-14 flex items-center gap-2 bg-neutral-900 text-white px-6 rounded-lg text-sm font-medium hover:bg-neutral-800 transition-colors">
+                  <button className="h-10 flex items-center gap-2 bg-neutral-900 text-white px-4 rounded-md text-sm font-medium hover:bg-neutral-800 transition-colors">
                     <span>Next 3 months</span>
                     <img src={ICON_CALENDAR} alt="" className="w-4 h-4 invert" />
                   </button>
 
                   {/* Search Input */}
                   <div className="flex-1 relative max-w-md">
-                    <div className="w-full h-14 px-3 rounded-lg border border-border-main flex flex-col justify-center relative bg-white">
-                         <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                            <img src={ICON_SEARCH} alt="" className="w-4 h-4 text-text-subtle opacity-50" />
-                         </div>
+                    <div className="w-full h-10 px-3 rounded-md bg-neutral-100 flex items-center">
+                         <img src={ICON_SEARCH} alt="" className="w-4 h-4 text-text-subtle opacity-50 mr-2" />
                          <input
                           type="text"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full h-full pl-8 bg-transparent border-none text-base text-text-main placeholder:text-transparent focus:ring-0"
-                          placeholder="Search by reservation ID..."
+                          className="w-full h-full bg-transparent border-none text-sm text-text-main placeholder:text-text-subtle focus:ring-0 p-0"
+                          placeholder="Search by reservation ID, recipient or business"
                         />
-                        {!searchQuery && (
-                          <span className="absolute left-10 top-1/2 -translate-y-1/2 text-text-subtle text-base pointer-events-none">Search by reservation ID, recipient or business</span>
-                        )}
-                        {searchQuery && (
-                           <label className="absolute left-10 top-2 text-[10px] text-text-subtle font-semibold pointer-events-none">
-                             Search by reservation ID...
-                           </label>
-                        )}
                     </div>
                   </div>
 
                   {/* Status Dropdown */}
-                  <div className="w-48 h-14 px-3 rounded-lg border border-border-main flex flex-col justify-center relative bg-white cursor-pointer hover:border-text-subtle transition-colors">
-                      <label className="text-text-subtle text-xs font-semibold absolute top-2 left-3">Status</label>
-                      <div className="pt-4 flex items-center justify-between">
-                          <span className="text-text-main text-base">To be paid, Paid</span>
-                          <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle" />
-                      </div>
+                  <div className="w-48 h-10 px-3 rounded-md bg-neutral-100 flex items-center justify-between cursor-pointer hover:bg-neutral-200 transition-colors">
+                      <span className="text-text-subtle text-sm">To be paid, Paid</span>
+                      <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle" />
                   </div>
 
                   {/* Business Type Dropdown */}
-                  <div className="w-48 h-14 px-3 rounded-lg border border-border-main flex flex-col justify-center relative bg-white cursor-pointer hover:border-text-subtle transition-colors">
-                      <label className="text-text-subtle text-xs font-semibold absolute top-2 left-3">Business Type</label>
-                      <div className="pt-4 flex items-center justify-between">
-                          <span className="text-text-main text-base">All types</span>
-                          <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle" />
-                      </div>
+                  <div className="w-48 h-10 px-3 rounded-md bg-neutral-100 flex items-center justify-between cursor-pointer hover:bg-neutral-200 transition-colors">
+                      <span className="text-text-subtle text-sm">Business Type</span>
+                      <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle" />
                   </div>
                 </div>
 
