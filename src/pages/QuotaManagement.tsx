@@ -263,15 +263,19 @@ export default function QuotaManagement() {
   };
 
   // Define ticket type capacities (sold, available, total)
-  // Note: 3 day passes have lower capacity since they bundle multiple single-day tickets
+  // Note: These numbers MUST sum up to match the parent capacity group totals
+  // Club 54: Total=600, Sold=250, Available=350
+  // Fanstand: Total=200, Sold=100, Available=100
   const ticketTypeCapacities: { [key: string]: { [ticket: string]: { sold: number; available: number; total: number } } } = {
     'Club 54': {
-      'Friday (June 26)': { sold: 150, available: 250, total: 400 },
-      '3 days pass': { sold: 50, available: 150, total: 200 }
+      'Friday (June 26)': { sold: 180, available: 220, total: 400 },  // Single day ticket (higher capacity)
+      '3 days pass': { sold: 70, available: 130, total: 200 }         // 3-day bundle (lower capacity)
+      // Sum: sold=250, available=350, total=600 ✓
     },
     'Fanstand': {
-      'Friday (June 26)': { sold: 280, available: 420, total: 700 },
-      '3 days pass': { sold: 120, available: 180, total: 300 }
+      'Friday (June 26)': { sold: 70, available: 80, total: 150 },    // Single day ticket (higher capacity)
+      '3 days pass': { sold: 30, available: 20, total: 50 }           // 3-day bundle (lower capacity)
+      // Sum: sold=100, available=100, total=200 ✓
     }
   };
 
