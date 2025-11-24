@@ -133,7 +133,7 @@ Located in `/public/icons/`. Use as `img` tags.
 
 - **Navigation**: `back-arrow.svg`, `close.svg`.
 - **Actions**: `add.svg`, `edit.svg`, `trash-can.svg`, `copy.svg`.
-- **Data**: `calendar.svg`, `clock.svg`, `search.svg`.
+- **Data**: `calendar.svg`, `clock.svg`, `search.svg`, `location-pin.svg`.
 - **UI Elements**:
   - `chevron-down.svg` (Light/Thin - Used in Dropdowns).
   - `angle-down.svg` (Bold - Used in Section Headers).

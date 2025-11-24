@@ -56,11 +56,12 @@ export default function Checkout() {
                         <h2 className="text-lg font-semibold text-text-main mb-2">
                           LIV Golf Chicago 2026
                         </h2>
-                        <div className="flex items-center gap-2 text-sm text-text-subtle">
-                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="flex-shrink-0">
-                            <path d="M6 1C3.24 1 1 3.24 1 6C1 8.76 3.24 11 6 11C8.76 11 11 8.76 11 6C11 3.24 8.76 1 6 1Z" stroke="currentColor" strokeWidth="1.5"/>
-                            <path d="M6 3V6L8 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                          </svg>
+                        <div className="flex items-center gap-1 text-sm text-text-subtle">
+                          <img 
+                            src="/icons/location-pin.svg" 
+                            alt="Location" 
+                            className="w-3 h-3 flex-shrink-0"
+                          />
                           <span>Chicago - 2001 Rodeo Drive, Bolingbrook</span>
                         </div>
                       </div>
