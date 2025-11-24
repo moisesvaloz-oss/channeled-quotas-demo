@@ -100,14 +100,13 @@ export default function TicketSelection() {
 
                   <div className="p-6">
                     <h3 className="text-lg font-bold text-text-main mb-4">{selectedTab}</h3>
-                    {/* Placeholder Image area */}
+                    {/* Event Image */}
                     <div className="w-full aspect-video bg-neutral-100 rounded-lg overflow-hidden relative group">
-                        <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
-                            {/* Mocking the golf image */}
-                            <svg className="w-16 h-16 opacity-20" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
+                        <img 
+                          src="/images/liv-golf-event.jpg" 
+                          alt="LIV Golf Chicago 2026"
+                          className="w-full h-full object-cover"
+                        />
                     </div>
                   </div>
                 </div>

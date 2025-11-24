@@ -57,8 +57,8 @@ export default function Checkout() {
                   <div className="bg-white rounded-lg border border-border-main p-6 mb-6">
                     <div className="flex gap-4">
                       <img 
-                        src="/api/placeholder/80/80" 
-                        alt="Event"
+                        src="/images/liv-golf-event.jpg" 
+                        alt="LIV Golf Chicago 2026"
                         className="w-20 h-20 rounded-lg object-cover"
                       />
                       <div className="flex-1">
