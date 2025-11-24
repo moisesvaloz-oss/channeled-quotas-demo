@@ -4,6 +4,7 @@
 @theme {
   /* FeverZone color palette from Figma */
   --color-primary-base: #0089e3;
+  --color-primary-main: #0089e3;
   --color-primary-active: #0079ca;
   --color-action-primary: #0089e3;
   --color-action-primary-hover: #0079ca;
