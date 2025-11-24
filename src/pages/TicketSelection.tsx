@@ -14,8 +14,7 @@ export default function TicketSelection() {
   
   const [selectedDate, setSelectedDate] = useState('Sat 8 Aug');
   const [selectedTime, setSelectedTime] = useState('9:00');
-  const [selectedTicketType, setSelectedTicketType] = useState('Grounds Pass');
-  const [ticketCount, setTicketCount] = useState(0);
+  const [ticketCounts, setTicketCounts] = useState<{ [key: string]: number }>({});
   const [selectedTab, setSelectedTab] = useState('Fanstand');
 
   const tabs = ['Fanstand', 'Birdie Shack', 'Birdie Shack Loge Box', 'Club 54', 'LIV Premium - All Access Hospitality', 'Suite on 18'];
@@ -26,7 +25,32 @@ export default function TicketSelection() {
     { day: 'Mon', date: '10 Aug' }
   ];
 
-  const ticketTypes = ['Grounds Pass', 'Grounds Pass Plus', 'Fanstand'];
+  const ticketSections = [
+    {
+      name: 'Fanstand',
+      tickets: [
+        { id: 'fanstand-fri', name: 'Fanstand | Friday (June 26)', price: 45.00, available: 9919 },
+        { id: 'fanstand-3day', name: 'Fanstand | 3 days pass', price: 120.00, available: 500 }
+      ]
+    },
+    {
+      name: 'Club 54',
+      tickets: [
+        { id: 'club54-fri', name: 'Club 54 | Friday (June 26)', price: 250.00, available: 100 },
+        { id: 'club54-3day', name: 'Club 54 | 3 days pass', price: 600.00, available: 50 }
+      ]
+    }
+  ];
+
+  const updateTicketCount = (id: string, delta: number) => {
+    setTicketCounts(prev => {
+      const current = prev[id] || 0;
+      const newCount = Math.max(0, current + delta);
+      return { ...prev, [id]: newCount };
+    });
+  };
+
+  const totalTickets = Object.values(ticketCounts).reduce((sum, count) => sum + count, 0);
 
   return (
     <div className="min-h-screen flex flex-col bg-background-contrast">
@@ -186,70 +210,66 @@ export default function TicketSelection() {
                   <div className="pt-4 border-t border-border-main">
                       <h3 className="text-sm font-bold text-text-main mb-3">Choose tickets</h3>
                       
-                      {/* Ticket Type Pills */}
-                      <div className="flex flex-wrap gap-2 mb-4">
-                          {ticketTypes.map(type => (
-                              <button
-                                  key={type}
-                                  onClick={() => setSelectedTicketType(type)}
-                                  className={`px-4 py-2 rounded-lg border text-xs font-medium transition-all ${
-                                      selectedTicketType === type
-                                          ? 'border-primary-main text-primary-main bg-white'
-                                          : 'border-border-main text-text-subtle hover:border-text-subtle'
-                                  }`}
-                              >
-                                  {type}
-                              </button>
-                          ))}
-                      </div>
-
-                      {/* Ticket Counter Card */}
-                      <div className="border border-border-main rounded-lg p-3 flex items-center justify-between bg-white relative overflow-hidden">
-                          {/* Dashed separator visual */}
-                          <div className="absolute right-[120px] top-0 bottom-0 w-px border-l border-dashed border-border-main"></div>
-                          
-                          <div className="flex-1 pr-4">
-                              <div className="text-sm font-bold text-text-main mb-0.5">Friday (August 8)</div>
-                              <div className="text-xs text-text-subtle mb-0.5">9919 available tickets left</div>
-                              <button className="text-xs text-primary-main hover:underline mb-1 font-semibold">See more</button>
-                              <div className="text-sm font-bold text-text-main">$45.00</div>
+                      <div className="space-y-6">
+                        {ticketSections.map((section) => (
+                          <div key={section.name}>
+                            <h4 className="text-sm font-bold text-text-main mb-3">{section.name}</h4>
+                            <div className="space-y-3">
+                              {section.tickets.map((ticket) => {
+                                const count = ticketCounts[ticket.id] || 0;
+                                return (
+                                  <div key={ticket.id} className="border border-border-main rounded-lg p-3 flex items-center justify-between bg-white relative overflow-hidden">
+                                      {/* Dashed separator visual */}
+                                      <div className="absolute right-[120px] top-0 bottom-0 w-px border-l border-dashed border-border-main"></div>
+                                      
+                                      <div className="flex-1 pr-4">
+                                          <div className="text-sm font-bold text-text-main mb-0.5">{ticket.name}</div>
+                                          <div className="text-xs text-text-subtle mb-0.5">{ticket.available} available tickets left</div>
+                                          <button className="text-xs text-primary-main hover:underline mb-1 font-semibold">See more</button>
+                                          <div className="text-sm font-bold text-text-main">${ticket.price.toFixed(2)}</div>
+                                      </div>
+                                      
+                                      <div className="flex items-center gap-2 pl-4 z-10 bg-white">
+                                          <button 
+                                              onClick={() => updateTicketCount(ticket.id, -1)}
+                                              className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                                                  count > 0 ? 'bg-neutral-100 hover:bg-neutral-200 text-text-main' : 'bg-neutral-50 text-border-main cursor-not-allowed'
+                                              }`}
+                                              disabled={count === 0}
+                                          >
+                                              <svg width="10" height="2" viewBox="0 0 10 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                  <path d="M0 1H10" stroke="currentColor" strokeWidth="2"/>
+                                              </svg>
+                                          </button>
+                                          
+                                          <span className="w-6 text-center text-sm font-medium">{count}</span>
+                                          
+                                          <button 
+                                              onClick={() => updateTicketCount(ticket.id, 1)}
+                                              className="w-8 h-8 rounded-full bg-primary-main hover:bg-primary-active flex items-center justify-center text-white transition-colors"
+                                          >
+                                              <img src={ICON_ADD} alt="" className="w-3 h-3 brightness-0 invert" />
+                                          </button>
+                                      </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
                           </div>
-                          
-                          <div className="flex items-center gap-2 pl-4 z-10 bg-white">
-                              <button 
-                                  onClick={() => ticketCount > 0 && setTicketCount(ticketCount - 1)}
-                                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-                                      ticketCount > 0 ? 'bg-neutral-100 hover:bg-neutral-200 text-text-main' : 'bg-neutral-50 text-border-main cursor-not-allowed'
-                                  }`}
-                                  disabled={ticketCount === 0}
-                              >
-                                  <svg width="10" height="2" viewBox="0 0 10 2" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                      <path d="M0 1H10" stroke="currentColor" strokeWidth="2"/>
-                                  </svg>
-                              </button>
-                              
-                              <span className="w-6 text-center text-sm font-medium">{ticketCount}</span>
-                              
-                              <button 
-                                  onClick={() => setTicketCount(ticketCount + 1)}
-                                  className="w-8 h-8 rounded-full bg-primary-main hover:bg-primary-active flex items-center justify-center text-white transition-colors"
-                              >
-                                  <img src={ICON_ADD} alt="" className="w-3 h-3 brightness-0 invert" />
-                              </button>
-                          </div>
+                        ))}
                       </div>
                   </div>
 
                   {/* Add to Cart Button */}
                   <button 
                       className={`w-full py-3 rounded-lg text-sm font-bold transition-colors ${
-                          ticketCount > 0 
+                          totalTickets > 0 
                               ? 'bg-action-primary text-white hover:bg-action-primary-hover' 
                               : 'bg-neutral-100 text-text-subtle cursor-not-allowed'
                       }`}
-                      disabled={ticketCount === 0}
+                      disabled={totalTickets === 0}
                   >
-                      Add to cart
+                      Add to cart {totalTickets > 0 && `(${totalTickets})`}
                   </button>
 
                 </div>
