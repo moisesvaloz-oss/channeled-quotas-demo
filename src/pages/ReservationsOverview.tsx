@@ -11,9 +11,9 @@ const ICON_CLOSE = '/icons/close.svg';
 
 export default function ReservationsOverview() {
   const [showGuideBanner, setShowGuideBanner] = useState(true);
-  const [selectedCity, setSelectedCity] = useState('City');
-  const [selectedVenue, setSelectedVenue] = useState('Venue');
-  const [globalSearch, setGlobalSearch] = useState('');
+  const [selectedCity, setSelectedCity] = useState('Chicago');
+  const [selectedVenue, setSelectedVenue] = useState('Bolingbrook Golf Club');
+  const [globalSearch, setGlobalSearch] = useState('LIV Golf Chicago 2025');
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
@@ -37,22 +37,21 @@ export default function ReservationsOverview() {
                 </div>
               </div>
 
-              {/* Global Search - Matching QuotaManagement static look but with input */}
+              {/* Global Search - Matching QuotaManagement style with pre-filled value */}
               <div className="bg-white border border-border-main rounded-sm h-14 px-3 flex flex-col justify-center relative flex-1">
-                 <input
-                  type="text"
-                  value={globalSearch}
-                  onChange={(e) => setGlobalSearch(e.target.value)}
-                  className="w-full h-full pt-4 bg-transparent border-none text-base text-text-main placeholder:text-transparent focus:ring-0 p-0"
-                  placeholder="Select a city and search for an event"
-                />
-                 {/* Label logic to match QuotaManagement static label position */}
-                <label className={`text-text-subtle text-xs font-semibold absolute left-3 transition-all duration-200 pointer-events-none ${globalSearch ? 'top-0' : 'top-4 text-base font-normal opacity-0'}`}>
-                  Select a city and search for an event
-                </label>
-                 {!globalSearch && (
-                   <span className="absolute left-3 top-4 text-text-subtle text-base pointer-events-none">Select a city and search for an event</span>
-                 )}
+                 <label className="text-text-subtle text-xs font-semibold absolute top-0 left-3">
+                   Search or type event
+                 </label>
+                 <div className="pt-4 flex items-center justify-between w-full">
+                   <input
+                    type="text"
+                    value={globalSearch}
+                    onChange={(e) => setGlobalSearch(e.target.value)}
+                    className="w-full h-full bg-transparent border-none text-base text-text-main placeholder:text-transparent focus:ring-0 p-0"
+                    placeholder="Search or type event"
+                  />
+                  <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-1.5 text-text-subtle ml-2 flex-shrink-0" />
+                 </div>
               </div>
 
               {/* Venue Dropdown */}
