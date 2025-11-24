@@ -5,6 +5,7 @@ import Businesses from './pages/Businesses';
 import ReservationsOverview from './pages/ReservationsOverview';
 import MakeReservation from './pages/MakeReservation';
 import SelectEvent from './pages/SelectEvent';
+import TicketSelection from './pages/TicketSelection';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/reservations/overview" element={<ReservationsOverview />} />
         <Route path="/reservations/create" element={<MakeReservation />} />
         <Route path="/reservations/create/event" element={<SelectEvent />} />
+        <Route path="/reservations/create/tickets" element={<TicketSelection />} />
       </Routes>
     </Router>
   );

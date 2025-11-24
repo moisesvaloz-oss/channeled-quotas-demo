@@ -98,7 +98,10 @@ export default function SelectEvent() {
                 </div>
 
                 {/* Table Row */}
-                <div className="px-4 py-4 flex items-center border-b border-border-main hover:bg-neutral-50 cursor-pointer transition-colors">
+                <div 
+                  onClick={() => navigate('/reservations/create/tickets')}
+                  className="px-4 py-4 flex items-center border-b border-border-main hover:bg-neutral-50 cursor-pointer transition-colors"
+                >
                   <div className="flex-1">
                     <div className="text-base font-semibold text-text-main mb-1">{event.name}</div>
                     <div className="text-xs text-text-subtle">{event.city} - {event.location}</div>
