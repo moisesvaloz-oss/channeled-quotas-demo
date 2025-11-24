@@ -5,16 +5,7 @@ import Sidebar from '../components/Sidebar';
 import { useBusinessStore } from '../stores/businessStore';
 
 // Placeholder illustration since we don't have the asset
-const Illustration = () => (
-  <svg width="300" height="200" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M68.5 155.5C68.5 155.5 45 163 38 186H262C255 163 231.5 155.5 231.5 155.5H68.5Z" fill="#E5F4F9" stroke="#06232C" strokeWidth="2"/>
-    <circle cx="150" cy="80" r="30" fill="#E5F4F9" stroke="#06232C" strokeWidth="2"/>
-    <path d="M150 110V155.5" stroke="#06232C" strokeWidth="2"/>
-    <path d="M120 130L150 110L180 130" stroke="#06232C" strokeWidth="2"/>
-    <rect x="200" y="120" width="50" height="35" rx="2" fill="white" stroke="#06232C" strokeWidth="2"/>
-    <path d="M210 155.5V186" stroke="#06232C" strokeWidth="2"/>
-  </svg>
-);
+// Removed as requested
 
 const ICON_CHEVRON_DOWN = '/icons/chevron-down.svg';
 
@@ -66,7 +57,7 @@ export default function MakeReservation() {
 
           {/* Main Content */}
           <div className="p-8">
-            <div className="bg-white rounded-lg shadow-sm border border-border-main overflow-hidden">
+            <div className="bg-white rounded-lg shadow-sm border border-border-main">
               <div className="flex flex-col md:flex-row">
                 {/* Left Side: Form */}
                 <div className="flex-1 p-8">
@@ -116,12 +107,9 @@ export default function MakeReservation() {
                   </div>
                 </div>
 
-                {/* Right Side: Illustration */}
+                {/* Right Side: Empty space */}
                 <div className="flex-1 flex items-center justify-center p-8 bg-neutral-50 md:bg-white">
-                  {/* Using a placeholder for the illustration as we don't have the asset */}
-                  <div className="opacity-50">
-                     <Illustration />
-                  </div>
+                  {/* Illustration removed as requested */}
                 </div>
               </div>
 
