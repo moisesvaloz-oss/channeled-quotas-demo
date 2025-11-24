@@ -350,69 +350,69 @@ export default function Payment() {
                         {/* Card */}
                         <button
                           onClick={() => setMarkAsPaidMethod('card')}
-                          className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-colors ${
+                          className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-lg border-2 transition-colors ${
                             markAsPaidMethod === 'card'
                               ? 'bg-[#a8f5e8] border-[#a8f5e8]'
                               : 'bg-neutral-50 border-border-main hover:border-text-subtle'
                           }`}
                         >
-                          <svg width="32" height="24" viewBox="0 0 32 24" fill="none" className="text-text-main">
+                          <svg width="24" height="18" viewBox="0 0 32 24" fill="none" className="text-text-main">
                             <rect x="1" y="1" width="30" height="22" rx="2" stroke="currentColor" strokeWidth="2"/>
                             <rect x="1" y="6" width="30" height="4" fill="currentColor"/>
                             <rect x="4" y="14" width="8" height="2" fill="currentColor"/>
                           </svg>
-                          <span className="text-sm font-semibold text-text-main">Card</span>
+                          <span className="text-xs font-semibold text-text-main">Card</span>
                         </button>
 
                         {/* Cash */}
                         <button
                           onClick={() => setMarkAsPaidMethod('cash')}
-                          className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-colors ${
+                          className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-lg border-2 transition-colors ${
                             markAsPaidMethod === 'cash'
                               ? 'bg-[#a8f5e8] border-[#a8f5e8]'
                               : 'bg-neutral-50 border-border-main hover:border-text-subtle'
                           }`}
                         >
-                          <svg width="32" height="24" viewBox="0 0 32 24" fill="none" className="text-text-main">
+                          <svg width="24" height="18" viewBox="0 0 32 24" fill="none" className="text-text-main">
                             <rect x="2" y="4" width="28" height="16" rx="1" stroke="currentColor" strokeWidth="2"/>
                             <rect x="6" y="8" width="4" height="8" fill="currentColor"/>
                             <rect x="12" y="8" width="4" height="8" fill="currentColor"/>
                             <rect x="18" y="8" width="4" height="8" fill="currentColor"/>
                           </svg>
-                          <span className="text-sm font-semibold text-text-main">Cash</span>
+                          <span className="text-xs font-semibold text-text-main">Cash</span>
                         </button>
 
                         {/* Bank Transfer */}
                         <button
                           onClick={() => setMarkAsPaidMethod('bank-transfer')}
-                          className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-colors ${
+                          className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-lg border-2 transition-colors ${
                             markAsPaidMethod === 'bank-transfer'
                               ? 'bg-[#a8f5e8] border-[#a8f5e8]'
                               : 'bg-neutral-50 border-border-main hover:border-text-subtle'
                           }`}
                         >
-                          <svg width="32" height="24" viewBox="0 0 32 24" fill="none" className="text-text-main">
+                          <svg width="24" height="18" viewBox="0 0 32 24" fill="none" className="text-text-main">
                             <rect x="1" y="1" width="30" height="22" rx="2" stroke="currentColor" strokeWidth="2"/>
                             <path d="M6 8h10M6 12h8M6 16h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                           </svg>
-                          <span className="text-sm font-semibold text-text-main">Bank Transfer</span>
+                          <span className="text-xs font-semibold text-text-main">Bank Transfer</span>
                         </button>
 
                         {/* Fever Bank Transfer */}
                         <button
                           onClick={() => setMarkAsPaidMethod('fever-bank-transfer')}
-                          className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-colors ${
+                          className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-lg border-2 transition-colors ${
                             markAsPaidMethod === 'fever-bank-transfer'
                               ? 'bg-[#a8f5e8] border-[#a8f5e8]'
                               : 'bg-neutral-50 border-border-main hover:border-text-subtle'
                           }`}
                         >
-                          <svg width="32" height="24" viewBox="0 0 32 24" fill="none" className="text-text-main">
+                          <svg width="24" height="18" viewBox="0 0 32 24" fill="none" className="text-text-main">
                             <rect x="1" y="1" width="30" height="22" rx="2" stroke="currentColor" strokeWidth="2"/>
                             <path d="M6 8h10M6 12h8M6 16h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                             <text x="24" y="18" fontSize="10" fontWeight="bold" fill="currentColor">F</text>
                           </svg>
-                          <span className="text-sm font-semibold text-text-main text-center">fever<br/>Bank transfer</span>
+                          <span className="text-xs font-semibold text-text-main text-center leading-tight">fever<br/>Bank transfer</span>
                         </button>
                       </div>
 
