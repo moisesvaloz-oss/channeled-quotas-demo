@@ -21,6 +21,8 @@ interface QuotaState {
   updateQuota: (id: string, updates: Partial<Omit<Quota, 'id' | 'sold' | 'available'>>) => void;
   updateQuotaCapacity: (id: string, newCapacity: number) => void;
   getQuotasByGroup: (capacityGroupName: string) => Quota[];
+  consumeQuotaCapacity: (quotaId: string, quantity: number) => void;
+  releaseQuotaCapacity: (quotaId: string, quantity: number) => void;
 }
 
 export const useQuotaStore = create<QuotaState>()(
@@ -65,6 +67,30 @@ export const useQuotaStore = create<QuotaState>()(
       },
       getQuotasByGroup: (capacityGroupName) => {
         return get().quotas.filter((q) => q.capacityGroupName === capacityGroupName);
+      },
+      consumeQuotaCapacity: (quotaId, quantity) => {
+        set((state) => ({
+          quotas: state.quotas.map((q) => {
+            if (q.id === quotaId) {
+              const newSold = q.sold + quantity;
+              const newAvailable = Math.max(0, q.available - quantity);
+              return { ...q, sold: newSold, available: newAvailable };
+            }
+            return q;
+          }),
+        }));
+      },
+      releaseQuotaCapacity: (quotaId, quantity) => {
+        set((state) => ({
+          quotas: state.quotas.map((q) => {
+            if (q.id === quotaId) {
+              const newSold = Math.max(0, q.sold - quantity);
+              const newAvailable = Math.min(q.capacity, q.available + quantity);
+              return { ...q, sold: newSold, available: newAvailable };
+            }
+            return q;
+          }),
+        }));
       },
     }),
     {

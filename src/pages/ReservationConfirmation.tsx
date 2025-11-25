@@ -19,6 +19,16 @@ export default function ReservationConfirmation() {
     }
   }, [orderId, getReservationById]);
 
+  // Calculate payment deadline (event time)
+  const getPaymentDeadline = () => {
+    return 'Fri, 25 Jul 2025, 11:59 PM (UTC-5)';
+  };
+
+  // Calculate time left (mock)
+  const getTimeLeft = () => {
+    return '210d 7h 0m';
+  };
+
   if (!reservation) {
     return (
       <div className="h-screen flex flex-col bg-neutral-50">
@@ -58,17 +68,17 @@ export default function ReservationConfirmation() {
             <div className="max-w-[1400px] mx-auto">
               <div className="flex gap-8 flex-col lg:flex-row">
                 {/* Left Column - Event & Cart */}
-                <div className="flex-1">
+                <div className="flex-1 max-w-[500px]">
                   {/* Event Card */}
                   <div className="bg-white rounded-lg border border-border-main p-6 mb-6">
                     <div className="flex gap-4">
                       <img 
                         src={reservation.eventImage}
                         alt={reservation.eventName}
-                        className="w-20 h-20 rounded-lg object-cover"
+                        className="w-16 h-16 rounded-lg object-cover"
                       />
                       <div className="flex-1">
-                        <h2 className="text-lg font-semibold text-text-main mb-2">
+                        <h2 className="text-base font-semibold text-text-main mb-1">
                           {reservation.eventName}
                         </h2>
                         <div className="flex items-center gap-1 text-sm text-text-subtle">
@@ -77,15 +87,15 @@ export default function ReservationConfirmation() {
                             alt="Location" 
                             className="w-3 h-3 flex-shrink-0"
                           />
-                          <span>{reservation.venueAddress}</span>
+                          <span>{reservation.venueName} - {reservation.venueAddress}</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   {/* Cart Section */}
-                  <div className="bg-white rounded-lg border border-border-main p-6">
-                    <h2 className="text-xl font-bold text-text-main mb-6">Cart</h2>
+                  <div className="bg-white rounded-lg border border-border-main p-6 mb-6">
+                    <h2 className="text-xl font-bold text-text-main mb-4">Cart</h2>
 
                     {/* Date/Time */}
                     <div className="text-sm font-semibold text-text-main mb-4">
@@ -117,65 +127,113 @@ export default function ReservationConfirmation() {
                     ))}
 
                     {/* Total */}
-                    <div className="flex justify-between items-center border-t border-border-main pt-6">
+                    <div className="flex justify-between items-center border-t border-border-main pt-4 mt-4">
                       <div className="text-base font-bold text-text-main">Total</div>
-                      <div className="text-xl font-bold text-text-main">
+                      <div className="text-lg font-bold text-text-main">
                         ${reservation.total.toFixed(2)}
                       </div>
                     </div>
                   </div>
+
+                  {/* Promo Code Section */}
+                  <div className="bg-white rounded-lg border border-border-main p-4 flex items-center justify-between cursor-pointer hover:bg-neutral-50">
+                    <div className="flex items-center gap-3">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-text-subtle">
+                        <path d="M17.5 8.33V6.67C17.5 5.75 16.75 5 15.83 5H4.17C3.25 5 2.5 5.75 2.5 6.67V8.33C3.42 8.33 4.17 9.08 4.17 10C4.17 10.92 3.42 11.67 2.5 11.67V13.33C2.5 14.25 3.25 15 4.17 15H15.83C16.75 15 17.5 14.25 17.5 13.33V11.67C16.58 11.67 15.83 10.92 15.83 10C15.83 9.08 16.58 8.33 17.5 8.33Z" stroke="currentColor" strokeWidth="1.5"/>
+                      </svg>
+                      <div>
+                        <div className="text-sm font-semibold text-text-main">Promo Code</div>
+                        <div className="text-xs text-text-subtle">Enter one if applicable</div>
+                      </div>
+                    </div>
+                    <svg width="8" height="14" viewBox="0 0 8 14" fill="none" className="text-text-subtle">
+                      <path d="M1 1L7 7L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
                 </div>
 
                 {/* Right Column - Confirmation */}
-                <div className="flex-1 lg:min-w-[400px]">
-                  <div className="bg-white rounded-lg border border-border-main p-8 text-center">
-                    {/* Success Icon */}
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-4">
-                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="text-green-600">
-                        <path d="M9 16L14 21L23 11" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                <div className="flex-1">
+                  <div className="bg-white rounded-lg border border-border-main p-8">
+                    {/* Success Icon & Thanks */}
+                    <div className="text-center mb-6">
+                      <div className="inline-flex items-center gap-2 mb-2">
+                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                          <circle cx="14" cy="14" r="14" fill="#22c55e"/>
+                          <path d="M8 14L12 18L20 10" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <h2 className="text-2xl font-bold text-text-main">Thanks!</h2>
+                      </div>
+                      
+                      <div className="text-lg text-primary-main font-semibold">
+                        Reservation ID: {reservation.id}
+                      </div>
                     </div>
 
-                    <h2 className="text-3xl font-bold text-text-main mb-2">Thank you!</h2>
-                    
-                    <div className="text-lg text-primary-main font-semibold mb-8">
-                      Order ID: {reservation.id}
+                    {/* Payment Deadline Warning */}
+                    <div className="bg-[#e0f2fe] rounded-lg p-4 mb-6">
+                      <div className="flex items-start gap-2">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-[#0284c7] flex-shrink-0 mt-0.5">
+                          <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5"/>
+                          <path d="M10 6V10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                          <circle cx="10" cy="13.5" r="0.75" fill="currentColor"/>
+                        </svg>
+                        <div>
+                          <p className="text-sm text-text-main font-semibold mb-1">
+                            Please complete the payment to avoid cancellations.
+                          </p>
+                          <p className="text-sm text-text-subtle">
+                            <span className="font-semibold">Payment deadline</span> (Event time): {getPaymentDeadline()}
+                          </p>
+                          <p className="text-sm text-text-subtle">
+                            <span className="font-semibold">Time left:</span>{' '}
+                            <span className="text-[#0284c7] font-semibold">{getTimeLeft()}</span>
+                          </p>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="space-y-3">
-                      <button className="w-full h-12 rounded-full bg-action-primary text-white font-semibold hover:bg-action-primary-hover transition-colors">
-                        Get delivery note
+                    <div className="flex gap-4 mb-4">
+                      <button className="flex-1 h-12 rounded-full border-2 border-primary-main text-primary-main font-semibold hover:bg-primary-main hover:text-white transition-colors">
+                        Get payment link
                       </button>
                       
-                      <button
-                        onClick={() => navigate('/reservations/overview')}
-                        className="w-full text-primary-active font-semibold hover:underline"
-                      >
-                        Order details
+                      <button className="flex-1 h-12 rounded-full bg-action-primary text-white font-semibold hover:bg-action-primary-hover transition-colors">
+                        Pay at the Box Office
                       </button>
                     </div>
 
-                    {/* Action Links */}
-                    <div className="flex items-center justify-center gap-8 mt-8 pt-8 border-t border-border-main">
-                      <button
-                        onClick={() => navigate('/reservations/overview')}
-                        className="flex items-center gap-2 text-primary-active hover:underline"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-primary-active">
-                          <path d="M2 8C2 8 4 4 8 4C12 4 14 8 14 8C14 8 12 12 8 12C4 12 2 8 2 8Z" stroke="currentColor" strokeWidth="1.5"/>
-                          <circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.5"/>
-                        </svg>
-                        <span className="text-sm font-semibold">See reservations</span>
-                      </button>
-                      
-                      <button
-                        onClick={() => navigate('/reservations/create')}
-                        className="text-primary-active hover:underline text-sm font-semibold"
-                      >
-                        New reservation
+                    {/* Mark as paid manually link */}
+                    <div className="text-center">
+                      <button className="text-primary-active font-semibold hover:underline text-sm">
+                        Mark as paid manually
                       </button>
                     </div>
+                  </div>
+
+                  {/* Bottom Action Links */}
+                  <div className="flex items-center justify-between mt-6">
+                    <button
+                      onClick={() => navigate('/reservations/overview')}
+                      className="flex items-center gap-2 border border-border-main rounded-full px-6 py-3 bg-white hover:bg-neutral-50 transition-colors"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-text-main">
+                        <path d="M2 8C2 8 4 4 8 4C12 4 14 8 14 8C14 8 12 12 8 12C4 12 2 8 2 8Z" stroke="currentColor" strokeWidth="1.5"/>
+                        <circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.5"/>
+                      </svg>
+                      <span className="text-sm font-semibold text-text-main">See reservations</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => navigate('/reservations/create')}
+                      className="flex items-center gap-2 border border-border-main rounded-full px-6 py-3 bg-white hover:bg-neutral-50 transition-colors"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-primary-active">
+                        <path d="M6 0V12M0 6H12" stroke="currentColor" strokeWidth="1.5"/>
+                      </svg>
+                      <span className="text-sm font-semibold text-primary-active">New reservation</span>
+                    </button>
                   </div>
                 </div>
               </div>

@@ -39,9 +39,9 @@ export default function Sidebar() {
   ];
 
   const reservationsSubItems = [
-    { name: 'Overview', path: '/reservations/overview' },
-    { name: 'Rules', path: '/reservations/rules' },
-    { name: 'Businesses', path: '/businesses' },
+    { name: 'Overview', path: '/reservations/overview', disabled: false },
+    { name: 'Rules', path: '/reservations/rules', disabled: true },
+    { name: 'Businesses', path: '/businesses', disabled: false },
   ];
 
   const isReservationsActive = location.pathname.includes('businesses') || location.pathname.includes('reservations');
@@ -107,15 +107,24 @@ export default function Sidebar() {
             <div className={`overflow-hidden transition-all duration-200 ease-out ${reservationsOpen ? 'max-h-[500px]' : 'max-h-0'}`}>
               <div className="pl-6 flex flex-col mt-1">
                 {reservationsSubItems.map((subItem, index) => (
-                  <Link 
-                    key={index} 
-                    to={subItem.path}
-                    className={`px-3 h-10 flex items-center rounded-sm text-white hover:text-white no-underline ${
-                      location.pathname === subItem.path ? 'bg-background-secondary' : ''
-                    }`}
-                  >
-                    <span className="text-base">{subItem.name}</span>
-                  </Link>
+                  subItem.disabled ? (
+                    <div 
+                      key={index}
+                      className="px-3 h-10 flex items-center rounded-sm text-white cursor-not-allowed"
+                    >
+                      <span className="text-base">{subItem.name}</span>
+                    </div>
+                  ) : (
+                    <Link 
+                      key={index} 
+                      to={subItem.path}
+                      className={`px-3 h-10 flex items-center rounded-sm text-white hover:text-white no-underline ${
+                        location.pathname === subItem.path ? 'bg-background-secondary' : ''
+                      }`}
+                    >
+                      <span className="text-base">{subItem.name}</span>
+                    </Link>
+                  )
                 ))}
               </div>
             </div>

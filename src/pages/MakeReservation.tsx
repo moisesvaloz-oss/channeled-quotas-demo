@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
 import { useBusinessStore } from '../stores/businessStore';
+import { useReservationFlowStore } from '../stores/reservationFlowStore';
 
 // Placeholder illustration since we don't have the asset
 // Removed as requested
@@ -14,6 +15,7 @@ export default function MakeReservation() {
   const navigate = useNavigate();
   const businesses = useBusinessStore((state) => state.businesses);
   const enabledBusinesses = businesses.filter(b => b.enabled);
+  const setSelectedBusinessInFlow = useReservationFlowStore((state) => state.setSelectedBusiness);
 
   const [selectedBusinessId, setSelectedBusinessId] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -39,7 +41,9 @@ export default function MakeReservation() {
   };
 
   const handleContinue = () => {
-    if (selectedBusinessId) {
+    if (selectedBusinessId && selectedBusiness) {
+      // Store the selected business in the flow store
+      setSelectedBusinessInFlow(selectedBusiness);
       navigate('/reservations/create/event');
     }
   };

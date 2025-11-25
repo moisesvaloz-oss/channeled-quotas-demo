@@ -49,14 +49,62 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
     { id: 1, fromDate: '', toDate: '', weekdays: [] as string[], fromTime: '', toTime: '' }
   ]);
   const [openTimeDropdown, setOpenTimeDropdown] = useState<{ index: number; field: 'from' | 'to' } | null>(null);
+  const [selectedReplicationTargets, setSelectedReplicationTargets] = useState<string[]>([]);
+  const [replicationTargetsOpen, setReplicationTargetsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const applicationDropdownRef = useRef<HTMLDivElement>(null);
+  const replicationTargetsDropdownRef = useRef<HTMLDivElement>(null);
   const timeDropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const replicationSectionRef = useRef<HTMLDivElement>(null);
   const dateRangeRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
   const addDateButtonRef = useRef<HTMLButtonElement>(null);
 
   const quotaTypeOptions = ['Exclusive', 'Shared', 'Blocked'];
+  
+  // Available capacity groups and their ticket types for replication
+  const capacityGroups: { [key: string]: string[] } = {
+    'Club 54': ['Friday (July 25)', '3 days pass'],
+    'Fanstand': ['Friday (July 25)', '3 days pass'],
+    'Birdie Shack': [],
+    'Birdie Shack LB': [],
+    'LIV Premium All Access': []
+  };
+  
+  // Generate replication target options (groups and their ticket types)
+  const getReplicationTargets = () => {
+    const targets: { id: string; label: string; type: 'group' | 'ticket'; group: string; ticketOption?: string }[] = [];
+    
+    Object.entries(capacityGroups).forEach(([groupName, tickets]) => {
+      // Skip current group if we're creating a group-level quota
+      const isCurrentGroup = groupName === capacityGroupName;
+      
+      // Add group-level option (only if not current group-level quota)
+      if (!(isCurrentGroup && !ticketOption)) {
+        targets.push({
+          id: `group:${groupName}`,
+          label: groupName,
+          type: 'group',
+          group: groupName
+        });
+      }
+      
+      // Add ticket-level options
+      tickets.forEach(ticket => {
+        // Skip if this is the current ticket we're editing
+        if (!(isCurrentGroup && ticketOption === ticket)) {
+          targets.push({
+            id: `ticket:${groupName}:${ticket}`,
+            label: `${groupName} → ${ticket}`,
+            type: 'ticket',
+            group: groupName,
+            ticketOption: ticket
+          });
+        }
+      });
+    });
+    
+    return targets;
+  };
   
   // Generate hours (1-12), minutes (00-59), and periods (AM/PM) for scrollable picker
   const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
@@ -80,6 +128,13 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
     'Reseller Educational Group',
     'Reseller Corporate Group',
     'Reseller Large Group',
+    'Reseller Travel Agency',
+    'Reseller Cultural Group',
+    'Reseller Tourist Guide',
+    'Reseller Internal Operations',
+    'Reseller Partnerships',
+    'Reseller Premium Services',
+    'Reseller Sales Representative',
     'Invitation',
     'BOLINGBROOKGC',
     'LIV GOLF DEPOSITS'
@@ -104,6 +159,9 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
       if (applicationDropdownRef.current && !applicationDropdownRef.current.contains(event.target as Node)) {
         setApplicationSelectionOpen(false);
       }
+      if (replicationTargetsDropdownRef.current && !replicationTargetsDropdownRef.current.contains(event.target as Node)) {
+        setReplicationTargetsOpen(false);
+      }
       
       // Check time dropdowns
       if (openTimeDropdown) {
@@ -115,13 +173,13 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
       }
     }
 
-    if (quotaTypeOpen || applicationSelectionOpen || openTimeDropdown) {
+    if (quotaTypeOpen || applicationSelectionOpen || replicationTargetsOpen || openTimeDropdown) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => {
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
-  }, [quotaTypeOpen, applicationSelectionOpen, openTimeDropdown]);
+  }, [quotaTypeOpen, applicationSelectionOpen, replicationTargetsOpen, openTimeDropdown]);
 
   // Scroll to replication section when "Specific selection" is selected
   useEffect(() => {
@@ -171,6 +229,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
       setApplicationOption('');
       setSelectedApplicationValues([]);
       setReplicationOption('');
+      setSelectedReplicationTargets([]);
       setTicketOption(initialTicketOption || '');
     }
   }, [editingQuota, replicatingQuota, initialTicketOption]);
@@ -589,7 +648,8 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
               </button>
 
               {replicationExpanded && (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-6">
+                  {/* Time Slots Replication */}
                   <div>
                     <p className="text-xs font-semibold text-text-main mb-2">In what time slots?</p>
                     <p className="text-sm text-text-main mb-4">You can replicate this quota in this group for several time slots.</p>
@@ -986,6 +1046,139 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                       </div>
                     )}
                   </div>
+
+                  {/* Other Groups / Ticket Types Replication */}
+                  <div className="border-t border-border-main pt-6">
+                    <p className="text-xs font-semibold text-text-main mb-2">In other groups / ticket types?</p>
+                    <p className="text-sm text-text-main mb-4">You can also copy this quota to other capacity groups or ticket types within the same time slot.</p>
+                    
+                    {/* Multi-select dropdown for groups/tickets */}
+                    <div className="relative" ref={replicationTargetsDropdownRef}>
+                      <button
+                        type="button"
+                        onClick={() => setReplicationTargetsOpen(!replicationTargetsOpen)}
+                        className="w-full bg-white border border-border-main rounded-lg h-14 px-3 pr-11 flex flex-col justify-center relative"
+                      >
+                        <label className="text-text-subtle text-xs absolute top-2 left-3 pointer-events-none">Select groups / ticket types</label>
+                        <div className={`pt-4 text-base text-left overflow-hidden text-ellipsis whitespace-nowrap ${
+                          selectedReplicationTargets.length > 0 ? 'text-text-main' : 'text-background-subtle-medium'
+                        }`}>
+                          {selectedReplicationTargets.length > 0 
+                            ? selectedReplicationTargets.length === 1
+                              ? getReplicationTargets().find(t => t.id === selectedReplicationTargets[0])?.label || 'Selected'
+                              : `${selectedReplicationTargets.length} selected`
+                            : 'Select options'}
+                        </div>
+                        <div className="absolute right-3 top-[18px] w-5 h-5 flex items-center justify-center pointer-events-none">
+                          <img src={ICON_CHEVRON_DOWN} alt="" className={`w-[14px] h-[7px] transition-transform ${replicationTargetsOpen ? 'rotate-180' : ''}`} />
+                        </div>
+                      </button>
+
+                      {/* Dropdown Menu */}
+                      {replicationTargetsOpen && (
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-border-main rounded-lg shadow-lg z-10 max-h-[250px] overflow-y-auto">
+                          {/* Group-level options */}
+                          <div className="px-3 py-2 bg-neutral-50 text-xs font-semibold text-text-subtle border-b border-border-main">
+                            Capacity Groups
+                          </div>
+                          {getReplicationTargets().filter(t => t.type === 'group').map((target) => (
+                            <button
+                              key={target.id}
+                              type="button"
+                              onClick={() => {
+                                if (selectedReplicationTargets.includes(target.id)) {
+                                  setSelectedReplicationTargets(selectedReplicationTargets.filter(id => id !== target.id));
+                                } else {
+                                  setSelectedReplicationTargets([...selectedReplicationTargets, target.id]);
+                                }
+                              }}
+                              className={`w-full px-3 py-3 text-left text-sm hover:bg-neutral-50 transition-colors flex items-center gap-2 ${
+                                selectedReplicationTargets.includes(target.id) ? 'bg-neutral-75' : ''
+                              }`}
+                            >
+                              <div className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center ${
+                                selectedReplicationTargets.includes(target.id)
+                                  ? 'bg-primary-base border-primary-base'
+                                  : 'border-border-main bg-white'
+                              }`}>
+                                {selectedReplicationTargets.includes(target.id) && (
+                                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                )}
+                              </div>
+                              <span className="text-text-main">{target.label}</span>
+                            </button>
+                          ))}
+                          
+                          {/* Ticket-level options */}
+                          {getReplicationTargets().filter(t => t.type === 'ticket').length > 0 && (
+                            <>
+                              <div className="px-3 py-2 bg-neutral-50 text-xs font-semibold text-text-subtle border-t border-b border-border-main">
+                                Ticket Types
+                              </div>
+                              {getReplicationTargets().filter(t => t.type === 'ticket').map((target) => (
+                                <button
+                                  key={target.id}
+                                  type="button"
+                                  onClick={() => {
+                                    if (selectedReplicationTargets.includes(target.id)) {
+                                      setSelectedReplicationTargets(selectedReplicationTargets.filter(id => id !== target.id));
+                                    } else {
+                                      setSelectedReplicationTargets([...selectedReplicationTargets, target.id]);
+                                    }
+                                  }}
+                                  className={`w-full px-3 py-3 text-left text-sm hover:bg-neutral-50 transition-colors flex items-center gap-2 ${
+                                    selectedReplicationTargets.includes(target.id) ? 'bg-neutral-75' : ''
+                                  }`}
+                                >
+                                  <div className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center ${
+                                    selectedReplicationTargets.includes(target.id)
+                                      ? 'bg-primary-base border-primary-base'
+                                      : 'border-border-main bg-white'
+                                  }`}>
+                                    {selectedReplicationTargets.includes(target.id) && (
+                                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                      </svg>
+                                    )}
+                                  </div>
+                                  <span className="text-text-main">{target.label}</span>
+                                </button>
+                              ))}
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Selected targets display */}
+                    {selectedReplicationTargets.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {selectedReplicationTargets.map(targetId => {
+                          const target = getReplicationTargets().find(t => t.id === targetId);
+                          if (!target) return null;
+                          return (
+                            <div 
+                              key={targetId}
+                              className="inline-flex items-center gap-1 bg-neutral-100 rounded-full px-3 py-1 text-sm text-text-main"
+                            >
+                              <span>{target.label}</span>
+                              <button
+                                type="button"
+                                onClick={() => setSelectedReplicationTargets(selectedReplicationTargets.filter(id => id !== targetId))}
+                                className="w-4 h-4 flex items-center justify-center text-text-subtle hover:text-text-main"
+                              >
+                                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -1030,6 +1223,24 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                     timeSlot,
                     ...(ticketOption && { ticketOption }),
                   });
+                  
+                  // Also replicate to other groups/tickets if selected
+                  if (selectedReplicationTargets.length > 0) {
+                    selectedReplicationTargets.forEach(targetId => {
+                      const target = getReplicationTargets().find(t => t.id === targetId);
+                      if (target) {
+                        addQuota({
+                          name: quotaName,
+                          type: quotaType as 'Exclusive' | 'Shared' | 'Blocked',
+                          capacity: parseInt(capacity),
+                          assignation,
+                          capacityGroupName: target.group,
+                          timeSlot,
+                          ...(target.ticketOption && { ticketOption: target.ticketOption }),
+                        });
+                      }
+                    });
+                  }
                 } else if (replicatingQuota) {
                   // Replicate quota to selected time slots
                   if (replicationOption === 'all-future') {
@@ -1064,7 +1275,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                     });
                   }
                 } else {
-                  // Add new quota
+                  // Add new quota to current group/ticket
                   addQuota({
                     name: quotaName,
                     type: quotaType as 'Exclusive' | 'Shared' | 'Blocked',
@@ -1074,6 +1285,24 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                     timeSlot,
                     ...(ticketOption && { ticketOption }),
                   });
+                  
+                  // Also replicate to other groups/tickets if selected
+                  if (selectedReplicationTargets.length > 0) {
+                    selectedReplicationTargets.forEach(targetId => {
+                      const target = getReplicationTargets().find(t => t.id === targetId);
+                      if (target) {
+                        addQuota({
+                          name: quotaName,
+                          type: quotaType as 'Exclusive' | 'Shared' | 'Blocked',
+                          capacity: parseInt(capacity),
+                          assignation,
+                          capacityGroupName: target.group,
+                          timeSlot,
+                          ...(target.ticketOption && { ticketOption: target.ticketOption }),
+                        });
+                      }
+                    });
+                  }
                 }
 
                 // Reset form
@@ -1084,6 +1313,7 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                 setApplicationOption('');
                 setSelectedApplicationValues([]);
                 setReplicationOption('');
+                setSelectedReplicationTargets([]);
                 
                 handleClose(true); // Signal that quota was created/updated
               }

@@ -4,10 +4,14 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
 import { useCartStore } from '../stores/cartStore';
+import { useReservationStore } from '../stores/reservationStore';
+import { useReservationFlowStore } from '../stores/reservationFlowStore';
 
 export default function Checkout() {
   const navigate = useNavigate();
   const { items: cartItems, clearCart, getTotal, setCustomerInfo } = useCartStore();
+  const { addReservation } = useReservationStore();
+  const selectedBusiness = useReservationFlowStore((state) => state.selectedBusiness);
   
   const [email, setEmail] = useState('mvaloz@feverup.com');
   const [firstName, setFirstName] = useState('Gabriel');
@@ -21,7 +25,34 @@ export default function Checkout() {
   const handleContinue = () => {
     // Save customer info to cart store
     setCustomerInfo(email, firstName, lastName);
-    navigate('/reservations/create/payment');
+    
+    // Create reservation directly (skip payment screen)
+    const orderId = addReservation({
+      eventName: 'LIV Golf Chicago 2025',
+      eventImage: '/images/liv-golf-event.jpg',
+      venueName: 'Bolingbrook Golf Club',
+      venueAddress: '2001 Rodeo Drive, Bolingbrook 60490',
+      date: cartItems[0]?.date || 'Fri 25 Jul',
+      time: cartItems[0]?.time || '10:30',
+      tickets: cartItems.map(item => ({
+        name: item.ticketName,
+        quantity: item.quantity,
+        price: item.price
+      })),
+      total: total,
+      bookingFees: 0,
+      status: 'to-be-paid',
+      customerEmail: email,
+      customerFirstName: firstName,
+      customerLastName: lastName,
+      businessId: selectedBusiness?.id,
+      businessName: selectedBusiness?.name,
+      businessType: selectedBusiness?.type
+    });
+    
+    // Clear cart and navigate to confirmation
+    clearCart();
+    navigate(`/reservations/confirmation?orderId=${orderId}`);
   };
 
   return (

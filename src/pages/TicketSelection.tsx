@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
 import { useCartStore } from '../stores/cartStore';
+import { useQuotaStore } from '../stores/quotaStore';
+import { useReservationFlowStore } from '../stores/reservationFlowStore';
+import { calculateChannelizedAvailability } from '../utils/capacityCalculator';
 
 const ICON_CALENDAR = '/icons/calendar.svg';
 const ICON_CHEVRON_UP = '/icons/angle-down.svg'; // Rotation needed
@@ -11,6 +14,8 @@ const ICON_CHEVRON_UP = '/icons/angle-down.svg'; // Rotation needed
 export default function TicketSelection() {
   const navigate = useNavigate();
   const { addItem, clearCart } = useCartStore();
+  const quotas = useQuotaStore((state) => state.quotas);
+  const selectedBusiness = useReservationFlowStore((state) => state.selectedBusiness);
   
   const [selectedDate, setSelectedDate] = useState('Fri 25 Jul');
   const [selectedTime, setSelectedTime] = useState('10:30');
@@ -26,27 +31,86 @@ export default function TicketSelection() {
     { day: 'Sun', date: '27 Jul', enabled: false }
   ];
 
-  const ticketSections = [
+  // Base ticket capacities (same as QuotaManagement)
+  const baseTicketCapacities: { [group: string]: { [ticket: string]: { sold: number; available: number; total: number } } } = {
+    'Club 54': {
+      'Friday (July 25)': { sold: 180, available: 220, total: 400 },
+      '3 days pass': { sold: 70, available: 130, total: 200 }
+    },
+    'Fanstand': {
+      'Friday (July 25)': { sold: 70, available: 80, total: 150 },
+      '3 days pass': { sold: 30, available: 20, total: 50 }
+    }
+  };
+
+  // Calculate channelized availability for each ticket based on selected business
+  const getChannelizedAvailability = useMemo(() => {
+    return (capacityGroup: string, ticketOption: string): number => {
+      const baseCapacity = baseTicketCapacities[capacityGroup]?.[ticketOption];
+      if (!baseCapacity) return 0;
+
+      const result = calculateChannelizedAvailability(
+        baseCapacity.available,
+        quotas,
+        selectedBusiness,
+        capacityGroup,
+        ticketOption
+      );
+
+      return result.available;
+    };
+  }, [quotas, selectedBusiness]);
+
+  // Ticket sections with dynamic availability based on channelized capacity
+  const ticketSections = useMemo(() => [
     {
       name: 'Fanstand',
       tickets: [
-        { id: 'fanstand-fri', name: 'Fanstand | Friday (July 25)', price: 287.00, available: 9919 },
-        { id: 'fanstand-3day', name: 'Fanstand | 3 days pass', price: 680.00, available: 500 }
+        { 
+          id: 'fanstand-fri', 
+          name: 'Fanstand | Friday (July 25)', 
+          price: 287.00, 
+          available: getChannelizedAvailability('Fanstand', 'Friday (July 25)'),
+          capacityGroup: 'Fanstand',
+          ticketOption: 'Friday (July 25)'
+        },
+        { 
+          id: 'fanstand-3day', 
+          name: 'Fanstand | 3 days pass', 
+          price: 680.00, 
+          available: getChannelizedAvailability('Fanstand', '3 days pass'),
+          capacityGroup: 'Fanstand',
+          ticketOption: '3 days pass'
+        }
       ]
     },
     {
       name: 'Club 54',
       tickets: [
-        { id: 'club54-fri', name: 'Club 54 | Friday (July 25)', price: 1031.00, available: 100 },
-        { id: 'club54-3day', name: 'Club 54 | 3 days pass', price: 2890.00, available: 50 }
+        { 
+          id: 'club54-fri', 
+          name: 'Club 54 | Friday (July 25)', 
+          price: 1031.00, 
+          available: getChannelizedAvailability('Club 54', 'Friday (July 25)'),
+          capacityGroup: 'Club 54',
+          ticketOption: 'Friday (July 25)'
+        },
+        { 
+          id: 'club54-3day', 
+          name: 'Club 54 | 3 days pass', 
+          price: 2890.00, 
+          available: getChannelizedAvailability('Club 54', '3 days pass'),
+          capacityGroup: 'Club 54',
+          ticketOption: '3 days pass'
+        }
       ]
     }
-  ];
+  ], [getChannelizedAvailability]);
 
-  const updateTicketCount = (id: string, delta: number) => {
+  const updateTicketCount = (id: string, delta: number, maxAvailable: number) => {
     setTicketCounts(prev => {
       const current = prev[id] || 0;
-      const newCount = Math.max(0, current + delta);
+      const newCount = Math.max(0, Math.min(maxAvailable, current + delta));
       return { ...prev, [id]: newCount };
     });
   };
@@ -209,6 +273,24 @@ export default function TicketSelection() {
                     </div>
                   </div>
 
+                  {/* Selected Business Info */}
+                  {selectedBusiness && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <svg className="w-4 h-4 text-primary-main flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/>
+                        </svg>
+                        <div>
+                          <span className="text-sm font-semibold text-primary-main">{selectedBusiness.name}</span>
+                          <span className="text-xs text-text-subtle ml-2">({selectedBusiness.type})</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-text-subtle mt-1">
+                        Availability shown is based on quotas assigned to this business/type
+                      </p>
+                    </div>
+                  )}
+
                   {/* Event Description Accordion - Removed as per request (mobile only) */}
 
                   {/* Date & hour */}
@@ -350,7 +432,7 @@ export default function TicketSelection() {
                                           <div className="flex items-center gap-3">
                                               {/* Minus Button */}
                                               <button 
-                                                  onClick={() => updateTicketCount(ticket.id, -1)}
+                                                  onClick={() => updateTicketCount(ticket.id, -1, ticket.available)}
                                                   className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
                                                       count > 0 ? 'bg-[#e6f4ff] text-[#0079ca] hover:bg-[#dbefff]' : 'bg-neutral-50 text-border-main cursor-not-allowed'
                                                   }`}
@@ -368,8 +450,13 @@ export default function TicketSelection() {
                                               
                                               {/* Plus Button */}
                                               <button 
-                                                  onClick={() => updateTicketCount(ticket.id, 1)}
-                                                  className="w-8 h-8 rounded-full bg-[#e6f4ff] text-[#0079ca] hover:bg-[#dbefff] flex items-center justify-center transition-colors"
+                                                  onClick={() => updateTicketCount(ticket.id, 1, ticket.available)}
+                                                  disabled={count >= ticket.available}
+                                                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                                                      count >= ticket.available 
+                                                          ? 'bg-neutral-50 text-border-main cursor-not-allowed' 
+                                                          : 'bg-[#e6f4ff] text-[#0079ca] hover:bg-[#dbefff]'
+                                                  }`}
                                               >
                                                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M6 0V12M0 6H12" stroke="currentColor" strokeWidth="1.5"/>
@@ -389,7 +476,7 @@ export default function TicketSelection() {
                             <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
                           </svg>
                           <div>
-                            <span className="text-[#b45309] font-semibold">Capacity for 3-Day Pass (July 25 - 27) is almost full</span>
+                            <span className="text-[#b45309] font-semibold">Capacity for 3 day pass is almost full</span>
                             <div className="text-[#b45309]">
                               Increase quota capacity{' '}
                               <a 

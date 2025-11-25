@@ -832,7 +832,7 @@ export default function QuotaManagement() {
                         <button 
                           ref={(el) => { buttonRefs.current[quota.id] = el; }}
                           onClick={() => toggleMenu(quota.id)} 
-                          className="cursor-pointer"
+                          className="cursor-pointer w-8 h-8 flex items-center justify-center -m-1"
                         >
                           <img src={ICON_VERTICAL_DOTS} alt="" className="w-[3.5px] h-[13.5px]" />
                         </button>
@@ -1055,7 +1055,7 @@ export default function QuotaManagement() {
                                 <button 
                                   ref={(el) => { buttonRefs.current[quota.id] = el; }}
                                   onClick={() => toggleMenu(quota.id)} 
-                                  className="cursor-pointer"
+                                  className="cursor-pointer w-8 h-8 flex items-center justify-center -m-1"
                                 >
                                   <img src={ICON_VERTICAL_DOTS} alt="" className="w-[3.5px] h-[13.5px]" />
                                 </button>
@@ -1275,7 +1275,7 @@ export default function QuotaManagement() {
                           <button 
                             ref={(el) => { buttonRefs.current[quota.id] = el; }}
                             onClick={() => toggleMenu(quota.id)} 
-                            className="cursor-pointer"
+                            className="cursor-pointer w-8 h-8 flex items-center justify-center -m-1"
                           >
                             <img src={ICON_VERTICAL_DOTS} alt="" className="w-[3.5px] h-[13.5px]" />
                           </button>
@@ -1498,7 +1498,7 @@ export default function QuotaManagement() {
                                 <button 
                                   ref={(el) => { buttonRefs.current[quota.id] = el; }}
                                   onClick={() => toggleMenu(quota.id)} 
-                                  className="cursor-pointer"
+                                  className="cursor-pointer w-8 h-8 flex items-center justify-center -m-1"
                                 >
                                   <img src={ICON_VERTICAL_DOTS} alt="" className="w-[3.5px] h-[13.5px]" />
                                 </button>
@@ -1718,7 +1718,7 @@ export default function QuotaManagement() {
                           <button 
                             ref={(el) => { buttonRefs.current[quota.id] = el; }}
                             onClick={() => toggleMenu(quota.id)} 
-                            className="cursor-pointer"
+                            className="cursor-pointer w-8 h-8 flex items-center justify-center -m-1"
                           >
                             <img src={ICON_VERTICAL_DOTS} alt="" className="w-[3.5px] h-[13.5px]" />
                           </button>
@@ -1933,7 +1933,7 @@ export default function QuotaManagement() {
                           <button 
                             ref={(el) => { buttonRefs.current[quota.id] = el; }}
                             onClick={() => toggleMenu(quota.id)} 
-                            className="cursor-pointer"
+                            className="cursor-pointer w-8 h-8 flex items-center justify-center -m-1"
                           >
                             <img src={ICON_VERTICAL_DOTS} alt="" className="w-[3.5px] h-[13.5px]" />
                           </button>
@@ -2148,7 +2148,7 @@ export default function QuotaManagement() {
                           <button 
                             ref={(el) => { buttonRefs.current[quota.id] = el; }}
                             onClick={() => toggleMenu(quota.id)} 
-                            className="cursor-pointer"
+                            className="cursor-pointer w-8 h-8 flex items-center justify-center -m-1"
                           >
                             <img src={ICON_VERTICAL_DOTS} alt="" className="w-[3.5px] h-[13.5px]" />
                           </button>

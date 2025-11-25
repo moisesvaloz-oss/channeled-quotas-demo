@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { consumeReservationCapacity, releaseReservationCapacity } from '../services/capacityService';
+import { useBusinessStore } from './businessStore';
 
 export interface Reservation {
   id: string; // Order ID like R96628515
@@ -22,6 +24,10 @@ export interface Reservation {
   customerEmail?: string;
   customerFirstName?: string;
   customerLastName?: string;
+  businessId?: string; // ID of the business that made the reservation
+  businessName?: string;
+  businessType?: string;
+  quotaConsumption?: Array<{ quotaId: string; consumed: number; ticketName: string }>; // Track which quotas were consumed
 }
 
 interface ReservationState {
@@ -45,10 +51,24 @@ export const useReservationStore = create<ReservationState>()(
       
       addReservation: (reservation) => {
         const orderId = generateOrderId();
+        
+        // Get business info if businessId is provided
+        let business = null;
+        if (reservation.businessId) {
+          business = useBusinessStore.getState().businesses.find(b => b.id === reservation.businessId) || null;
+        }
+        
+        // Consume capacity from quotas (regardless of payment status)
+        const quotaConsumption = consumeReservationCapacity(
+          reservation.tickets,
+          business
+        );
+        
         const newReservation: Reservation = {
           ...reservation,
           id: orderId,
           createdAt: new Date().toISOString(),
+          quotaConsumption: quotaConsumption.length > 0 ? quotaConsumption : undefined,
         };
         
         set((state) => ({
@@ -59,6 +79,19 @@ export const useReservationStore = create<ReservationState>()(
       },
       
       updateReservationStatus: (id, status) => {
+        const reservation = get().reservations.find((res) => res.id === id);
+        
+        // If cancelling a non-cancelled reservation, release capacity
+        if (reservation && status === 'cancelled' && reservation.status !== 'cancelled') {
+          // Release quota capacity if any was consumed
+          if (reservation.quotaConsumption && reservation.quotaConsumption.length > 0) {
+            releaseReservationCapacity(reservation.quotaConsumption, reservation.tickets);
+          } else {
+            // No quota consumption - still need to release base capacity
+            releaseReservationCapacity([], reservation.tickets);
+          }
+        }
+        
         set((state) => ({
           reservations: state.reservations.map((res) =>
             res.id === id ? { ...res, status } : res
@@ -71,6 +104,19 @@ export const useReservationStore = create<ReservationState>()(
       },
       
       deleteReservation: (id) => {
+        const reservation = get().reservations.find((res) => res.id === id);
+        
+        // Release capacity when deleting a non-cancelled reservation
+        if (reservation && reservation.status !== 'cancelled') {
+          // Release quota capacity if any was consumed
+          if (reservation.quotaConsumption && reservation.quotaConsumption.length > 0) {
+            releaseReservationCapacity(reservation.quotaConsumption, reservation.tickets);
+          } else {
+            // No quota consumption - still need to release base capacity
+            releaseReservationCapacity([], reservation.tickets);
+          }
+        }
+        
         set((state) => ({
           reservations: state.reservations.filter((res) => res.id !== id),
         }));
