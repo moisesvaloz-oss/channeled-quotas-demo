@@ -352,18 +352,25 @@ export default function QuotaManagement() {
   };
 
   // Calculate free capacity for a group
+  // Free capacity represents the portion of group capacity NOT allocated to any group-level quota
+  // It's a visualization of the "general pool" that anyone can access
   const calculateFreeCapacity = (groupName: string) => {
     const groupConfig = CAPACITY_GROUPS[groupName as keyof typeof CAPACITY_GROUPS];
     if (!groupConfig) return { sold: 0, available: 0, capacity: 0 };
 
-    // Only count GROUP-LEVEL quotas (not ticket-level quotas)
+    // Only count GROUP-LEVEL quotas (ticket-level quotas don't affect group free capacity)
     const groupLevelQuotas = getGroupLevelQuotas(groupName);
     const totalQuotaCapacity = groupLevelQuotas.reduce((sum, q) => sum + q.capacity, 0);
     const totalQuotaSold = groupLevelQuotas.reduce((sum, q) => sum + q.sold, 0);
 
-    // Free capacity is what's left after quotas are allocated
+    // Free capacity = total capacity not allocated to group-level quotas
     const freeCapacity = groupConfig.totalCapacity - totalQuotaCapacity;
+    
+    // Free sold = group's total sold minus what was sold through group-level quotas
+    // This represents tickets sold from the "general pool"
     const freeSold = groupConfig.sold - totalQuotaSold;
+    
+    // Free available = free capacity minus free sold
     const freeAvailable = freeCapacity - freeSold;
 
     return {
@@ -371,6 +378,38 @@ export default function QuotaManagement() {
       available: Math.max(0, freeAvailable),
       capacity: Math.max(0, freeCapacity)
     };
+  };
+
+  // Calculate free capacity for a ticket type
+  // Similar to group free capacity, but at the ticket level
+  const calculateTicketFreeCapacity = (groupName: string, ticketOption: string) => {
+    const baseCapacity = ticketTypeCapacities[groupName]?.[ticketOption];
+    if (!baseCapacity) return { sold: 0, available: 0, capacity: 0 };
+
+    // Only count TICKET-LEVEL quotas for this specific ticket
+    const ticketLevelQuotas = getTicketLevelQuotas(groupName, ticketOption);
+    const totalQuotaCapacity = ticketLevelQuotas.reduce((sum, q) => sum + q.capacity, 0);
+    const totalQuotaSold = ticketLevelQuotas.reduce((sum, q) => sum + q.sold, 0);
+
+    // Free capacity = total ticket capacity not allocated to ticket-level quotas
+    const freeCapacity = baseCapacity.total - totalQuotaCapacity;
+    
+    // Free sold = ticket's total sold minus what was sold through ticket-level quotas
+    const freeSold = baseCapacity.sold - totalQuotaSold;
+    
+    // Free available = free capacity minus free sold
+    const freeAvailable = freeCapacity - freeSold;
+
+    return {
+      sold: Math.max(0, freeSold),
+      available: Math.max(0, freeAvailable),
+      capacity: Math.max(0, freeCapacity)
+    };
+  };
+
+  // Helper to check if a group has any ticket-level quotas
+  const hasTicketLevelQuotas = (groupName: string, ticketOption: string) => {
+    return getTicketLevelQuotas(groupName, ticketOption).length > 0;
   };
 
   // Calculate time slot totals (sum of all groups)
@@ -880,8 +919,7 @@ export default function QuotaManagement() {
                       
                       {/* Free Capacity Row for Ticket Type - Only show if quotas exist */}
                       {getTicketLevelQuotas('Club 54', ticketOption).length > 0 && (() => {
-                        const ticketTotals = calculateTicketTypeTotals('Club 54', ticketOption);
-                        const freeCapacity = ticketTotals.available;
+                        const ticketFreeCapacity = calculateTicketFreeCapacity('Club 54', ticketOption);
                         
                         return (
                           <div className="mx-2 my-2 border border-border-main rounded px-2 py-4 flex items-center min-h-[52px] bg-white">
@@ -899,13 +937,13 @@ export default function QuotaManagement() {
                             {/* Numbers with left border */}
                             <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
                               <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
-                                {ticketTotals.sold}
+                                {ticketFreeCapacity.sold}
                               </div>
                               <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
-                                {freeCapacity}
+                                {ticketFreeCapacity.available}
                               </div>
                               <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
-                                {ticketTotals.capacity}
+                                {ticketFreeCapacity.capacity}
                               </div>
                               <div className="w-[40px]"></div>
                             </div>
@@ -1324,8 +1362,7 @@ export default function QuotaManagement() {
                       
                       {/* Free Capacity Row for Ticket Type - Only show if quotas exist */}
                       {getTicketLevelQuotas('Fanstand', ticketOption).length > 0 && (() => {
-                        const ticketTotals = calculateTicketTypeTotals('Fanstand', ticketOption);
-                        const freeCapacity = ticketTotals.available;
+                        const ticketFreeCapacity = calculateTicketFreeCapacity('Fanstand', ticketOption);
                         
                         return (
                           <div className="mx-2 my-2 border border-border-main rounded px-2 py-4 flex items-center min-h-[52px] bg-white">
@@ -1343,13 +1380,13 @@ export default function QuotaManagement() {
                             {/* Numbers with left border */}
                             <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
                               <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
-                                {ticketTotals.sold}
+                                {ticketFreeCapacity.sold}
                               </div>
                               <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
-                                {freeCapacity}
+                                {ticketFreeCapacity.available}
                               </div>
                               <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
-                                {ticketTotals.capacity}
+                                {ticketFreeCapacity.capacity}
                               </div>
                               <div className="w-[40px]"></div>
                             </div>
