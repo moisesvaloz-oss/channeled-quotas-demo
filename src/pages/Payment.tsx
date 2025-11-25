@@ -7,7 +7,7 @@ import { useReservationStore } from '../stores/reservationStore';
 
 export default function Payment() {
   const navigate = useNavigate();
-  const { items: cartItems, getTotal, clearCart } = useCartStore();
+  const { items: cartItems, getTotal, clearCart, customerEmail, customerFirstName, customerLastName } = useCartStore();
   const { addReservation } = useReservationStore();
   
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('bank-card');
@@ -25,7 +25,7 @@ export default function Payment() {
 
     // Create reservation
     const orderId = addReservation({
-      eventName: 'LIV Golf Chicago 2026',
+      eventName: 'LIV Golf Chicago 2025',
       eventImage: '/images/liv-golf-event.jpg',
       venueName: 'Bolingbrook Golf Club',
       venueAddress: 'Chicago - 2001 Rodeo Drive, Bolingbrook',
@@ -40,6 +40,9 @@ export default function Payment() {
       bookingFees,
       status: selectedPaymentMethod === 'mark-paid' ? 'paid' : 'to-be-paid',
       paymentMethod: selectedPaymentMethod === 'mark-paid' ? markAsPaidMethod : selectedPaymentMethod,
+      customerEmail: customerEmail,
+      customerFirstName: customerFirstName,
+      customerLastName: customerLastName,
     });
 
     // Clear cart
@@ -99,11 +102,11 @@ export default function Payment() {
                 <div className="bg-white rounded-lg border border-border-main p-4 mb-6 flex gap-4">
                   <img 
                     src="/images/liv-golf-event.jpg" 
-                    alt="LIV Golf Chicago 2026"
+                    alt="LIV Golf Chicago 2025"
                     className="w-16 h-16 rounded-lg object-cover"
                   />
                   <div>
-                    <h2 className="text-base font-semibold text-text-main">LIV Golf Chicago 2026</h2>
+                    <h2 className="text-base font-semibold text-text-main">LIV Golf Chicago 2025</h2>
                     <div className="flex items-center gap-1 text-sm text-text-subtle mt-1">
                       <img 
                         src="/icons/location-pin.svg" 
@@ -205,7 +208,7 @@ export default function Payment() {
                         <strong>Please complete the payment to avoid cancellations.</strong>
                       </div>
                       <div className="text-sm text-orange-800">
-                        <strong>Payment deadline</strong> (Event time): Thu, 27 Nov 2025, 3:06 PM (UTC-6).
+                        <strong>Payment deadline</strong> (Event time): Sun, 27 Jul 2025, 10:30 AM (UTC-5).
                       </div>
                       <div className="text-sm text-orange-800">
                         <strong>Time left:</strong> 2d 23h 59m

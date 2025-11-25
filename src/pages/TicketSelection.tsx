@@ -12,8 +12,8 @@ export default function TicketSelection() {
   const navigate = useNavigate();
   const { addItem, clearCart } = useCartStore();
   
-  const [selectedDate, setSelectedDate] = useState('Sat 8 Aug');
-  const [selectedTime, setSelectedTime] = useState('9:00');
+  const [selectedDate, setSelectedDate] = useState('Sun 27 Jul');
+  const [selectedTime, setSelectedTime] = useState('10:30');
   const [ticketCounts, setTicketCounts] = useState<{ [key: string]: number }>({});
   const [selectedTab, setSelectedTab] = useState('Fanstand');
   const [selectedTicketSection, setSelectedTicketSection] = useState('Fanstand');
@@ -21,23 +21,23 @@ export default function TicketSelection() {
   const tabs = ['Fanstand', 'Birdie Shack', 'Birdie Shack Loge Box', 'Club 54', 'LIV Premium - All Access Hospitality', 'Suite on 18'];
   
   const dates = [
-    { day: 'Sat', date: '8 Aug' },
-    { day: 'Sun', date: '9 Aug' },
-    { day: 'Mon', date: '10 Aug' }
+    { day: 'Fri', date: '25 Jul' },
+    { day: 'Sat', date: '26 Jul' },
+    { day: 'Sun', date: '27 Jul' }
   ];
 
   const ticketSections = [
     {
       name: 'Fanstand',
       tickets: [
-        { id: 'fanstand-fri', name: 'Fanstand | Friday (June 26)', price: 287.00, available: 9919 },
+        { id: 'fanstand-fri', name: 'Fanstand | Friday (July 25)', price: 287.00, available: 9919 },
         { id: 'fanstand-3day', name: 'Fanstand | 3 days pass', price: 680.00, available: 500 }
       ]
     },
     {
       name: 'Club 54',
       tickets: [
-        { id: 'club54-fri', name: 'Club 54 | Friday (June 26)', price: 1031.00, available: 100 },
+        { id: 'club54-fri', name: 'Club 54 | Friday (July 25)', price: 1031.00, available: 100 },
         { id: 'club54-3day', name: 'Club 54 | 3 days pass', price: 2890.00, available: 50 }
       ]
     }
@@ -94,21 +94,88 @@ export default function TicketSelection() {
                       >
                         {tab}
                         {selectedTab === tab && (
-                          <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#84cc16]"></div>
+                          <div className="absolute bottom-0 left-0 w-full h-1 bg-[#bdff69]"></div>
                         )}
                       </button>
                     ))}
                   </div>
 
-                  <div className="p-6">
-                    <h3 className="text-lg font-bold text-text-main mb-4">{selectedTab}</h3>
-                    {/* Event Image */}
-                    <div className="w-full aspect-video bg-neutral-100 rounded-lg overflow-hidden relative group">
-                        <img 
-                          src="/images/liv-golf-event.jpg" 
-                          alt="LIV Golf Chicago 2026"
-                          className="w-full h-full object-cover"
-                        />
+                  {/* Tab Content */}
+                  <div className="p-6 overflow-y-auto">
+                    <h2 className="text-2xl font-bold text-text-main mb-6">{selectedTab}</h2>
+                    
+                    {/* Video */}
+                    <div className="mb-10">
+                      <video 
+                        autoPlay 
+                        loop 
+                        muted 
+                        playsInline 
+                        controls
+                        className="w-full rounded-lg"
+                      >
+                        <source src="https://images.feverup.com/plan/video/3b6b7302-19e2-11f0-b60d-7e1f3a38b892.mp4" type="video/mp4" />
+                      </video>
+                    </div>
+
+                    {/* Event Itinerary */}
+                    <div className="bg-neutral-100 rounded-lg p-6 mb-10">
+                      <h3 className="text-xl font-bold text-text-main mb-4">Event Itinerary</h3>
+                      <div className="flex flex-col md:flex-row gap-6">
+                        <div className="flex-1 text-text-subtle">
+                          <p className="mb-3">📍 <em>Chicago, July 25–27, 2025</em></p>
+                          <p className="mb-3">Step into the good life with a hospitality ticket—shaded lounges, gourmet bites, and front-row views of the action. 🥂⛳ Whether you're treating clients, friends, or fam, it's a luxe day out done right. Guests aged 4+ need a ticket.</p>
+                          <p><strong>Limited time offer</strong>: Get Early Bird tickets now for <strong>up to 10% off</strong>.</p>
+                        </div>
+                        <div className="flex-1 space-y-2">
+                          {[
+                            { day: 'Friday, July 25', times: ['10:00 AM - Gates & Fan Village open', '12:15 PM - Shotgun Start (Round 1 begins!)', '5:15 PM - Gates & Fan Village close', '*Times subject to change'] },
+                            { day: 'Saturday, July 26', times: ['9:00 AM - Gates & Fan Village open', '11:15 AM - Shotgun Start (Round 2)', '5:30 PM - Gates & Fan Village close', '*Times subject to change'] },
+                            { day: 'Sunday, July 27', times: ['10:00 AM - Gates & Fan Village open', '12:15 PM - Final Round tees off', 'After Golf - Podium Ceremony', '5:30 PM - Gates & Fan Village close', '*Times subject to change'] }
+                          ].map((day, idx) => (
+                            <details key={idx} className="bg-white rounded p-3">
+                              <summary className="font-bold text-lg cursor-pointer flex justify-between items-center">
+                                {day.day}
+                                <span className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm">▼</span>
+                              </summary>
+                              <ul className="mt-3 space-y-2 text-text-subtle text-sm">
+                                {day.times.map((time, i) => (
+                                  <li key={i}>{time}</li>
+                                ))}
+                              </ul>
+                            </details>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Experience Details */}
+                    <div>
+                      <h3 className="text-2xl font-bold text-text-main mb-4">Experience details</h3>
+                      <div className="text-text-subtle space-y-4 mb-8">
+                        <p><strong>🏟️ For the real golf fanatics—the ones who want every swing, every strategy, every stat.</strong></p>
+                        <p>Fanstand gives you a front-row seat (literally) to all the drama on the 6th Tee. Think stadium-style vibes, shaded chill zones, and a private bar just steps away. It's smart, stylish spectating at its best. 🎯</p>
+                        <p>Plus, enjoy 2 complimentary drinks included with your ticket — because great golf deserves a proper toast.</p>
+                        <p><strong>⛳ What to Expect</strong></p>
+                        <p>You're not just watching the game—you're living it. Soak up every tee shot from your reserved grandstand, then roam the course or reset in the lounge whenever you need a breather.</p>
+                        <p className="text-sm">*Children aged 4 and over require a ticket for this experience.<br/>**Concerts may not take place every day. Stay tuned to LIVGolf.com for the latest schedule and updates.</p>
+                      </div>
+
+                      {/* Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {[
+                          { img: 'https://images.feverup.com/plan/photo/7b8da25a-19df-11f0-b040-5e752b0fae13.jpg', title: 'Reserved grandstand seating 👑', desc: 'No jostling for space—your seat is waiting on the 6th Tee with a view worth bragging about.' },
+                          { img: 'https://images.feverup.com/plan/photo/7b931244-19df-11f0-b040-5e752b0fae13.jpg', title: 'Private bar access 🍹', desc: 'Stay hydrated (and hyped) with drinks just steps from your seat. Two drinks free included with your ticket.' },
+                          { img: 'https://images.feverup.com/plan/photo/7b9895c0-19df-11f0-b040-5e752b0fae13.jpg', title: 'Dedicated lounge to recharge 🌤️', desc: 'Catch your breath in a breezy chill-out zone with snacks and sweet relief.' },
+                          { img: 'https://images.feverup.com/plan/photo/7b9e46aa-19df-11f0-b040-5e752b0fae13.jpg', title: 'Explore the full experience 🏌️', desc: 'Your ticket includes full access to the course and Fan Village, so wander at will.' }
+                        ].map((item, idx) => (
+                          <div key={idx} className="space-y-3">
+                            <img src={item.img} alt={item.title} className="w-full rounded-lg" loading="lazy" />
+                            <h4 className="font-semibold text-base text-text-main">{item.title}</h4>
+                            <p className="text-sm text-text-subtle">{item.desc}</p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -123,12 +190,14 @@ export default function TicketSelection() {
                   {/* Event Card (Small) */}
                   <div className="flex gap-4 pb-4 border-b border-border-main">
                     <div className="w-12 h-12 bg-neutral-200 rounded-md overflow-hidden flex-shrink-0">
-                      <div className="w-full h-full bg-[#0089e3] flex items-center justify-center text-white font-bold text-[10px]">
-                        LIV GOLF
-                      </div>
+                      <img 
+                        src="/images/liv-golf-event.jpg" 
+                        alt="LIV Golf Chicago 2025"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div className="flex flex-col justify-center">
-                      <h2 className="text-sm font-bold text-text-main mb-1">LIV Golf Chicago 2026</h2>
+                      <h2 className="text-sm font-bold text-text-main mb-1">LIV Golf Chicago 2025</h2>
                       <div className="flex items-center gap-1 text-xs text-text-subtle">
                         <img 
                           src="/icons/location-pin.svg" 
@@ -151,7 +220,7 @@ export default function TicketSelection() {
                       <div className="border border-border-main rounded-lg px-3 py-2 flex items-center justify-between cursor-pointer hover:border-text-subtle">
                           <div className="flex flex-col">
                               <span className="text-xs text-text-subtle">Show availability from...</span>
-                              <span className="text-sm text-text-main">2026-08-08</span>
+                              <span className="text-sm text-text-main">2025-07-27</span>
                           </div>
                           <img src={ICON_CALENDAR} alt="" className="w-4 h-4 text-text-main" />
                       </div>

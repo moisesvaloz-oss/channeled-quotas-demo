@@ -12,104 +12,141 @@ export default function SelectEvent() {
   const event = {
     id: '1',
     name: 'LIV Golf Chicago 2025',
+    image: '/images/liv-golf-event.jpg',
     location: 'Bolingbrook Golf Club',
     city: 'Chicago',
-    dates: '13 Sep 2025\n15 Sep 2025',
+    dates: ['Fri 25 Jul', 'Sat 26 Jul', 'Sun 27 Jul'],
     status: 'For sale'
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background-contrast">
+    <div className="h-screen flex flex-col bg-neutral-50">
       <Header />
-      <div className="flex flex-1">
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <div className="flex-1 flex flex-col overflow-auto bg-background-contrast">
-          
-          {/* Header Section */}
-          <div className="px-8 pt-6 pb-8">
+        
+        <main className="flex-1 overflow-auto flex flex-col bg-background-contrast">
+          {/* Hero Section */}
+          <div className="bg-background-contrast px-8 py-6">
             <button 
               onClick={() => navigate('/reservations/create')}
               className="text-white text-sm font-semibold mb-4 flex items-center gap-2 hover:underline"
             >
               <span className="text-lg">‹</span> Back
             </button>
-            <h1 className="text-white text-2xl font-bold">Make a reservation</h1>
+            <h1 className="text-white text-2xl font-bold mb-6">Make a reservation</h1>
             
             {/* Filters */}
-            <div className="flex gap-4 mt-6">
+            <div className="flex gap-4">
               {/* City */}
-              <div className="w-64 h-14 bg-white rounded-lg px-4 flex items-center justify-between cursor-pointer">
-                <div className="flex flex-col justify-center">
-                  <span className="text-xs text-text-subtle font-semibold">City</span>
-                  <span className="text-sm text-text-main">Chicago</span>
+              <div className="bg-white border border-border-main rounded-sm h-14 px-3 flex flex-col justify-center relative w-64 cursor-pointer">
+                <label className="text-text-subtle text-xs font-semibold">City</label>
+                <div className="flex items-center justify-between">
+                  <div className="text-text-main text-base">Chicago</div>
+                  <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-2 absolute right-3" />
                 </div>
-                <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-2 text-text-main" />
               </div>
 
               {/* Venue */}
-              <div className="w-64 h-14 bg-white rounded-lg px-4 flex items-center justify-between cursor-pointer">
-                <div className="flex flex-col justify-center">
-                  <span className="text-xs text-text-subtle font-semibold">Venue</span>
-                  <span className="text-sm text-text-main">Bolingbrook Golf Club</span>
+              <div className="bg-white border border-border-main rounded-sm h-14 px-3 flex flex-col justify-center relative w-64 cursor-pointer">
+                <label className="text-text-subtle text-xs font-semibold">Venue</label>
+                <div className="flex items-center justify-between">
+                  <div className="text-text-main text-base">Bolingbrook Golf Club</div>
+                  <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-2 absolute right-3" />
                 </div>
-                <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-2 text-text-main" />
               </div>
 
               {/* Event */}
-              <div className="flex-1 h-14 bg-white rounded-lg px-4 flex items-center justify-between cursor-pointer">
-                <div className="flex flex-col justify-center">
-                  <span className="text-xs text-text-subtle font-semibold">Event</span>
-                  <span className="text-sm text-text-main">{event.name}</span>
+              <div className="bg-white border border-border-main rounded-sm h-14 px-3 flex flex-col justify-center relative flex-1 cursor-pointer">
+                <label className="text-text-subtle text-xs font-semibold">Event</label>
+                <div className="flex items-center justify-between">
+                  <div className="text-text-main text-base">{event.name}</div>
+                  <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-2 absolute right-3" />
                 </div>
-                <img src={ICON_CHEVRON_DOWN} alt="" className="w-3 h-2 text-text-main" />
               </div>
             </div>
           </div>
 
-          {/* Content Card */}
+          {/* Content */}
           <div className="flex-1 bg-neutral-50 p-8">
-            <div className="bg-white rounded-lg shadow-sm border border-border-main p-6 min-h-[400px]">
-              <h2 className="text-xl font-bold text-text-main mb-2">Available events</h2>
-              <p className="text-text-subtle text-sm mb-6">
+            <div className="bg-white rounded-lg border border-border-main p-6">
+              {/* Page Title */}
+              <h2 className="text-2xl font-bold text-text-main mb-2">Available events</h2>
+              <p className="text-text-subtle text-base mb-6">
                 Select an available event and start a new reservation
               </p>
 
-              <div className="text-sm text-text-subtle mb-4">
+              {/* Results Count */}
+              <div className="text-sm font-semibold text-text-main mb-4">
                 1 events with the filters applied
               </div>
 
               {/* Table */}
-              <div className="w-full">
+              <div className="rounded-lg border border-border-main overflow-hidden">
                 {/* Table Header */}
-                <div className="bg-neutral-50 px-4 py-3 flex items-center border-b border-border-main">
-                  <div className="flex-1 flex items-center gap-2 cursor-pointer">
+                <div className="bg-neutral-75 px-6 py-3 grid grid-cols-[auto_1fr_200px_120px] gap-6 items-center border-b border-border-main">
+                  <div className="w-16"></div>
+                  <div className="flex items-center gap-2 cursor-pointer hover:text-text-main">
                     <span className="text-sm font-semibold text-text-subtle">Event</span>
-                    <img src={ICON_CHEVRON_DOWN} alt="" className="w-2 h-2 text-text-subtle opacity-50" />
+                    <svg className="w-3 h-3 text-text-subtle" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M7 15l5 5 5-5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M7 9l5-5 5 5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </div>
-                  <div className="w-48 text-sm font-semibold text-text-subtle">Dates</div>
-                  <div className="w-32 flex items-center gap-2 cursor-pointer">
+                  <div className="text-sm font-semibold text-text-subtle">Dates</div>
+                  <div className="flex items-center gap-2 cursor-pointer hover:text-text-main">
                     <span className="text-sm font-semibold text-text-subtle">Status</span>
-                    <img src={ICON_CHEVRON_DOWN} alt="" className="w-2 h-2 text-text-subtle opacity-50" />
+                    <svg className="w-3 h-3 text-text-subtle" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M7 15l5 5 5-5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M7 9l5-5 5 5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </div>
                 </div>
 
-                {/* Table Row */}
-                <div 
-                  onClick={() => navigate('/reservations/create/tickets')}
-                  className="px-4 py-4 flex items-center border-b border-border-main hover:bg-neutral-50 cursor-pointer transition-colors"
-                >
-                  <div className="flex-1">
-                    <div className="text-base font-semibold text-text-main mb-1">{event.name}</div>
-                    <div className="text-xs text-text-subtle">{event.city} - {event.location}</div>
-                    <div className="text-xs text-text-subtle">2001 Rodeo Drive, Bolingbrook 60490</div>
-                  </div>
-                  <div className="w-48 text-sm text-text-main whitespace-pre-line">
-                    {event.dates}
-                  </div>
-                  <div className="w-32">
-                    <span className="inline-block px-2 py-1 rounded border border-status-positive text-status-positive text-xs font-medium bg-white">
-                      {event.status}
-                    </span>
+                {/* Table Body */}
+                <div className="bg-white divide-y divide-border-main">
+                  {/* Event Row */}
+                  <div 
+                    className="px-6 py-4 grid grid-cols-[auto_1fr_200px_120px] gap-6 items-start hover:bg-neutral-50 cursor-pointer transition-colors"
+                    onClick={() => navigate('/reservations/create/tickets')}
+                  >
+                    {/* Event Image */}
+                    <div className="w-16 h-16 rounded overflow-hidden flex-shrink-0">
+                      <img 
+                        src={event.image} 
+                        alt={event.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
+                    {/* Event Info */}
+                    <div className="flex flex-col gap-1">
+                      <h3 className="text-base font-semibold text-text-main">
+                        {event.name}
+                      </h3>
+                      <div className="text-sm text-text-subtle">
+                        {event.city} - {event.location}
+                      </div>
+                      <div className="text-sm text-text-subtle">
+                        2001 Rodeo Drive, Bolingbrook 60490
+                      </div>
+                    </div>
+
+                    {/* Dates */}
+                    <div className="flex flex-col gap-1">
+                      {event.dates.map((date, index) => (
+                        <div key={index} className="text-sm text-text-main">
+                          {date}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Status */}
+                    <div className="flex items-start">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded border border-green-500 bg-white text-green-700 text-sm font-medium">
+                        {event.status}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -117,7 +154,7 @@ export default function SelectEvent() {
           </div>
 
           <Footer />
-        </div>
+        </main>
       </div>
     </div>
   );

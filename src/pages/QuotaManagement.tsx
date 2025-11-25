@@ -51,7 +51,7 @@ export default function QuotaManagement() {
   const buttonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
   const [selectedGroup, setSelectedGroup] = useState<{ name: string; timeSlot: string }>({ 
     name: '', 
-    timeSlot: 'Sun 27 Jul 2025 - 10:30' 
+    timeSlot: 'Fri 25 Jul 2025 - 10:30' 
   });
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [quotaToDelete, setQuotaToDelete] = useState<{ id: string; name: string } | null>(null);
@@ -86,7 +86,7 @@ export default function QuotaManagement() {
   const handleAddQuota = (groupName: string, ticketOption?: string) => {
     setSelectedGroup({ 
       name: groupName, 
-      timeSlot: 'Sun 27 Jul 2025 - 10:30' 
+      timeSlot: 'Fri 25 Jul 2025 - 10:30' 
     });
     setSelectedTicketOption(ticketOption || '');
     setDrawerOpen(true);
@@ -253,10 +253,17 @@ export default function QuotaManagement() {
     return getGroupQuotas(groupName).filter(q => q.ticketOption === ticketOption);
   };
 
+  // Check if a group has any content to display (quotas or ticket types)
+  const hasContentToShow = (groupName: string) => {
+    const hasGroupQuotas = getGroupLevelQuotas(groupName).length > 0;
+    const hasTicketTypes = showTicketTypes && ticketOptions[groupName] && ticketOptions[groupName].length > 0;
+    return hasGroupQuotas || hasTicketTypes;
+  };
+
   // Define ticket options for each group
   const ticketOptions: { [key: string]: string[] } = {
-    'Club 54': ['Friday (June 26)', '3 days pass'],
-    'Fanstand': ['Friday (June 26)', '3 days pass'],
+    'Club 54': ['Friday (July 25)', '3 days pass'],
+    'Fanstand': ['Friday (July 25)', '3 days pass'],
     'Birdie Shack': [],
     'Birdie Shack LB': [],
     'LIV Premium All Access': []
@@ -268,12 +275,12 @@ export default function QuotaManagement() {
   // Fanstand: Total=200, Sold=100, Available=100
   const ticketTypeCapacities: { [key: string]: { [ticket: string]: { sold: number; available: number; total: number } } } = {
     'Club 54': {
-      'Friday (June 26)': { sold: 180, available: 220, total: 400 },  // Single day ticket (higher capacity)
+      'Friday (July 25)': { sold: 180, available: 220, total: 400 },  // Single day ticket (higher capacity)
       '3 days pass': { sold: 70, available: 130, total: 200 }         // 3-day bundle (lower capacity)
       // Sum: sold=250, available=350, total=600 ✓
     },
     'Fanstand': {
-      'Friday (June 26)': { sold: 70, available: 80, total: 150 },    // Single day ticket (higher capacity)
+      'Friday (July 25)': { sold: 70, available: 80, total: 150 },    // Single day ticket (higher capacity)
       '3 days pass': { sold: 30, available: 20, total: 50 }           // 3-day bundle (lower capacity)
       // Sum: sold=100, available=100, total=200 ✓
     }
@@ -294,6 +301,28 @@ export default function QuotaManagement() {
       sold: groupConfig.sold,
       available: groupConfig.totalCapacity - groupConfig.sold - totalBlockedCapacity,
       capacity: groupConfig.totalCapacity
+    };
+  };
+
+  // Calculate ticket type totals (accounting for quotas that consume from the ticket type)
+  const calculateTicketTypeTotals = (groupName: string, ticketOption: string) => {
+    const baseCapacity = ticketTypeCapacities[groupName]?.[ticketOption];
+    if (!baseCapacity) return { sold: 0, available: 0, capacity: 0 };
+
+    // Get all quotas for this specific ticket type
+    const ticketQuotas = getTicketLevelQuotas(groupName, ticketOption);
+    
+    // Calculate total capacity allocated to quotas for this ticket type
+    const totalQuotaCapacity = ticketQuotas
+      .reduce((sum, q) => sum + q.capacity, 0);
+    
+    // Available = base total - base sold - quota allocations
+    const available = baseCapacity.total - baseCapacity.sold - totalQuotaCapacity;
+
+    return {
+      sold: baseCapacity.sold,
+      available: Math.max(0, available), // Can't be negative
+      capacity: baseCapacity.total
     };
   };
 
@@ -425,7 +454,7 @@ export default function QuotaManagement() {
                   <div className="bg-white border border-border-main rounded-lg h-14 flex items-center">
                     <div className="flex-1 px-3 pr-11 flex flex-col justify-center relative">
                       <label className="text-text-subtle text-xs absolute top-0 left-3">Date</label>
-                      <div className="pt-4 text-text-main text-base">07/27</div>
+                      <div className="pt-4 text-text-main text-base">07/25</div>
                       <div className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center">
                         <img src={ICON_CALENDAR} alt="" className="w-[14px] h-4" />
                       </div>
@@ -459,9 +488,10 @@ export default function QuotaManagement() {
                     type="checkbox"
                     checked={showTicketTypes}
                     onChange={(e) => setShowTicketTypes(e.target.checked)}
-                    className="w-4 h-4 rounded border-border-main text-primary-active focus:ring-primary-active cursor-pointer"
+                    className="w-4 h-4 rounded border-border-main cursor-pointer accent-[#0089e3]"
+                    style={{ accentColor: '#0089e3' }}
                   />
-                  <span className="text-sm text-text-main font-medium">Show Ticket types</span>
+                  <span className="text-sm text-text-main font-medium">Show ticket level</span>
                 </label>
 
                 <div className="flex-1"></div>
@@ -526,7 +556,7 @@ export default function QuotaManagement() {
                 <div className="flex items-center">
                   {/* Date/Time - Flexible */}
                   <div className="flex-1 min-w-0">
-                    <div className="text-text-main text-base font-semibold">Sun, 27 Jul 2025 - 10:30 AM</div>
+                    <div className="text-text-main text-base font-semibold">Fri, 25 Jul 2025 - 10:30 AM</div>
                   </div>
                   
                   {/* Quota Type */}
@@ -575,7 +605,10 @@ export default function QuotaManagement() {
             {/* Club 54 Group */}
             <div className="bg-white border border-border-main rounded-lg py-1 overflow-visible">
                   {/* Group Header */}
-                  <div className={`px-2 py-3 flex items-center ${!collapsedGroups['Club 54'] ? 'border-b border-border-main' : ''}`}>
+                  <div className="relative px-2 py-3 flex items-center">
+                    {!collapsedGroups['Club 54'] && hasContentToShow('Club 54') && (
+                      <div className="absolute left-2 right-2 bottom-0 border-b border-border-main"></div>
+                    )}
                     {/* Left: Chevron + Name - Flexible */}
                     <div className="flex-1 min-w-0 flex items-center gap-3">
                       <div 
@@ -622,8 +655,8 @@ export default function QuotaManagement() {
 
               {/* Collapsible Content */}
               <div className={`transition-all duration-200 ease-out ${collapsedGroups['Club 54'] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
-                  {/* Free Capacity Row */}
-                  {(() => {
+                  {/* Free Capacity Row - Only show if quotas exist */}
+                  {getGroupLevelQuotas('Club 54').length > 0 && (() => {
                     const freeCapacity = calculateFreeCapacity('Club 54');
                     return (
                       <div className="mx-2 my-2 border border-border-main rounded px-2 py-4 flex items-center min-h-[52px]">
@@ -829,13 +862,13 @@ export default function QuotaManagement() {
                         {/* Numbers with left border */}
                         <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
-                            {ticketTypeCapacities['Club 54']?.[ticketOption]?.sold || 0}
+                            {calculateTicketTypeTotals('Club 54', ticketOption).sold}
                           </div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
-                            {ticketTypeCapacities['Club 54']?.[ticketOption]?.available || 0}
+                            {calculateTicketTypeTotals('Club 54', ticketOption).available}
                           </div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
-                            {ticketTypeCapacities['Club 54']?.[ticketOption]?.total || 0}
+                            {calculateTicketTypeTotals('Club 54', ticketOption).capacity}
                           </div>
                           <div className="w-[40px]"></div>
                         </div>
@@ -843,6 +876,44 @@ export default function QuotaManagement() {
 
                       {/* Collapsible Quotas Section */}
                       <div className={`transition-all duration-200 ease-out ${collapsedTickets[ticketKey] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
+                      
+                      {/* Free Capacity Row for Ticket Type - Only show if quotas exist */}
+                      {getTicketLevelQuotas('Club 54', ticketOption).length > 0 && (() => {
+                        const ticketTotals = calculateTicketTypeTotals('Club 54', ticketOption);
+                        const ticketQuotas = getTicketLevelQuotas('Club 54', ticketOption);
+                        const totalQuotaCapacity = ticketQuotas.reduce((sum, q) => sum + q.capacity, 0);
+                        const freeCapacity = ticketTotals.available;
+                        
+                        return (
+                          <div className="mx-2 my-2 border border-border-main rounded px-2 py-4 flex items-center min-h-[52px] bg-white">
+                            {/* Left: Name - Flexible */}
+                            <div className="flex-1 min-w-0 flex items-center gap-1">
+                              <div className="text-text-main text-sm font-semibold">Free capacity (no quota)</div>
+                            </div>
+                            
+                            {/* Quota Type */}
+                            <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">-</div>
+                            
+                            {/* Quota Assignation */}
+                            <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">General*</div>
+                            
+                            {/* Numbers with left border */}
+                            <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                                {ticketTotals.sold}
+                              </div>
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                                {freeCapacity}
+                              </div>
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                                {ticketTotals.capacity}
+                              </div>
+                              <div className="w-[40px]"></div>
+                            </div>
+                          </div>
+                        );
+                      })()}
+
                       {/* Render Ticket-Level Quotas */}
                       {getTicketLevelQuotas('Club 54', ticketOption).map((quota) => {
                         const isBlocked = quota.type === 'Blocked';
@@ -980,7 +1051,10 @@ export default function QuotaManagement() {
             {/* Fanstand Group */}
             <div className="bg-white border border-border-main rounded-lg py-1 overflow-visible">
                   {/* Group Header */}
-                  <div className={`px-2 py-3 flex items-center ${!collapsedGroups['Fanstand'] ? 'border-b border-border-main' : ''}`}>
+                  <div className="relative px-2 py-3 flex items-center">
+                    {!collapsedGroups['Fanstand'] && hasContentToShow('Fanstand') && (
+                      <div className="absolute left-2 right-2 bottom-0 border-b border-border-main"></div>
+                    )}
                     {/* Left: Chevron + Name - Flexible */}
                     <div className="flex-1 min-w-0 flex items-center gap-3">
                       <div 
@@ -1027,8 +1101,8 @@ export default function QuotaManagement() {
 
               {/* Collapsible Content */}
               <div className={`transition-all duration-200 ease-out ${collapsedGroups['Fanstand'] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
-                  {/* Free Capacity Row */}
-                  {(() => {
+                  {/* Free Capacity Row - Only show if quotas exist */}
+                  {getGroupLevelQuotas('Fanstand').length > 0 && (() => {
                     const freeCapacity = calculateFreeCapacity('Fanstand');
                     return (
                       <div className="mx-2 my-2 border border-border-main rounded px-2 py-4 flex items-center min-h-[52px]">
@@ -1234,13 +1308,13 @@ export default function QuotaManagement() {
                         {/* Numbers with left border */}
                         <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
-                            {ticketTypeCapacities['Fanstand']?.[ticketOption]?.sold || 0}
+                            {calculateTicketTypeTotals('Fanstand', ticketOption).sold}
                           </div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
-                            {ticketTypeCapacities['Fanstand']?.[ticketOption]?.available || 0}
+                            {calculateTicketTypeTotals('Fanstand', ticketOption).available}
                           </div>
                           <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
-                            {ticketTypeCapacities['Fanstand']?.[ticketOption]?.total || 0}
+                            {calculateTicketTypeTotals('Fanstand', ticketOption).capacity}
                           </div>
                           <div className="w-[40px]"></div>
                         </div>
@@ -1248,6 +1322,44 @@ export default function QuotaManagement() {
 
                       {/* Collapsible Quotas Section */}
                       <div className={`transition-all duration-200 ease-out ${collapsedTickets[ticketKey] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
+                      
+                      {/* Free Capacity Row for Ticket Type - Only show if quotas exist */}
+                      {getTicketLevelQuotas('Fanstand', ticketOption).length > 0 && (() => {
+                        const ticketTotals = calculateTicketTypeTotals('Fanstand', ticketOption);
+                        const ticketQuotas = getTicketLevelQuotas('Fanstand', ticketOption);
+                        const totalQuotaCapacity = ticketQuotas.reduce((sum, q) => sum + q.capacity, 0);
+                        const freeCapacity = ticketTotals.available;
+                        
+                        return (
+                          <div className="mx-2 my-2 border border-border-main rounded px-2 py-4 flex items-center min-h-[52px] bg-white">
+                            {/* Left: Name - Flexible */}
+                            <div className="flex-1 min-w-0 flex items-center gap-1">
+                              <div className="text-text-main text-sm font-semibold">Free capacity (no quota)</div>
+                            </div>
+                            
+                            {/* Quota Type */}
+                            <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">-</div>
+                            
+                            {/* Quota Assignation */}
+                            <div className="w-[200px] flex-shrink-0 text-center text-text-main text-sm">General*</div>
+                            
+                            {/* Numbers with left border */}
+                            <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                                {ticketTotals.sold}
+                              </div>
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                                {freeCapacity}
+                              </div>
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                                {ticketTotals.capacity}
+                              </div>
+                              <div className="w-[40px]"></div>
+                            </div>
+                          </div>
+                        );
+                      })()}
+
                       {/* Render Ticket-Level Quotas */}
                       {getTicketLevelQuotas('Fanstand', ticketOption).map((quota) => {
                         const isBlocked = quota.type === 'Blocked';
@@ -1385,7 +1497,10 @@ export default function QuotaManagement() {
            {/* Birdie Shack capacity group */}
             <div className="bg-white border border-border-main rounded-lg py-1 overflow-visible">
                   {/* Group Header */}
-                  <div className={`px-2 py-3 flex items-center ${!collapsedGroups['Birdie Shack'] ? 'border-b border-border-main' : ''}`}>
+                  <div className="relative px-2 py-3 flex items-center">
+                    {!collapsedGroups['Birdie Shack'] && hasContentToShow('Birdie Shack') && (
+                      <div className="absolute left-2 right-2 bottom-0 border-b border-border-main"></div>
+                    )}
                     {/* Left: Chevron + Name - Flexible */}
                     <div className="flex-1 min-w-0 flex items-center gap-3">
                       <div 
@@ -1432,8 +1547,8 @@ export default function QuotaManagement() {
 
               {/* Collapsible Content */}
               <div className={`transition-all duration-200 ease-out ${collapsedGroups['Birdie Shack'] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
-                   {/* Free Capacity Row */}
-                  {(() => {
+                   {/* Free Capacity Row - Only show if quotas exist */}
+                  {getGroupQuotas('Birdie Shack').length > 0 && (() => {
                     const freeCapacity = calculateFreeCapacity('Birdie Shack');
                     return (
                       <div className="mx-2 my-2 border border-border-main rounded px-2 py-4 flex items-center min-h-[52px]">
@@ -1597,7 +1712,10 @@ export default function QuotaManagement() {
            {/* Birdie Shack LB capacity group */}
             <div className="bg-white border border-border-main rounded-lg py-1 overflow-visible">
                   {/* Group Header */}
-                  <div className={`px-2 py-3 flex items-center ${!collapsedGroups['Birdie Shack LB'] ? 'border-b border-border-main' : ''}`}>
+                  <div className="relative px-2 py-3 flex items-center">
+                    {!collapsedGroups['Birdie Shack LB'] && hasContentToShow('Birdie Shack LB') && (
+                      <div className="absolute left-2 right-2 bottom-0 border-b border-border-main"></div>
+                    )}
                     {/* Left: Chevron + Name - Flexible */}
                     <div className="flex-1 min-w-0 flex items-center gap-3">
                       <div 
@@ -1644,8 +1762,8 @@ export default function QuotaManagement() {
 
               {/* Collapsible Content */}
               <div className={`transition-all duration-200 ease-out ${collapsedGroups['Birdie Shack LB'] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
-                   {/* Free Capacity Row */}
-                  {(() => {
+                   {/* Free Capacity Row - Only show if quotas exist */}
+                  {getGroupQuotas('Birdie Shack LB').length > 0 && (() => {
                     const freeCapacity = calculateFreeCapacity('Birdie Shack LB');
                     return (
                       <div className="mx-2 my-2 border border-border-main rounded px-2 py-4 flex items-center min-h-[52px]">
@@ -1809,7 +1927,10 @@ export default function QuotaManagement() {
            {/* LIV Premium All Access capacity group */}
             <div className="bg-white border border-border-main rounded-lg py-1 overflow-visible">
                   {/* Group Header */}
-                  <div className={`px-2 py-3 flex items-center ${!collapsedGroups['LIV Premium All Access'] ? 'border-b border-border-main' : ''}`}>
+                  <div className="relative px-2 py-3 flex items-center">
+                    {!collapsedGroups['LIV Premium All Access'] && hasContentToShow('LIV Premium All Access') && (
+                      <div className="absolute left-2 right-2 bottom-0 border-b border-border-main"></div>
+                    )}
                     {/* Left: Chevron + Name - Flexible */}
                     <div className="flex-1 min-w-0 flex items-center gap-3">
                       <div 
@@ -1856,8 +1977,8 @@ export default function QuotaManagement() {
 
               {/* Collapsible Content */}
               <div className={`transition-all duration-200 ease-out ${collapsedGroups['LIV Premium All Access'] ? 'max-h-0 overflow-hidden' : 'max-h-[10000px]'}`}>
-                   {/* Free Capacity Row */}
-                  {(() => {
+                   {/* Free Capacity Row - Only show if quotas exist */}
+                  {getGroupQuotas('LIV Premium All Access').length > 0 && (() => {
                     const freeCapacity = calculateFreeCapacity('LIV Premium All Access');
                     return (
                       <div className="mx-2 my-2 border border-border-main rounded px-2 py-4 flex items-center min-h-[52px]">
@@ -2040,7 +2161,7 @@ export default function QuotaManagement() {
          isOpen={transferDrawerOpen}
          onClose={handleTransferDrawerClose}
          sourceQuotaId={transferSourceQuotaId}
-         timeSlot="Sun 27 Jul 2025 - 10:30"
+         timeSlot="Fri 25 Jul 2025 - 10:30"
        />
 
         {/* Success Toast */}

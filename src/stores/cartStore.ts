@@ -12,15 +12,22 @@ export interface CartItem {
 
 interface CartState {
   items: CartItem[];
+  customerEmail: string;
+  customerFirstName: string;
+  customerLastName: string;
   addItem: (item: CartItem) => void;
   updateQuantity: (id: string, quantity: number) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
   getTotal: () => number;
+  setCustomerInfo: (email: string, firstName: string, lastName: string) => void;
 }
 
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
+  customerEmail: '',
+  customerFirstName: '',
+  customerLastName: '',
   
   addItem: (item) =>
     set((state) => {
@@ -49,11 +56,14 @@ export const useCartStore = create<CartState>((set, get) => ({
       items: state.items.filter(item => item.id !== id),
     })),
     
-  clearCart: () => set({ items: [] }),
+  clearCart: () => set({ items: [], customerEmail: '', customerFirstName: '', customerLastName: '' }),
   
   getTotal: () => {
     const state = get();
     return state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   },
+  
+  setCustomerInfo: (email, firstName, lastName) =>
+    set({ customerEmail: email, customerFirstName: firstName, customerLastName: lastName }),
 }));
 

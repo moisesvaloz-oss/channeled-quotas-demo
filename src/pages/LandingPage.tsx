@@ -115,7 +115,7 @@ export default function LandingPage() {
               {/* Time Slot Header */}
               <div className="mt-6">
                 <div className="bg-neutral-75 rounded-lg p-3 flex items-center">
-                  <div className="flex-1 text-text-main text-base font-semibold">Sun, 18 Jan 2024 - 10:30 AM</div>
+                  <div className="flex-1 text-text-main text-base font-semibold">Fri, 25 Jul 2025 - 10:30 AM</div>
                   <div className="w-[100px] flex flex-col items-center justify-start">
                     <div className="text-text-subtle text-xs mb-0.5">Status</div>
                   </div>
@@ -188,7 +188,7 @@ export default function LandingPage() {
                           <div className="w-[18px] h-[18px] flex items-center justify-center relative">
                             <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
                           </div>
-                          <span className="text-text-main text-sm">Fanstand | Friday (June 26)</span>
+                          <span className="text-text-main text-sm">Fanstand | Friday (July 25)</span>
                         </div>
                         <div className="w-[100px] flex items-center justify-center">
                           <span className="px-1 py-0.5 bg-status-positive text-white rounded text-xs h-5 flex items-center justify-center min-w-[48px]">On-sale</span>
@@ -280,7 +280,7 @@ export default function LandingPage() {
                           <div className="w-[18px] h-[18px] flex items-center justify-center relative">
                             <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
                           </div>
-                          <span className="text-text-main text-sm">Club 54 | Friday (June 26)</span>
+                          <span className="text-text-main text-sm">Club 54 | Friday (July 25)</span>
                         </div>
                         <div className="w-[100px] flex items-center justify-center">
                           <span className="px-1 py-0.5 bg-status-positive text-white rounded text-xs h-5 flex items-center justify-center min-w-[48px]">On-sale</span>
@@ -329,6 +329,108 @@ export default function LandingPage() {
                           <div className="w-5 h-5 flex items-center justify-center relative">
                             <img src={ICON_PEN_TO_SQUARE} alt="" className="w-4 h-4" />
                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Birdie Shack Group */}
+                  <div className="bg-white border border-border-main rounded-lg overflow-hidden p-3">
+                    <div className="bg-white border-b border-dashed border-border-main pb-3 flex items-center">
+                      <div className="flex-1 flex items-center gap-2">
+                        <div className="w-[26px] h-[26px] flex items-center justify-center relative">
+                          <img src={ICON_ANGLE_DOWN} alt="" className="w-[15px] h-[9px]" />
+                        </div>
+                        <div>
+                          <div className="text-text-subtle text-xs">Capacity Group</div>
+                          <div className="text-text-main text-base font-semibold">Birdie Shack</div>
+                        </div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-center"></div>
+                      <div className="w-[100px] flex items-center justify-center"></div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">0</div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">350</div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">350</div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">0%</div>
+                      </div>
+                      <div className="w-[40px] flex justify-center">
+                        <div className="w-5 h-5 flex items-center justify-center relative">
+                          <img src={ICON_PEN_TO_SQUARE} alt="" className="w-4 h-4" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Birdie Shack LB Group */}
+                  <div className="bg-white border border-border-main rounded-lg overflow-hidden p-3">
+                    <div className="bg-white border-b border-dashed border-border-main pb-3 flex items-center">
+                      <div className="flex-1 flex items-center gap-2">
+                        <div className="w-[26px] h-[26px] flex items-center justify-center relative">
+                          <img src={ICON_ANGLE_DOWN} alt="" className="w-[15px] h-[9px]" />
+                        </div>
+                        <div>
+                          <div className="text-text-subtle text-xs">Capacity Group</div>
+                          <div className="text-text-main text-base font-semibold">Birdie Shack LB</div>
+                        </div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-center"></div>
+                      <div className="w-[100px] flex items-center justify-center"></div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">0</div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">15</div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">15</div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">0%</div>
+                      </div>
+                      <div className="w-[40px] flex justify-center">
+                        <div className="w-5 h-5 flex items-center justify-center relative">
+                          <img src={ICON_PEN_TO_SQUARE} alt="" className="w-4 h-4" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* LIV Premium All Access Group */}
+                  <div className="bg-white border border-border-main rounded-lg overflow-hidden p-3">
+                    <div className="bg-white border-b border-dashed border-border-main pb-3 flex items-center">
+                      <div className="flex-1 flex items-center gap-2">
+                        <div className="w-[26px] h-[26px] flex items-center justify-center relative">
+                          <img src={ICON_ANGLE_DOWN} alt="" className="w-[15px] h-[9px]" />
+                        </div>
+                        <div>
+                          <div className="text-text-subtle text-xs">Capacity Group</div>
+                          <div className="text-text-main text-base font-semibold">LIV Premium All Access</div>
+                        </div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-center"></div>
+                      <div className="w-[100px] flex items-center justify-center"></div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">0</div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">10</div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">10</div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">0%</div>
+                      </div>
+                      <div className="w-[40px] flex justify-center">
+                        <div className="w-5 h-5 flex items-center justify-center relative">
+                          <img src={ICON_PEN_TO_SQUARE} alt="" className="w-4 h-4" />
                         </div>
                       </div>
                     </div>

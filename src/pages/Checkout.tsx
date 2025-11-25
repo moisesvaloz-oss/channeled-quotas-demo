@@ -7,7 +7,7 @@ import { useCartStore } from '../stores/cartStore';
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { items: cartItems, clearCart, getTotal } = useCartStore();
+  const { items: cartItems, clearCart, getTotal, setCustomerInfo } = useCartStore();
   
   const [email, setEmail] = useState('mvaloz@feverup.com');
   const [firstName, setFirstName] = useState('Gabriel');
@@ -17,6 +17,12 @@ export default function Checkout() {
   const [overridePrice, setOverridePrice] = useState(false);
 
   const total = getTotal();
+
+  const handleContinue = () => {
+    // Save customer info to cart store
+    setCustomerInfo(email, firstName, lastName);
+    navigate('/reservations/create/payment');
+  };
 
   return (
     <div className="h-screen flex flex-col bg-neutral-50">
@@ -49,12 +55,12 @@ export default function Checkout() {
                     <div className="flex gap-4">
                       <img 
                         src="/images/liv-golf-event.jpg" 
-                        alt="LIV Golf Chicago 2026"
+                        alt="LIV Golf Chicago 2025"
                         className="w-20 h-20 rounded-lg object-cover"
                       />
                       <div className="flex-1">
                         <h2 className="text-lg font-semibold text-text-main mb-2">
-                          LIV Golf Chicago 2026
+                          LIV Golf Chicago 2025
                         </h2>
                         <div className="flex items-center gap-1 text-sm text-text-subtle">
                           <img 
@@ -305,7 +311,7 @@ export default function Checkout() {
                         Back
                       </button>
                       <button
-                        onClick={() => navigate('/reservations/create/payment')}
+                        onClick={handleContinue}
                         className="flex-1 h-12 rounded-full bg-action-primary text-white font-semibold hover:bg-action-primary-hover transition-colors"
                       >
                         Continue

@@ -87,10 +87,22 @@ export default function ReservationsOverview() {
     return timeStr;
   };
 
+  const getBusinessTypeColor = (type: string) => {
+    const colorMap: Record<string, string> = {
+      'Agency': 'border-purple-500 text-purple-700',
+      'Corporate': 'border-pink-500 text-pink-700',
+      'Cultural': 'border-blue-500 text-blue-700',
+      'Educational': 'border-green-500 text-green-700',
+      'Guide': 'border-yellow-500 text-yellow-700',
+      'Internal operations': 'border-gray-500 text-gray-700',
+    };
+    return colorMap[type] || 'border-gray-500 text-gray-700';
+  };
+
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
       case 'paid':
-        return 'bg-green-100 text-green-700 border-green-300';
+        return 'bg-green-500 text-white border-green-500';
       case 'to-be-paid':
         return 'bg-orange-100 text-orange-700 border-orange-300';
       case 'cancelled':
@@ -328,24 +340,24 @@ export default function ReservationsOverview() {
                                <div className="text-text-subtle">{formatTime(reservation.time)}</div>
                              </div>
                              
-                             {/* Business */}
-                             <div className="text-sm">
-                               <div className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700 border border-gray-300 mb-1">
-                                 {reservation.venueName.includes('Educational') ? 'Educational' : 'Agency'}
-                               </div>
-                               <div className="text-text-main font-medium">{reservation.venueName}</div>
-                               {reservation.customerEmail && (
-                                 <div className="text-primary-active text-xs">{reservation.customerEmail}</div>
-                               )}
-                               {reservation.customerFirstName && (
-                                 <div className="text-text-subtle text-xs flex items-center gap-1">
-                                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                     <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                                   </svg>
-                                   <span>Phone number</span>
-                                 </div>
-                               )}
-                             </div>
+                            {/* Business */}
+                            <div className="text-sm">
+                              <div className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-medium bg-white mb-1 ${getBusinessTypeColor(reservation.venueName.includes('Educational') ? 'Educational' : 'Agency')}`}>
+                                {reservation.venueName.includes('Educational') ? 'Educational' : 'Agency'}
+                              </div>
+                              <div className="text-text-main font-medium">{reservation.venueName}</div>
+                              {reservation.customerEmail && (
+                                <div className="text-primary-active text-xs">{reservation.customerEmail}</div>
+                              )}
+                              {reservation.customerFirstName && (
+                                <div className="text-text-subtle text-xs flex items-center gap-1">
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                  </svg>
+                                  <span>Phone number</span>
+                                </div>
+                              )}
+                            </div>
                              
                              {/* Event */}
                              <div className="text-sm text-text-main">{reservation.eventName}</div>
@@ -380,12 +392,12 @@ export default function ReservationsOverview() {
                                </span>
                              </div>
                              
-                             {/* Attendance */}
-                             <div className="flex justify-end">
-                               <button className="px-4 py-1.5 rounded-full border-2 border-primary-main text-primary-main text-xs font-semibold hover:bg-blue-50 transition-colors">
-                                 Confirm arrival
-                               </button>
-                             </div>
+                            {/* Attendance */}
+                            <div className="flex justify-end">
+                              <button className="px-4 py-1.5 rounded-full border border-border-main text-text-subtle text-xs font-semibold hover:bg-neutral-50 transition-colors">
+                                Confirm arrival
+                              </button>
+                            </div>
                            </div>
                          );
                        })}
