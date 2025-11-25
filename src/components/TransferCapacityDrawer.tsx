@@ -6,6 +6,11 @@ interface TransferCapacityDrawerProps {
   onClose: (transferCompleted: boolean) => void;
   sourceQuotaId?: string;
   timeSlot: string;
+  validateCapacity?: (groupName: string, capacity: number, excludeQuotaId?: string, ticketOption?: string) => {
+    isValid: boolean;
+    maxAvailable: number;
+    message: string;
+  };
 }
 
 const ICON_CHEVRON_DOWN = '/icons/chevron-down.svg';
@@ -15,7 +20,8 @@ export default function TransferCapacityDrawer({
   isOpen,
   onClose,
   sourceQuotaId,
-  timeSlot
+  timeSlot,
+  validateCapacity
 }: TransferCapacityDrawerProps) {
   const { quotas, updateQuotaCapacity } = useQuotaStore();
   const [isClosing, setIsClosing] = useState(false);
@@ -24,6 +30,7 @@ export default function TransferCapacityDrawer({
   const [transferAmount, setTransferAmount] = useState('');
   const [fromDropdownOpen, setFromDropdownOpen] = useState(false);
   const [toDropdownOpen, setToDropdownOpen] = useState(false);
+  const [transferError, setTransferError] = useState('');
   const fromDropdownRef = useRef<HTMLDivElement>(null);
   const toDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -31,6 +38,25 @@ export default function TransferCapacityDrawer({
   const availableQuotas = quotas.filter(q => q.timeSlot === timeSlot);
   const fromQuota = quotas.find(q => q.id === fromQuotaId);
   const toQuota = quotas.find(q => q.id === toQuotaId);
+
+  // Get compatible quotas for transfer (same level: group-to-group or same ticket type)
+  const getCompatibleQuotas = (sourceQuota: typeof fromQuota) => {
+    if (!sourceQuota) return availableQuotas;
+    
+    return availableQuotas.filter(q => {
+      // Must be same capacity group
+      if (q.capacityGroupName !== sourceQuota.capacityGroupName) return false;
+      
+      // Must be same level (both group-level or both same ticket type)
+      if (sourceQuota.ticketOption) {
+        // Source is ticket-level, destination must be same ticket type
+        return q.ticketOption === sourceQuota.ticketOption;
+      } else {
+        // Source is group-level, destination must also be group-level
+        return !q.ticketOption;
+      }
+    });
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -65,14 +91,46 @@ export default function TransferCapacityDrawer({
     }, 300);
   };
 
+  // Validate the transfer amount for the destination quota
+  const validateTransfer = (amount: number): { isValid: boolean; message: string } => {
+    if (!fromQuota || !toQuota || !validateCapacity) {
+      return { isValid: true, message: '' };
+    }
+
+    // Check source has enough available
+    if (amount > fromQuota.available) {
+      return { isValid: false, message: `Source quota only has ${fromQuota.available} available` };
+    }
+
+    // Check destination can receive this amount
+    const newDestinationCapacity = toQuota.capacity + amount;
+    const validation = validateCapacity(
+      toQuota.capacityGroupName,
+      newDestinationCapacity,
+      toQuota.id,
+      toQuota.ticketOption
+    );
+
+    if (!validation.isValid) {
+      return { 
+        isValid: false, 
+        message: `Destination exceeds available capacity (max additional: ${validation.maxAvailable - toQuota.capacity})` 
+      };
+    }
+
+    return { isValid: true, message: '' };
+  };
+
   const handleSave = () => {
     const amount = parseInt(transferAmount);
     if (!fromQuotaId || !toQuotaId || !amount || amount <= 0 || !fromQuota || !toQuota) {
       return;
     }
 
-    // Validate transfer amount doesn't exceed available capacity
-    if (amount > fromQuota.available) {
+    // Validate transfer
+    const validation = validateTransfer(amount);
+    if (!validation.isValid) {
+      setTransferError(validation.message);
       return;
     }
 
@@ -85,14 +143,22 @@ export default function TransferCapacityDrawer({
 
   const canSave = () => {
     const amount = parseInt(transferAmount);
-    return (
-      fromQuotaId &&
-      toQuotaId &&
-      fromQuotaId !== toQuotaId &&
-      amount > 0 &&
-      fromQuota &&
-      amount <= fromQuota.available
-    );
+    if (!fromQuotaId || !toQuotaId || fromQuotaId === toQuotaId || !amount || amount <= 0 || !fromQuota) {
+      return false;
+    }
+    
+    // Check basic source availability
+    if (amount > fromQuota.available) {
+      return false;
+    }
+
+    // Check destination validation if validateCapacity is provided
+    if (validateCapacity && toQuota) {
+      const validation = validateTransfer(amount);
+      return validation.isValid;
+    }
+
+    return true;
   };
 
   if (!isOpen) return null;
@@ -176,7 +242,9 @@ export default function TransferCapacityDrawer({
                             type="button"
                             onClick={() => {
                               setFromQuotaId(quota.id);
+                              setToQuotaId(''); // Reset destination when source changes
                               setTransferAmount('');
+                              setTransferError('');
                               setFromDropdownOpen(false);
                             }}
                             className="w-full px-3 py-3 text-left hover:bg-neutral-50 flex items-center gap-1 text-base text-text-main"
@@ -187,6 +255,9 @@ export default function TransferCapacityDrawer({
                               className="w-3.5 h-3.5"
                             />
                             {quota.name}
+                            {quota.ticketOption && (
+                              <span className="text-xs text-text-subtle ml-1">({quota.ticketOption})</span>
+                            )}
                           </button>
                         ))}
                     </div>
@@ -194,7 +265,7 @@ export default function TransferCapacityDrawer({
                 </div>
 
                 {/* Transfer Amount Input */}
-                <div className="w-[79px] bg-white border border-border-main rounded-lg h-[56px] px-3 relative">
+                <div className={`w-[79px] bg-white border rounded-lg h-[56px] px-3 relative ${transferError ? 'border-status-danger' : 'border-border-main'}`}>
                   <div className="flex flex-col gap-1 grow items-start justify-center h-full relative">
                     <div className="flex items-center justify-end pt-4 w-full">
                       <div className="flex items-center justify-end flex-1">
@@ -206,6 +277,7 @@ export default function TransferCapacityDrawer({
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             setTransferAmount(value);
+                            setTransferError(''); // Clear error on change
                           }}
                           disabled={!fromQuotaId}
                           className={`bg-transparent border-none outline-none text-base text-right h-6 leading-none p-0 ${transferAmount ? 'text-text-main' : 'text-background-subtle-medium'}`}
@@ -228,6 +300,13 @@ export default function TransferCapacityDrawer({
                   <p className="text-sm font-bold text-black leading-none">
                     Available quota: {fromQuota.available}
                   </p>
+                </div>
+              )}
+              
+              {/* Error message */}
+              {transferError && (
+                <div className="flex gap-1 items-center px-2">
+                  <p className="text-xs text-status-danger">{transferError}</p>
                 </div>
               )}
             </div>
@@ -284,10 +363,10 @@ export default function TransferCapacityDrawer({
                     </div>
                   </button>
 
-                  {/* Dropdown Menu */}
+                  {/* Dropdown Menu - Only show compatible quotas (same level) */}
                   {toDropdownOpen && fromQuotaId && (
                     <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-border-main rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                      {availableQuotas
+                      {getCompatibleQuotas(fromQuota)
                         .filter(q => q.id !== fromQuotaId)
                         .map((quota) => (
                           <button
@@ -295,6 +374,7 @@ export default function TransferCapacityDrawer({
                             type="button"
                             onClick={() => {
                               setToQuotaId(quota.id);
+                              setTransferError('');
                               setToDropdownOpen(false);
                             }}
                             className="w-full px-3 py-3 text-left hover:bg-neutral-50 flex items-center gap-1 text-base text-text-main"
@@ -305,8 +385,16 @@ export default function TransferCapacityDrawer({
                               className="w-3.5 h-3.5"
                             />
                             {quota.name}
+                            {quota.ticketOption && (
+                              <span className="text-xs text-text-subtle ml-1">({quota.ticketOption})</span>
+                            )}
                           </button>
                         ))}
+                      {getCompatibleQuotas(fromQuota).filter(q => q.id !== fromQuotaId).length === 0 && (
+                        <div className="px-3 py-3 text-sm text-text-subtle italic">
+                          No compatible quotas available
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

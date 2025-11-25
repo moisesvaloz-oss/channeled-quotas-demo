@@ -122,6 +122,8 @@ export default function LandingPage() {
                   <div className="w-[100px] flex flex-col items-center justify-start">
                     <div className="text-text-subtle text-xs mb-0.5">Visibility</div>
                   </div>
+                  {/* Time slot totals: Sum of all groups */}
+                  {/* Club 54: 600, Fanstand: 200, Birdie Shack: 350, Birdie Shack LB: 15, LIV Premium: 10 = 1175 */}
                   <div className="w-[100px] flex flex-col items-end justify-start">
                     <div className="flex items-center justify-center gap-1 mb-0.5">
                       <span className="text-text-subtle text-xs">Issued</span>
@@ -131,15 +133,15 @@ export default function LandingPage() {
                   </div>
                   <div className="w-[100px] flex flex-col items-end justify-start">
                     <div className="text-text-subtle text-xs mb-0.5">Available</div>
-                    <div className="text-text-main text-base font-semibold">450</div>
+                    <div className="text-text-main text-base font-semibold">825</div>
                   </div>
                   <div className="w-[100px] flex flex-col items-end justify-start">
                     <div className="text-text-subtle text-xs mb-0.5">T. Capacity</div>
-                    <div className="text-text-main text-base font-semibold">800</div>
+                    <div className="text-text-main text-base font-semibold">1175</div>
                   </div>
                   <div className="w-[100px] flex flex-col items-end justify-start">
                     <div className="text-text-subtle text-xs mb-0.5">Occupancy</div>
-                    <div className="text-text-main text-base font-semibold">75%</div>
+                    <div className="text-text-main text-base font-semibold">29.8%</div>
                   </div>
                   <div className="w-[40px] flex justify-center">
                     <div className="w-5 h-5 flex items-center justify-center relative">
@@ -150,7 +152,7 @@ export default function LandingPage() {
 
                 {/* Capacity Groups */}
                 <div className="mt-6 space-y-4">
-                  {/* Fanstand Group */}
+                  {/* Fanstand Group - Total: 200, Sold: 100, Available: 100 */}
                   <div className="bg-white border border-border-main rounded-lg overflow-hidden p-3">
                     <div className="bg-white border-b border-dashed border-border-main pb-3 flex items-center">
                       <div className="flex-1 flex items-center gap-2">
@@ -160,98 +162,6 @@ export default function LandingPage() {
                         <div>
                           <div className="text-text-subtle text-xs">Capacity Group</div>
                           <div className="text-text-main text-base font-semibold">Fanstand</div>
-                        </div>
-                      </div>
-                      <div className="w-[100px] flex items-center justify-center"></div>
-                      <div className="w-[100px] flex items-center justify-center"></div>
-                      <div className="w-[100px] flex items-center justify-end">
-                        <div className="text-text-main text-base font-semibold">250</div>
-                      </div>
-                      <div className="w-[100px] flex items-center justify-end">
-                        <div className="text-text-main text-base font-semibold">350</div>
-                      </div>
-                      <div className="w-[100px] flex items-center justify-end">
-                        <div className="text-text-main text-base font-semibold">600</div>
-                      </div>
-                      <div className="w-[100px] flex items-center justify-end">
-                        <div className="text-text-main text-base font-semibold">41.7%</div>
-                      </div>
-                      <div className="w-[40px] flex justify-center">
-                        <div className="w-5 h-5 flex items-center justify-center relative">
-                          <img src={ICON_PEN_TO_SQUARE} alt="" className="w-4 h-4" />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-neutral-50 rounded-lg p-3 flex flex-col gap-6 mt-4">
-                      <div className="flex items-center text-sm">
-                        <div className="flex-1 flex items-center gap-2">
-                          <div className="w-[18px] h-[18px] flex items-center justify-center relative">
-                            <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
-                          </div>
-                          <span className="text-text-main text-sm">Fanstand | Friday (July 25)</span>
-                        </div>
-                        <div className="w-[100px] flex items-center justify-center">
-                          <span className="px-1 py-0.5 bg-status-positive text-white rounded text-xs h-5 flex items-center justify-center min-w-[48px]">On-sale</span>
-                        </div>
-                        <div className="w-[100px] flex items-center justify-center">
-                          <span className="px-1 py-0.5 border border-text-main text-text-main rounded text-xs flex items-center gap-1">
-                            <div className="w-4 h-4 flex items-center justify-center relative">
-                              <img src={ICON_EYE} alt="" className="w-[13.5px] h-[10.5px]" />
-                            </div>
-                            Visible
-                          </span>
-                        </div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">200</div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">100</div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">300</div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">66.67%</div>
-                        <div className="w-[40px] flex justify-center">
-                          <div className="w-5 h-5 flex items-center justify-center relative">
-                            <img src={ICON_PEN_TO_SQUARE} alt="" className="w-4 h-4" />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center text-sm">
-                        <div className="flex-1 flex items-center gap-2">
-                          <div className="w-[18px] h-[18px] flex items-center justify-center relative">
-                            <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
-                          </div>
-                          <span className="text-text-main text-sm">Fanstand | 3 days pass</span>
-                        </div>
-                        <div className="w-[100px] flex items-center justify-center">
-                          <span className="px-1 py-0.5 bg-status-positive text-white rounded text-xs h-5 flex items-center justify-center min-w-[48px]">On-sale</span>
-                        </div>
-                        <div className="w-[100px] flex items-center justify-center">
-                          <span className="px-1 py-0.5 border border-text-main text-text-main rounded text-xs flex items-center gap-1">
-                            <div className="w-4 h-4 flex items-center justify-center relative">
-                              <img src={ICON_EYE} alt="" className="w-[13.5px] h-[10.5px]" />
-                            </div>
-                            Visible
-                          </span>
-                        </div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">50</div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">250</div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">300</div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">16.67%</div>
-                        <div className="w-[40px] flex justify-center">
-                          <div className="w-5 h-5 flex items-center justify-center relative">
-                            <img src={ICON_PEN_TO_SQUARE} alt="" className="w-4 h-4" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Club 54 Group */}
-                  <div className="bg-white border border-border-main rounded-lg overflow-hidden p-3">
-                    <div className="bg-white border-b border-dashed border-border-main pb-3 flex items-center">
-                      <div className="flex-1 flex items-center gap-2">
-                        <div className="w-[26px] h-[26px] flex items-center justify-center relative">
-                          <img src={ICON_ANGLE_DOWN} alt="" className="w-[15px] h-[9px]" />
-                        </div>
-                        <div>
-                          <div className="text-text-subtle text-xs">Capacity Group</div>
-                          <div className="text-text-main text-base font-semibold">Club 54</div>
                         </div>
                       </div>
                       <div className="w-[100px] flex items-center justify-center"></div>
@@ -275,6 +185,101 @@ export default function LandingPage() {
                       </div>
                     </div>
                     <div className="bg-neutral-50 rounded-lg p-3 flex flex-col gap-6 mt-4">
+                      {/* Friday ticket - sold: 70, available: 80, total: 150 */}
+                      <div className="flex items-center text-sm">
+                        <div className="flex-1 flex items-center gap-2">
+                          <div className="w-[18px] h-[18px] flex items-center justify-center relative">
+                            <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
+                          </div>
+                          <span className="text-text-main text-sm">Fanstand | Friday (July 25)</span>
+                        </div>
+                        <div className="w-[100px] flex items-center justify-center">
+                          <span className="px-1 py-0.5 bg-status-positive text-white rounded text-xs h-5 flex items-center justify-center min-w-[48px]">On-sale</span>
+                        </div>
+                        <div className="w-[100px] flex items-center justify-center">
+                          <span className="px-1 py-0.5 border border-text-main text-text-main rounded text-xs flex items-center gap-1">
+                            <div className="w-4 h-4 flex items-center justify-center relative">
+                              <img src={ICON_EYE} alt="" className="w-[13.5px] h-[10.5px]" />
+                            </div>
+                            Visible
+                          </span>
+                        </div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">70</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">80</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">150</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">46.67%</div>
+                        <div className="w-[40px] flex justify-center">
+                          <div className="w-5 h-5 flex items-center justify-center relative">
+                            <img src={ICON_PEN_TO_SQUARE} alt="" className="w-4 h-4" />
+                          </div>
+                        </div>
+                      </div>
+                      {/* 3 days pass - sold: 30, available: 20, total: 50 */}
+                      <div className="flex items-center text-sm">
+                        <div className="flex-1 flex items-center gap-2">
+                          <div className="w-[18px] h-[18px] flex items-center justify-center relative">
+                            <img src={ICON_TICKET} alt="" className="w-4 h-[11px]" />
+                          </div>
+                          <span className="text-text-main text-sm">Fanstand | 3 days pass</span>
+                        </div>
+                        <div className="w-[100px] flex items-center justify-center">
+                          <span className="px-1 py-0.5 bg-status-positive text-white rounded text-xs h-5 flex items-center justify-center min-w-[48px]">On-sale</span>
+                        </div>
+                        <div className="w-[100px] flex items-center justify-center">
+                          <span className="px-1 py-0.5 border border-text-main text-text-main rounded text-xs flex items-center gap-1">
+                            <div className="w-4 h-4 flex items-center justify-center relative">
+                              <img src={ICON_EYE} alt="" className="w-[13.5px] h-[10.5px]" />
+                            </div>
+                            Visible
+                          </span>
+                        </div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">30</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">20</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">50</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">60%</div>
+                        <div className="w-[40px] flex justify-center">
+                          <div className="w-5 h-5 flex items-center justify-center relative">
+                            <img src={ICON_PEN_TO_SQUARE} alt="" className="w-4 h-4" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Club 54 Group - Total: 600, Sold: 250, Available: 350 */}
+                  <div className="bg-white border border-border-main rounded-lg overflow-hidden p-3">
+                    <div className="bg-white border-b border-dashed border-border-main pb-3 flex items-center">
+                      <div className="flex-1 flex items-center gap-2">
+                        <div className="w-[26px] h-[26px] flex items-center justify-center relative">
+                          <img src={ICON_ANGLE_DOWN} alt="" className="w-[15px] h-[9px]" />
+                        </div>
+                        <div>
+                          <div className="text-text-subtle text-xs">Capacity Group</div>
+                          <div className="text-text-main text-base font-semibold">Club 54</div>
+                        </div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-center"></div>
+                      <div className="w-[100px] flex items-center justify-center"></div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">250</div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">350</div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">600</div>
+                      </div>
+                      <div className="w-[100px] flex items-center justify-end">
+                        <div className="text-text-main text-base font-semibold">41.7%</div>
+                      </div>
+                      <div className="w-[40px] flex justify-center">
+                        <div className="w-5 h-5 flex items-center justify-center relative">
+                          <img src={ICON_PEN_TO_SQUARE} alt="" className="w-4 h-4" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-neutral-50 rounded-lg p-3 flex flex-col gap-6 mt-4">
+                      {/* Friday ticket - sold: 180, available: 220, total: 400 */}
                       <div className="flex items-center text-sm">
                         <div className="flex-1 flex items-center gap-2">
                           <div className="w-[18px] h-[18px] flex items-center justify-center relative">
@@ -293,16 +298,17 @@ export default function LandingPage() {
                             Visible
                           </span>
                         </div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">50</div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">50</div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">100</div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">50%</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">180</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">220</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">400</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">45%</div>
                         <div className="w-[40px] flex justify-center">
                           <div className="w-5 h-5 flex items-center justify-center relative">
                             <img src={ICON_PEN_TO_SQUARE} alt="" className="w-4 h-4" />
                           </div>
                         </div>
                       </div>
+                      {/* 3 days pass - sold: 70, available: 130, total: 200 */}
                       <div className="flex items-center text-sm">
                         <div className="flex-1 flex items-center gap-2">
                           <div className="w-[18px] h-[18px] flex items-center justify-center relative">
@@ -321,10 +327,10 @@ export default function LandingPage() {
                             Visible
                           </span>
                         </div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">50</div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">50</div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">100</div>
-                        <div className="w-[100px] flex items-center justify-end text-text-main">50%</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">70</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">130</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">200</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main">35%</div>
                         <div className="w-[40px] flex justify-center">
                           <div className="w-5 h-5 flex items-center justify-center relative">
                             <img src={ICON_PEN_TO_SQUARE} alt="" className="w-4 h-4" />

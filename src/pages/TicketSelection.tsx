@@ -12,7 +12,7 @@ export default function TicketSelection() {
   const navigate = useNavigate();
   const { addItem, clearCart } = useCartStore();
   
-  const [selectedDate, setSelectedDate] = useState('Sun 27 Jul');
+  const [selectedDate, setSelectedDate] = useState('Fri 25 Jul');
   const [selectedTime, setSelectedTime] = useState('10:30');
   const [ticketCounts, setTicketCounts] = useState<{ [key: string]: number }>({});
   const [selectedTab, setSelectedTab] = useState('Fanstand');
@@ -21,9 +21,9 @@ export default function TicketSelection() {
   const tabs = ['Fanstand', 'Birdie Shack', 'Birdie Shack Loge Box', 'Club 54', 'LIV Premium - All Access Hospitality', 'Suite on 18'];
   
   const dates = [
-    { day: 'Fri', date: '25 Jul' },
-    { day: 'Sat', date: '26 Jul' },
-    { day: 'Sun', date: '27 Jul' }
+    { day: 'Fri', date: '25 Jul', enabled: true },
+    { day: 'Sat', date: '26 Jul', enabled: false },
+    { day: 'Sun', date: '27 Jul', enabled: false }
   ];
 
   const ticketSections = [
@@ -231,21 +231,25 @@ export default function TicketSelection() {
                     {dates.map((d) => {
                         const label = `${d.day} ${d.date}`;
                         const isSelected = selectedDate === label;
+                        const isDisabled = !d.enabled;
                         return (
                             <button
                                 key={label}
-                                onClick={() => setSelectedDate(label)}
+                                onClick={() => d.enabled && setSelectedDate(label)}
+                                disabled={isDisabled}
                                 className={`flex-1 py-2 px-1 rounded-lg border text-center transition-all relative overflow-hidden ${
-                                    isSelected 
-                                        ? 'border-primary-main bg-white text-primary-main' 
-                                        : 'border-border-main text-text-subtle hover:border-text-subtle'
+                                    isDisabled
+                                        ? 'border-border-main bg-neutral-100 text-text-subtle opacity-50 cursor-not-allowed'
+                                        : isSelected 
+                                            ? 'border-primary-main bg-white text-primary-main' 
+                                            : 'border-border-main text-text-subtle hover:border-text-subtle'
                                 }`}
                             >
-                                {isSelected && (
+                                {isSelected && !isDisabled && (
                                   <div className="absolute top-[1px] right-[1px] w-3.5 h-3.5 bg-primary-main rounded-tr-[5px]" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%)' }}></div>
                                 )}
-                                <div className={`text-xs font-semibold ${isSelected ? 'text-primary-main' : ''}`}>{d.day}</div>
-                                <div className={`text-sm ${isSelected ? 'text-primary-main font-bold' : ''}`}>{d.date}</div>
+                                <div className={`text-xs font-semibold ${isSelected && !isDisabled ? 'text-primary-main' : ''}`}>{d.day}</div>
+                                <div className={`text-sm ${isSelected && !isDisabled ? 'text-primary-main font-bold' : ''}`}>{d.date}</div>
                             </button>
                         )
                     })}
@@ -293,7 +297,12 @@ export default function TicketSelection() {
                               return (
                                 <button
                                     key={section.name}
-                                    onClick={() => setSelectedTicketSection(section.name)}
+                                    onClick={() => {
+                                        if (selectedTicketSection !== section.name) {
+                                            setSelectedTicketSection(section.name);
+                                            setTicketCounts({}); // Clear cart when switching sections
+                                        }
+                                    }}
                                     className={`px-4 py-2 rounded-lg border text-xs font-medium transition-all relative overflow-hidden ${
                                         isSelected
                                             ? 'border-primary-main text-primary-main bg-white'
@@ -371,6 +380,34 @@ export default function TicketSelection() {
                             </div>
                           );
                         })}
+                      </div>
+
+                      {/* Capacity Warning Banner */}
+                      <div className="mt-4 bg-[#fff4e5] border-l-4 border-[#ff9800] rounded-r-lg px-4 py-3 flex items-start justify-between">
+                        <div className="flex items-start gap-2">
+                          <svg className="w-5 h-5 text-[#ff9800] flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                          </svg>
+                          <div>
+                            <span className="text-[#b45309] font-semibold">Capacity for 3-Day Pass (July 25 - 27) is almost full</span>
+                            <div className="text-[#b45309]">
+                              Increase quota capacity{' '}
+                              <a 
+                                href="/#/quota-management" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="font-bold underline hover:no-underline"
+                              >
+                                here
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                        <button className="text-[#b45309] hover:text-[#92400e] flex-shrink-0 ml-2">
+                          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M6 18L18 6M6 6l12 12"/>
+                          </svg>
+                        </button>
                       </div>
                   </div>
 

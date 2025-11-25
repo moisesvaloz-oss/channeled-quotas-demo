@@ -17,7 +17,7 @@ interface AddQuotaDrawerProps {
   timeSlot: string;
   editingQuota?: Quota | null;
   replicatingQuota?: Quota | null;
-  validateCapacity: (groupName: string, capacity: number, excludeQuotaId?: string) => {
+  validateCapacity: (groupName: string, capacity: number, excludeQuotaId?: string, ticketOption?: string) => {
     isValid: boolean;
     maxAvailable: number;
     message: string;
@@ -347,12 +347,13 @@ export default function AddQuotaDrawer({ isOpen, onClose, capacityGroupName, tim
                     const newCapacity = e.target.value;
                     setCapacity(newCapacity);
                     
-                    // Validate capacity
+                    // Validate capacity - pass ticketOption for ticket-level quotas
                     if (newCapacity && parseInt(newCapacity) > 0) {
                       const validation = validateCapacity(
                         capacityGroupName, 
                         parseInt(newCapacity), 
-                        editingQuota?.id
+                        editingQuota?.id,
+                        ticketOption || undefined
                       );
                       setCapacityError(validation.message);
                     } else {

@@ -270,19 +270,27 @@ export default function QuotaManagement() {
   };
 
   // Define ticket type capacities (sold, available, total)
-  // Note: These numbers MUST sum up to match the parent capacity group totals
-  // Club 54: Total=600, Sold=250, Available=350
-  // Fanstand: Total=200, Sold=100, Available=100
+  // 
+  // IMPORTANT: Ticket capacities are INDEPENDENT LIMITS, not subdivisions!
+  // - Each ticket type has its own capacity limit
+  // - Sales count towards BOTH ticket AND group levels simultaneously
+  // - Effective availability = min(ticket.available, group.available)
+  // 
+  // The SOLD values MUST be consistent across hierarchy:
+  // - Sum of ticket sold = group sold (same sales counted at both levels)
+  // 
+  // Club 54: Group sold=250, Group total=600
+  // Fanstand: Group sold=100, Group total=200
   const ticketTypeCapacities: { [key: string]: { [ticket: string]: { sold: number; available: number; total: number } } } = {
     'Club 54': {
-      'Friday (July 25)': { sold: 180, available: 220, total: 400 },  // Single day ticket (higher capacity)
-      '3 days pass': { sold: 70, available: 130, total: 200 }         // 3-day bundle (lower capacity)
-      // Sum: sold=250, available=350, total=600 ✓
+      'Friday (July 25)': { sold: 180, available: 220, total: 400 },  // Independent capacity limit
+      '3 days pass': { sold: 70, available: 130, total: 200 }         // Independent capacity limit
+      // Sold sum: 180 + 70 = 250 = Group sold ✓ (same sales counted at both levels)
     },
     'Fanstand': {
-      'Friday (July 25)': { sold: 70, available: 80, total: 150 },    // Single day ticket (higher capacity)
-      '3 days pass': { sold: 30, available: 20, total: 50 }           // 3-day bundle (lower capacity)
-      // Sum: sold=100, available=100, total=200 ✓
+      'Friday (July 25)': { sold: 70, available: 80, total: 150 },    // Independent capacity limit
+      '3 days pass': { sold: 30, available: 20, total: 50 }           // Independent capacity limit
+      // Sold sum: 70 + 30 = 100 = Group sold ✓ (same sales counted at both levels)
     }
   };
 
@@ -304,7 +312,9 @@ export default function QuotaManagement() {
     };
   };
 
-  // Calculate ticket type totals (accounting for quotas that consume from the ticket type)
+  // Calculate ticket type totals
+  // The ticket header shows the BASE capacity - quotas subdivide this but don't reduce it
+  // Only BLOCKED quotas reduce availability
   const calculateTicketTypeTotals = (groupName: string, ticketOption: string) => {
     const baseCapacity = ticketTypeCapacities[groupName]?.[ticketOption];
     if (!baseCapacity) return { sold: 0, available: 0, capacity: 0 };
@@ -312,31 +322,54 @@ export default function QuotaManagement() {
     // Get all quotas for this specific ticket type
     const ticketQuotas = getTicketLevelQuotas(groupName, ticketOption);
     
-    // Calculate total capacity allocated to quotas for this ticket type
-    const totalQuotaCapacity = ticketQuotas
+    // Only BLOCKED quotas reduce the ticket's available capacity
+    const blockedCapacity = ticketQuotas
+      .filter(q => q.type === 'Blocked')
       .reduce((sum, q) => sum + q.capacity, 0);
-    
-    // Available = base total - base sold - quota allocations
-    const available = baseCapacity.total - baseCapacity.sold - totalQuotaCapacity;
 
     return {
       sold: baseCapacity.sold,
-      available: Math.max(0, available), // Can't be negative
+      available: Math.max(0, baseCapacity.available - blockedCapacity),
       capacity: baseCapacity.total
     };
   };
 
   // Validate capacity doesn't exceed available capacity
-  const validateCapacity = (groupName: string, newCapacity: number, excludeQuotaId?: string) => {
+  // For group-level quotas: validate against group's available capacity
+  // For ticket-level quotas: validate against ticket's available capacity
+  const validateCapacity = (groupName: string, newCapacity: number, excludeQuotaId?: string, ticketOption?: string) => {
+    // If this is a ticket-level quota, validate against ticket capacity
+    if (ticketOption) {
+      const baseCapacity = ticketTypeCapacities[groupName]?.[ticketOption];
+      if (!baseCapacity) return { isValid: true, maxAvailable: 0, message: '' };
+
+      // Get all other ticket-level quotas for this specific ticket
+      const ticketQuotas = getTicketLevelQuotas(groupName, ticketOption);
+      const otherQuotasCapacity = ticketQuotas
+        .filter(q => q.id !== excludeQuotaId)
+        .reduce((sum, q) => sum + q.capacity, 0);
+
+      // The maximum available for this quota is the ticket's available capacity minus other quotas
+      const maxAvailable = baseCapacity.available - otherQuotasCapacity;
+      const isValid = newCapacity <= maxAvailable;
+
+      return {
+        isValid,
+        maxAvailable,
+        message: isValid ? '' : `Value exceeds available capacity (max: ${maxAvailable})`
+      };
+    }
+
+    // Group-level quota validation
     const groupConfig = CAPACITY_GROUPS[groupName as keyof typeof CAPACITY_GROUPS];
     if (!groupConfig) return { isValid: true, maxAvailable: 0, message: '' };
 
     // Get the group's available capacity (total - sold - blocked)
     const groupTotals = calculateGroupTotals(groupName);
     
-    // Calculate total capacity already allocated to other quotas (excluding the one being edited)
-    const groupQuotas = getGroupQuotas(groupName);
-    const otherQuotasCapacity = groupQuotas
+    // Calculate total capacity already allocated to other GROUP-LEVEL quotas (excluding the one being edited)
+    const groupLevelQuotas = getGroupLevelQuotas(groupName);
+    const otherQuotasCapacity = groupLevelQuotas
       .filter(q => q.id !== excludeQuotaId)
       .reduce((sum, q) => sum + q.capacity, 0);
 
@@ -362,6 +395,8 @@ export default function QuotaManagement() {
     const groupLevelQuotas = getGroupLevelQuotas(groupName);
     const totalQuotaCapacity = groupLevelQuotas.reduce((sum, q) => sum + q.capacity, 0);
     const totalQuotaSold = groupLevelQuotas.reduce((sum, q) => sum + q.sold, 0);
+    // Sum of available from all group-level quotas (capacity - sold for each quota)
+    const totalQuotaAvailable = groupLevelQuotas.reduce((sum, q) => sum + (q.capacity - q.sold), 0);
 
     // Free capacity = total capacity not allocated to group-level quotas
     const freeCapacity = groupConfig.totalCapacity - totalQuotaCapacity;
@@ -370,8 +405,12 @@ export default function QuotaManagement() {
     // This represents tickets sold from the "general pool"
     const freeSold = groupConfig.sold - totalQuotaSold;
     
-    // Free available = free capacity minus free sold
-    const freeAvailable = freeCapacity - freeSold;
+    // Get the group header's available (which already accounts for quota capacity deductions)
+    const groupTotals = calculateGroupTotals(groupName);
+    
+    // Free available = group's overall available minus quota's available
+    // This ensures Free + Quota availables = Group header available
+    const freeAvailable = groupTotals.available - totalQuotaAvailable;
 
     return {
       sold: Math.max(0, freeSold),
@@ -381,15 +420,18 @@ export default function QuotaManagement() {
   };
 
   // Calculate free capacity for a ticket type
-  // Similar to group free capacity, but at the ticket level
+  // Free capacity = ticket's base capacity minus what's allocated to quotas
   const calculateTicketFreeCapacity = (groupName: string, ticketOption: string) => {
     const baseCapacity = ticketTypeCapacities[groupName]?.[ticketOption];
     if (!baseCapacity) return { sold: 0, available: 0, capacity: 0 };
 
     // Only count TICKET-LEVEL quotas for this specific ticket
     const ticketLevelQuotas = getTicketLevelQuotas(groupName, ticketOption);
+    
     const totalQuotaCapacity = ticketLevelQuotas.reduce((sum, q) => sum + q.capacity, 0);
     const totalQuotaSold = ticketLevelQuotas.reduce((sum, q) => sum + q.sold, 0);
+    // Sum of available from all quotas (capacity - sold for each quota)
+    const totalQuotaAvailable = ticketLevelQuotas.reduce((sum, q) => sum + (q.capacity - q.sold), 0);
 
     // Free capacity = total ticket capacity not allocated to ticket-level quotas
     const freeCapacity = baseCapacity.total - totalQuotaCapacity;
@@ -397,19 +439,15 @@ export default function QuotaManagement() {
     // Free sold = ticket's total sold minus what was sold through ticket-level quotas
     const freeSold = baseCapacity.sold - totalQuotaSold;
     
-    // Free available = free capacity minus free sold
-    const freeAvailable = freeCapacity - freeSold;
+    // Free available = ticket's base available minus quota's available
+    // This ensures Free available + Quota availables = Ticket header available
+    const freeAvailable = baseCapacity.available - totalQuotaAvailable;
 
     return {
       sold: Math.max(0, freeSold),
       available: Math.max(0, freeAvailable),
       capacity: Math.max(0, freeCapacity)
     };
-  };
-
-  // Helper to check if a group has any ticket-level quotas
-  const hasTicketLevelQuotas = (groupName: string, ticketOption: string) => {
-    return getTicketLevelQuotas(groupName, ticketOption).length > 0;
   };
 
   // Calculate time slot totals (sum of all groups)
@@ -714,9 +752,9 @@ export default function QuotaManagement() {
                         
                         {/* Numbers with left border */}
                         <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.sold}</div>
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.sold}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.available}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.capacity}</div>
                           <div className="w-[40px]"></div>
                         </div>
                       </div>
@@ -753,8 +791,8 @@ export default function QuotaManagement() {
                     
                     {/* Numbers with left border */}
                     <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
-                      <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
-                      <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                      <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{quota.sold}</div>
+                      <div className="w-[100px] flex items-center justify-end text-text-main text-sm">
                         {isBlocked ? '-' : quota.available}
                       </div>
                       <div className="w-[100px] flex items-center justify-end relative">
@@ -768,8 +806,8 @@ export default function QuotaManagement() {
                                 if (!isNaN(newValue)) {
                                   capacityEditsRef.current[quota.id] = newValue;
                                   
-                                  // Validate
-                                  const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id);
+                                  // Validate - pass ticketOption for ticket-level quotas
+                                  const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id, quota.ticketOption);
                                   setCapacityErrors(prev => {
                                     if (validation.isValid) {
                                       const newErrors = { ...prev };
@@ -786,7 +824,7 @@ export default function QuotaManagement() {
                             />
                           </div>
                         ) : (
-                          <span className="text-text-main text-sm font-semibold">{quota.capacity}</span>
+                          <span className="text-text-main text-sm">{quota.capacity}</span>
                         )}
                       </div>
                       <div className="w-[20px]"></div>
@@ -936,13 +974,13 @@ export default function QuotaManagement() {
                             
                             {/* Numbers with left border */}
                             <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
-                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm">
                                 {ticketFreeCapacity.sold}
                               </div>
-                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm">
                                 {ticketFreeCapacity.available}
                               </div>
-                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm">
                                 {ticketFreeCapacity.capacity}
                               </div>
                               <div className="w-[40px]"></div>
@@ -978,8 +1016,8 @@ export default function QuotaManagement() {
                             </div>
                             
                             <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
-                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
-                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{quota.sold}</div>
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm">
                                 {isBlocked ? '-' : quota.available}
                               </div>
                               <div className="w-[100px] flex items-center justify-end relative">
@@ -992,7 +1030,7 @@ export default function QuotaManagement() {
                                         const newValue = parseInt(e.target.value);
                                         if (!isNaN(newValue)) {
                                           capacityEditsRef.current[quota.id] = newValue;
-                                          const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id);
+                                          const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id, quota.ticketOption);
                                           setCapacityErrors(prev => {
                                             if (validation.isValid) {
                                               const newErrors = { ...prev };
@@ -1009,7 +1047,7 @@ export default function QuotaManagement() {
                                     />
                                   </div>
                                 ) : (
-                                  <span className="text-text-main text-sm font-semibold">{quota.capacity}</span>
+                                  <span className="text-text-main text-sm">{quota.capacity}</span>
                                 )}
                               </div>
                               <div className="w-[20px]"></div>
@@ -1157,9 +1195,9 @@ export default function QuotaManagement() {
                         
                         {/* Numbers with left border */}
                         <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.sold}</div>
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.sold}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.available}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.capacity}</div>
                           <div className="w-[40px]"></div>
                         </div>
                       </div>
@@ -1196,7 +1234,7 @@ export default function QuotaManagement() {
                       
                       {/* Numbers with left border */}
                       <div className="border-l border-border-main pl-2 pr-2 flex items-center gap-0 flex-shrink-0">
-                        <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{quota.sold}</div>
                         <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
                           {isBlocked ? '-' : quota.available}
                         </div>
@@ -1212,7 +1250,7 @@ export default function QuotaManagement() {
                                     capacityEditsRef.current[quota.id] = newValue;
                                     
                                     // Validate
-                                    const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id);
+                                    const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id, quota.ticketOption);
                                     setCapacityErrors(prev => {
                                       if (validation.isValid) {
                                         const newErrors = { ...prev };
@@ -1229,7 +1267,7 @@ export default function QuotaManagement() {
                               />
                             </div>
                           ) : (
-                            <span className="text-text-main text-sm font-semibold">{quota.capacity}</span>
+                            <span className="text-text-main text-sm">{quota.capacity}</span>
                           )}
                         </div>
                         <div className="w-[20px]"></div>
@@ -1379,13 +1417,13 @@ export default function QuotaManagement() {
                             
                             {/* Numbers with left border */}
                             <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
-                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm">
                                 {ticketFreeCapacity.sold}
                               </div>
-                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm">
                                 {ticketFreeCapacity.available}
                               </div>
-                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm">
                                 {ticketFreeCapacity.capacity}
                               </div>
                               <div className="w-[40px]"></div>
@@ -1421,8 +1459,8 @@ export default function QuotaManagement() {
                             </div>
                             
                             <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
-                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
-                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{quota.sold}</div>
+                              <div className="w-[100px] flex items-center justify-end text-text-main text-sm">
                                 {isBlocked ? '-' : quota.available}
                               </div>
                               <div className="w-[100px] flex items-center justify-end relative">
@@ -1435,7 +1473,7 @@ export default function QuotaManagement() {
                                         const newValue = parseInt(e.target.value);
                                         if (!isNaN(newValue)) {
                                           capacityEditsRef.current[quota.id] = newValue;
-                                          const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id);
+                                          const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id, quota.ticketOption);
                                           setCapacityErrors(prev => {
                                             if (validation.isValid) {
                                               const newErrors = { ...prev };
@@ -1452,7 +1490,7 @@ export default function QuotaManagement() {
                                     />
                                   </div>
                                 ) : (
-                                  <span className="text-text-main text-sm font-semibold">{quota.capacity}</span>
+                                  <span className="text-text-main text-sm">{quota.capacity}</span>
                                 )}
                               </div>
                               <div className="w-[20px]"></div>
@@ -1600,9 +1638,9 @@ export default function QuotaManagement() {
                         
                         {/* Numbers with left border */}
                         <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.sold}</div>
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.sold}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.available}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.capacity}</div>
                           <div className="w-[40px]"></div>
                         </div>
                       </div>
@@ -1639,7 +1677,7 @@ export default function QuotaManagement() {
                       
                       {/* Numbers with left border */}
                       <div className="border-l border-border-main pl-2 pr-2 flex items-center gap-0 flex-shrink-0">
-                        <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{quota.sold}</div>
                         <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
                           {isBlocked ? '-' : quota.available}
                         </div>
@@ -1655,7 +1693,7 @@ export default function QuotaManagement() {
                                     capacityEditsRef.current[quota.id] = newValue;
                                     
                                     // Validate
-                                    const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id);
+                                    const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id, quota.ticketOption);
                                     setCapacityErrors(prev => {
                                       if (validation.isValid) {
                                         const newErrors = { ...prev };
@@ -1672,7 +1710,7 @@ export default function QuotaManagement() {
                               />
                             </div>
                           ) : (
-                            <span className="text-text-main text-sm font-semibold">{quota.capacity}</span>
+                            <span className="text-text-main text-sm">{quota.capacity}</span>
                           )}
                         </div>
                         <div className="w-[20px]"></div>
@@ -1815,9 +1853,9 @@ export default function QuotaManagement() {
                         
                         {/* Numbers with left border */}
                         <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.sold}</div>
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.sold}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.available}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.capacity}</div>
                           <div className="w-[40px]"></div>
                         </div>
                       </div>
@@ -1854,7 +1892,7 @@ export default function QuotaManagement() {
                       
                       {/* Numbers with left border */}
                       <div className="border-l border-border-main pl-2 pr-2 flex items-center gap-0 flex-shrink-0">
-                        <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{quota.sold}</div>
                         <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
                           {isBlocked ? '-' : quota.available}
                         </div>
@@ -1870,7 +1908,7 @@ export default function QuotaManagement() {
                                     capacityEditsRef.current[quota.id] = newValue;
                                     
                                     // Validate
-                                    const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id);
+                                    const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id, quota.ticketOption);
                                     setCapacityErrors(prev => {
                                       if (validation.isValid) {
                                         const newErrors = { ...prev };
@@ -1887,7 +1925,7 @@ export default function QuotaManagement() {
                               />
                             </div>
                           ) : (
-                            <span className="text-text-main text-sm font-semibold">{quota.capacity}</span>
+                            <span className="text-text-main text-sm">{quota.capacity}</span>
                           )}
                         </div>
                         <div className="w-[20px]"></div>
@@ -2030,9 +2068,9 @@ export default function QuotaManagement() {
                         
                         {/* Numbers with left border */}
                         <div className="border-l border-border-main pl-2 flex items-center gap-0 flex-shrink-0">
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.sold}</div>
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.available}</div>
-                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{freeCapacity.capacity}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.sold}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.available}</div>
+                          <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{freeCapacity.capacity}</div>
                           <div className="w-[40px]"></div>
                         </div>
                       </div>
@@ -2069,7 +2107,7 @@ export default function QuotaManagement() {
                       
                       {/* Numbers with left border */}
                       <div className="border-l border-border-main pl-2 pr-2 flex items-center gap-0 flex-shrink-0">
-                        <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">{quota.sold}</div>
+                        <div className="w-[100px] flex items-center justify-end text-text-main text-sm">{quota.sold}</div>
                         <div className="w-[100px] flex items-center justify-end text-text-main text-sm font-semibold">
                           {isBlocked ? '-' : quota.available}
                         </div>
@@ -2085,7 +2123,7 @@ export default function QuotaManagement() {
                                     capacityEditsRef.current[quota.id] = newValue;
                                     
                                     // Validate
-                                    const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id);
+                                    const validation = validateCapacity(quota.capacityGroupName, newValue, quota.id, quota.ticketOption);
                                     setCapacityErrors(prev => {
                                       if (validation.isValid) {
                                         const newErrors = { ...prev };
@@ -2102,7 +2140,7 @@ export default function QuotaManagement() {
                               />
                             </div>
                           ) : (
-                            <span className="text-text-main text-sm font-semibold">{quota.capacity}</span>
+                            <span className="text-text-main text-sm">{quota.capacity}</span>
                           )}
                         </div>
                         <div className="w-[20px]"></div>
@@ -2196,6 +2234,7 @@ export default function QuotaManagement() {
          onClose={handleTransferDrawerClose}
          sourceQuotaId={transferSourceQuotaId}
          timeSlot="Fri 25 Jul 2025 - 10:30"
+         validateCapacity={validateCapacity}
        />
 
         {/* Success Toast */}
