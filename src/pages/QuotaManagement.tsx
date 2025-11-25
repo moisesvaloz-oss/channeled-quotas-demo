@@ -356,9 +356,10 @@ export default function QuotaManagement() {
     const groupConfig = CAPACITY_GROUPS[groupName as keyof typeof CAPACITY_GROUPS];
     if (!groupConfig) return { sold: 0, available: 0, capacity: 0 };
 
-    const groupQuotas = getGroupQuotas(groupName);
-    const totalQuotaCapacity = groupQuotas.reduce((sum, q) => sum + q.capacity, 0);
-    const totalQuotaSold = groupQuotas.reduce((sum, q) => sum + q.sold, 0);
+    // Only count GROUP-LEVEL quotas (not ticket-level quotas)
+    const groupLevelQuotas = getGroupLevelQuotas(groupName);
+    const totalQuotaCapacity = groupLevelQuotas.reduce((sum, q) => sum + q.capacity, 0);
+    const totalQuotaSold = groupLevelQuotas.reduce((sum, q) => sum + q.sold, 0);
 
     // Free capacity is what's left after quotas are allocated
     const freeCapacity = groupConfig.totalCapacity - totalQuotaCapacity;
