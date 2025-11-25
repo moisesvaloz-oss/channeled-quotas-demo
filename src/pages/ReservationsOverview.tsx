@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
+import { useReservationStore } from '../stores/reservationStore';
 
 // Icon assets
 const ICON_CALENDAR = '/icons/calendar.svg';
@@ -15,6 +16,8 @@ const STATUS_OPTIONS = ['To be paid', 'Paid', 'Cancelled', 'Expired'];
 
 export default function ReservationsOverview() {
   const navigate = useNavigate();
+  const { reservations } = useReservationStore();
+  
   // Force refresh
   const [showGuideBanner, setShowGuideBanner] = useState(true);
   const [selectedCity] = useState('Chicago');
@@ -51,6 +54,59 @@ export default function ReservationsOverview() {
     if (selectedStatuses.length === 0) return 'Select status';
     if (selectedStatuses.length === STATUS_OPTIONS.length) return 'All statuses';
     return selectedStatuses.join(', ');
+  };
+
+  // Filter reservations based on search and status
+  const filteredReservations = reservations.filter(reservation => {
+    // Status filter
+    const statusMap: Record<string, string> = {
+      'to-be-paid': 'To be paid',
+      'paid': 'Paid',
+      'cancelled': 'Cancelled'
+    };
+    const reservationStatus = statusMap[reservation.status] || reservation.status;
+    const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(reservationStatus);
+    
+    // Search filter
+    const searchLower = searchQuery.toLowerCase();
+    const matchesSearch = !searchQuery || 
+      reservation.id.toLowerCase().includes(searchLower) ||
+      reservation.eventName.toLowerCase().includes(searchLower) ||
+      reservation.customerEmail?.toLowerCase().includes(searchLower) ||
+      reservation.venueName.toLowerCase().includes(searchLower);
+    
+    return matchesStatus && matchesSearch;
+  });
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  const formatTime = (timeStr: string) => {
+    return timeStr;
+  };
+
+  const getStatusBadgeClass = (status: string) => {
+    switch (status) {
+      case 'paid':
+        return 'bg-green-100 text-green-700 border-green-300';
+      case 'to-be-paid':
+        return 'bg-orange-100 text-orange-700 border-orange-300';
+      case 'cancelled':
+        return 'bg-red-100 text-red-700 border-red-300';
+      default:
+        return 'bg-gray-100 text-gray-700 border-gray-300';
+    }
+  };
+
+  const getStatusLabel2 = (status: string) => {
+    const statusMap: Record<string, string> = {
+      'to-be-paid': 'TO BE PAID',
+      'paid': 'PAID',
+      'cancelled': 'CANCELLED'
+    };
+    return statusMap[status] || status.toUpperCase();
   };
 
   return (
@@ -204,7 +260,9 @@ export default function ReservationsOverview() {
 
                 {/* Results Count & Actions */}
                 <div className="flex items-center gap-3 mb-4 relative z-10">
-                  <span className="text-sm font-semibold text-text-main">0 reservations with the filters applied</span>
+                  <span className="text-sm font-semibold text-text-main">
+                    {filteredReservations.length} reservation{filteredReservations.length !== 1 ? 's' : ''} with the filters applied
+                  </span>
                   <button className="p-1.5 hover:bg-neutral-100 rounded transition-colors">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -241,17 +299,98 @@ export default function ReservationsOverview() {
                       <div className="text-right flex items-center justify-end">Attendance</div>
                    </div>
                    
-                   {/* Empty State */}
-                   <div className="flex-1 flex flex-col items-center justify-center py-20 bg-white">
-                      <div className="w-16 h-16 mb-4 text-neutral-300">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
-                      <p className="text-text-subtle text-base max-w-md text-center">
-                        Sorry, we couldn't find reservations with your search criteria. Please change the filters and try again.
-                      </p>
-                   </div>
+                   {/* Table Body */}
+                   {filteredReservations.length === 0 ? (
+                     /* Empty State */
+                     <div className="flex-1 flex flex-col items-center justify-center py-20 bg-white">
+                        <div className="w-16 h-16 mb-4 text-neutral-300">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                        <p className="text-text-subtle text-base max-w-md text-center">
+                          Sorry, we couldn't find reservations with your search criteria. Please change the filters and try again.
+                        </p>
+                     </div>
+                   ) : (
+                     <div className="bg-white divide-y divide-border-main">
+                       {filteredReservations.map((reservation) => {
+                         const totalTickets = reservation.tickets.reduce((sum, ticket) => sum + ticket.quantity, 0);
+                         
+                         return (
+                           <div 
+                             key={reservation.id}
+                             className="px-4 py-4 grid grid-cols-[auto_1fr_1fr_auto_1fr_auto_auto_auto_auto] gap-4 items-center hover:bg-neutral-50 transition-colors cursor-pointer"
+                           >
+                             {/* Event Date */}
+                             <div className="text-sm text-text-main">
+                               <div className="font-semibold">{formatDate(reservation.date)}</div>
+                               <div className="text-text-subtle">{formatTime(reservation.time)}</div>
+                             </div>
+                             
+                             {/* Business */}
+                             <div className="text-sm">
+                               <div className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700 border border-gray-300 mb-1">
+                                 {reservation.venueName.includes('Educational') ? 'Educational' : 'Agency'}
+                               </div>
+                               <div className="text-text-main font-medium">{reservation.venueName}</div>
+                               {reservation.customerEmail && (
+                                 <div className="text-primary-active text-xs">{reservation.customerEmail}</div>
+                               )}
+                               {reservation.customerFirstName && (
+                                 <div className="text-text-subtle text-xs flex items-center gap-1">
+                                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                     <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                   </svg>
+                                   <span>Phone number</span>
+                                 </div>
+                               )}
+                             </div>
+                             
+                             {/* Event */}
+                             <div className="text-sm text-text-main">{reservation.eventName}</div>
+                             
+                             {/* Reservation ID */}
+                             <div className="text-sm font-medium text-text-main">{reservation.id}</div>
+                             
+                             {/* Contact Info */}
+                             <div className="text-sm">
+                               <div className="text-text-main font-medium">
+                                 {reservation.customerFirstName && reservation.customerLastName 
+                                   ? `${reservation.customerFirstName} ${reservation.customerLastName}`
+                                   : 'Generic user'}
+                               </div>
+                               {reservation.customerEmail && (
+                                 <div className="text-primary-active text-xs">{reservation.customerEmail}</div>
+                               )}
+                             </div>
+                             
+                             {/* Tickets */}
+                             <div className="text-sm text-text-main text-right">{totalTickets}</div>
+                             
+                             {/* Total */}
+                             <div className="text-sm font-semibold text-text-main text-right">
+                               ${reservation.total.toFixed(2)}
+                             </div>
+                             
+                             {/* Status */}
+                             <div className="flex justify-end">
+                               <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-bold border ${getStatusBadgeClass(reservation.status)}`}>
+                                 {getStatusLabel2(reservation.status)}
+                               </span>
+                             </div>
+                             
+                             {/* Attendance */}
+                             <div className="flex justify-end">
+                               <button className="px-4 py-1.5 rounded-full border-2 border-primary-main text-primary-main text-xs font-semibold hover:bg-blue-50 transition-colors">
+                                 Confirm arrival
+                               </button>
+                             </div>
+                           </div>
+                         );
+                       })}
+                     </div>
+                   )}
                 </div>
             </div>
           </div>
