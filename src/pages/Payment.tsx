@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import { useCartStore } from '../stores/cartStore';
+import { useReservationStore } from '../stores/reservationStore';
 
 export default function Payment() {
   const navigate = useNavigate();
   const { items: cartItems, getTotal, clearCart } = useCartStore();
+  const { addReservation } = useReservationStore();
   
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('bank-card');
   const [cardNumber, setCardNumber] = useState('');
@@ -19,14 +21,32 @@ export default function Payment() {
   const totalWithFees = total + bookingFees;
 
   const handlePayment = () => {
-    // Mock payment - clear cart and show success
+    if (cartItems.length === 0) return;
+
+    // Create reservation
+    const orderId = addReservation({
+      eventName: 'LIV Golf Chicago 2026',
+      eventImage: '/images/liv-golf-event.jpg',
+      venueName: 'Bolingbrook Golf Club',
+      venueAddress: 'Chicago - 2001 Rodeo Drive, Bolingbrook',
+      date: cartItems[0]?.date || '',
+      time: cartItems[0]?.time || '',
+      tickets: cartItems.map(item => ({
+        name: item.ticketName,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+      total: totalWithFees,
+      bookingFees,
+      status: selectedPaymentMethod === 'mark-paid' ? 'paid' : 'to-be-paid',
+      paymentMethod: selectedPaymentMethod === 'mark-paid' ? markAsPaidMethod : selectedPaymentMethod,
+    });
+
+    // Clear cart
     clearCart();
-    setShowSuccessToast(true);
     
-    // Redirect to reservations overview after 2 seconds
-    setTimeout(() => {
-      navigate('/reservations/overview');
-    }, 2000);
+    // Navigate to confirmation page with order ID
+    navigate(`/reservations/confirmation?orderId=${orderId}`);
   };
 
   return (

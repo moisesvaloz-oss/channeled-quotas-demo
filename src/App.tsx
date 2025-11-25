@@ -8,6 +8,7 @@ import SelectEvent from './pages/SelectEvent';
 import TicketSelection from './pages/TicketSelection';
 import Checkout from './pages/Checkout';
 import Payment from './pages/Payment';
+import ReservationConfirmation from './pages/ReservationConfirmation';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/reservations/create/tickets" element={<TicketSelection />} />
         <Route path="/reservations/create/checkout" element={<Checkout />} />
         <Route path="/reservations/create/payment" element={<Payment />} />
+        <Route path="/reservations/confirmation" element={<ReservationConfirmation />} />
       </Routes>
     </Router>
   );
