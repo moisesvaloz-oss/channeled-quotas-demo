@@ -880,8 +880,6 @@ export default function QuotaManagement() {
                       {/* Free Capacity Row for Ticket Type - Only show if quotas exist */}
                       {getTicketLevelQuotas('Club 54', ticketOption).length > 0 && (() => {
                         const ticketTotals = calculateTicketTypeTotals('Club 54', ticketOption);
-                        const ticketQuotas = getTicketLevelQuotas('Club 54', ticketOption);
-                        const totalQuotaCapacity = ticketQuotas.reduce((sum, q) => sum + q.capacity, 0);
                         const freeCapacity = ticketTotals.available;
                         
                         return (
@@ -1326,8 +1324,6 @@ export default function QuotaManagement() {
                       {/* Free Capacity Row for Ticket Type - Only show if quotas exist */}
                       {getTicketLevelQuotas('Fanstand', ticketOption).length > 0 && (() => {
                         const ticketTotals = calculateTicketTypeTotals('Fanstand', ticketOption);
-                        const ticketQuotas = getTicketLevelQuotas('Fanstand', ticketOption);
-                        const totalQuotaCapacity = ticketQuotas.reduce((sum, q) => sum + q.capacity, 0);
                         const freeCapacity = ticketTotals.available;
                         
                         return (
